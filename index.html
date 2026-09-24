@@ -4,123 +4,307 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Morotti Gym - App</title>
-    <!-- Tailwind CSS para um design moderno e rápido -->
-    <script src="https://tailwindcss.com"></script>
-    <!-- Ícones Lucide para os botões -->
-    <script src="https://unpkg.com"></script>
-</head>
-<body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen flex justify-center items-start p-0 sm:p-4">
+    <style>
+        /* Estilos Globais Modernos (Estilo Dark/Academia) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    <!-- Container simulando a tela de um smartphone -->
-    <div class="w-full max-w-md bg-zinc-900 min-h-screen sm:min-h-[850px] sm:rounded-3xl sm:shadow-2xl border border-zinc-800 overflow-hidden flex flex-col justify-between">
-        
+        body {
+            background-color: #09090b;
+            color: #f4f4f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        @media (min-width: 640px) {
+            body { padding: 20px; }
+        }
+
+        /* Container Principal estilo Celular */
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: #18181b;
+            min-height: 100vh;
+            border: 1px solid #27272a;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 640px) {
+            .app-container {
+                min-height: 800px;
+                border-radius: 24px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                overflow: hidden;
+            }
+        }
+
+        /* Topo / Header */
+        header {
+            padding: 24px;
+            text-align: center;
+            border-b: 1px solid #27272a;
+            background-color: #18181b;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid #27272a;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: #dc2626;
+        }
+
+        header p {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #a1a1aa;
+            margin-top: 4px;
+        }
+
+        /* Alternador de Nível de Acesso */
+        .toggle-container {
+            margin-top: 16px;
+            display: inline-flex;
+            padding: 4px;
+            background-color: #09090b;
+            border-radius: 8px;
+            border: 1px solid #27272a;
+        }
+
+        .toggle-btn {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-aluno-ativo {
+            background-color: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-func-ativo {
+            background-color: #f59e0b;
+            color: #09090b;
+        }
+
+        .btn-inativo {
+            background-color: transparent;
+            color: #a1a1aa;
+        }
+
+        .btn-inativo:hover {
+            color: #f4f4f5;
+        }
+
+        /* Grid de Botões Principal */
+        main {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-cols: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(39, 39, 42, 0.5);
+            border: 1px solid #27272a;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: #f4f4f5;
+            aspect-ratio: 1 / 1;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            background-color: #27272a;
+            transform: translateY(-2px);
+        }
+
+        .menu-item .emoji {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .menu-item span {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Botão específico do WhatsApp */
+        .menu-item.whatsapp {
+            background-color: rgba(6, 78, 59, 0.3);
+            border-color: rgba(6, 95, 70, 0.5);
+            color: #34d399;
+        }
+
+        .menu-item.whatsapp:hover {
+            background-color: rgba(6, 78, 59, 0.6);
+        }
+
+        /* Painel Administrativo do Funcionário */
+        .admin-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #27272a;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #f59e0b;
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+
+        .menu-item.admin {
+            background-color: rgba(120, 53, 4, 0.2);
+            border-color: rgba(146, 64, 14, 0.4);
+            color: #fbbf24;
+        }
+
+        .menu-item.admin:hover {
+            background-color: rgba(120, 53, 4, 0.4);
+        }
+
+        /* Rodapé */
+        footer {
+            padding: 16px;
+            text-align: center;
+            border-top: 1px solid #27272a;
+            font-size: 0.65rem;
+            color: #52525b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
         <!-- Topo / Header -->
-        <header class="p-6 text-center border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
-            <h1 class="text-3xl font-black tracking-wider text-red-600">MOROTTI GYM</h1>
-            <p class="text-xs uppercase tracking-widest text-zinc-400 mt-1">Força • Disciplina • Evolução</p>
+        <header>
+            <h1>MOROTTI GYM</h1>
+            <p>Força • Disciplina • Evolução</p>
             
-            <!-- Seletor de Acesso rápido para testes -->
-            <div class="mt-4 inline-flex p-1 bg-zinc-950 rounded-lg border border-zinc-800">
-                <button onclick="mudarAcesso('aluno')" id="btn-aluno" class="px-3 py-1 text-xs font-bold rounded-md bg-red-600 text-white transition-all">
+            <div class="toggle-container">
+                <button onclick="mudarAcesso('aluno')" id="btn-aluno" class="toggle-btn btn-aluno-ativo">
                     Aluno
                 </button>
-                <button onclick="mudarAcesso('funcionario')" id="btn-funcionario" class="px-3 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-zinc-200 transition-all">
+                <button onclick="mudarAcesso('funcionario')" id="btn-funcionario" class="toggle-btn btn-inativo">
                     Funcionário
                 </button>
             </div>
         </header>
 
-        <!-- Menu Principal / Grid de Botões -->
-        <main class="flex-1 p-6 overflow-y-auto">
-            <div class="grid grid-cols-2 gap-4">
+        <!-- Menu Principal -->
+        <main>
+            <div class="menu-grid">
                 
-                <!-- 🏠 Início -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="home" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Início</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">🏠</div>
+                    <span>Início</span>
+                </div>
 
-                <!-- 🏋🏻 Meu treino -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="dumbbell" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Meu treino</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">🏋🏻</div>
+                    <span>Meu treino</span>
+                </div>
 
-                <!-- 📅 Horários -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="calendar" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Horários</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">📅</div>
+                    <span>Horários</span>
+                </div>
 
-                <!-- 💳 Meu plano -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="credit-card" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Meu plano</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">💳</div>
+                    <span>Meu plano</span>
+                </div>
 
-                <!-- 👤 Meu perfil -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="user" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Meu perfil</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">👤</div>
+                    <span>Meu perfil</span>
+                </div>
 
-                <!-- 📢 Avisos -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="megaphone" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Avisos</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">📢</div>
+                    <span>Avisos</span>
+                </div>
 
-                <!-- 📍 Academia -->
-                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
-                    <i data-lucide="map-pin" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Academia</span>
-                </button>
+                <div class="menu-item">
+                    <div class="emoji">📍</div>
+                    <span>Academia</span>
+                </div>
 
-                <!-- 💬 WhatsApp -->
-                <a href="https://wa.me" target="_blank" class="flex flex-col items-center justify-center bg-emerald-950/30 hover:bg-emerald-900/40 p-4 rounded-xl border border-emerald-900/50 transition-all aspect-square group text-center">
-                    <i data-lucide="message-square" class="w-8 h-8 text-emerald-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium text-emerald-400">WhatsApp</span>
+                <a href="https://wa.me" target="_blank" class="menu-item whatsapp">
+                    <div class="emoji">💬</div>
+                    <span>WhatsApp</span>
                 </a>
 
             </div>
 
-            <!-- ================= ÁREA EXCLUSIVA DO FUNCIONÁRIO ================= -->
-            <div id="area-funcionario" class="hidden mt-8 pt-6 border-t border-zinc-800">
-                <div class="flex items-center gap-2 mb-4 text-amber-500">
-                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
-                    <h2 class="text-xs font-black uppercase tracking-widest">Painel Administrativo</h2>
+            <!-- PAINEL EXCLUSIVO DO FUNCIONÁRIO -->
+            <div id="area-funcionario" class="admin-section hidden">
+                <div class="admin-title">
+                    <span>⚠️ Painel Administrativo</span>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- 👥 Gerenciar Alunos -->
-                    <button class="flex flex-col items-center justify-center bg-amber-950/20 hover:bg-amber-950/40 p-4 rounded-xl border border-amber-900/40 transition-all aspect-square group">
-                        <i data-lucide="users" class="w-8 h-8 text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                        <span class="text-xs font-medium text-amber-400 text-center">Cadastrar Aluno</span>
-                    </button>
+                <div class="menu-grid">
+                    <div class="menu-item admin">
+                        <div class="emoji">👥</div>
+                        <span>Cadastrar Aluno</span>
+                    </div>
 
-                    <!-- 📝 Atualizar Treinos -->
-                    <button class="flex flex-col items-center justify-center bg-amber-950/20 hover:bg-amber-950/40 p-4 rounded-xl border border-amber-900/40 transition-all aspect-square group">
-                        <i data-lucide="file-text" class="w-8 h-8 text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
-                        <span class="text-xs font-medium text-amber-400 text-center">Editar Treinos</span>
-                    </button>
+                    <div class="menu-item admin">
+                        <div class="emoji">📝</div>
+                        <span>Editar Treinos</span>
+                    </div>
                 </div>
             </div>
-            <!-- ================================================================= -->
 
         </main>
 
-        <!-- Rodapé simples -->
-        <footer class="p-4 text-center border-t border-zinc-800 text-[10px] text-zinc-600">
+        <!-- Rodapé -->
+        <footer>
             Morotti Gym App &copy; 2026 • Todos os direitos reservados.
         </footer>
     </div>
 
-    <!-- Scripts para Ícones e Dinâmica da Página -->
+    <!-- Script de Alternância de Abas -->
     <script>
-        // Inicializa os ícones do Lucide
-        lucide.createIcons();
-
-        // Função que muda a visualização dependendo do nível de acesso
         function mudarAcesso(tipo) {
             const areaFunc = document.getElementById('area-funcionario');
             const btnAluno = document.getElementById('btn-aluno');
@@ -128,12 +312,12 @@
 
             if (tipo === 'funcionario') {
                 areaFunc.classList.remove('hidden');
-                btnFunc.className = "px-3 py-1 text-xs font-bold rounded-md bg-amber-500 text-zinc-950 transition-all";
-                btnAluno.className = "px-3 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-zinc-200 transition-all";
+                btnFunc.className = "toggle-btn btn-func-ativo";
+                btnAluno.className = "toggle-btn btn-inativo";
             } else {
                 areaFunc.classList.add('hidden');
-                btnAluno.className = "px-3 py-1 text-xs font-bold rounded-md bg-red-600 text-white transition-all";
-                btnFunc.className = "px-3 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-zinc-200 transition-all";
+                btnAluno.className = "toggle-btn btn-aluno-ativo";
+                btnFunc.className = "toggle-btn btn-inativo";
             }
         }
     </script>
