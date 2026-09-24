@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morotti Gym - App</title>
+    <!-- Tailwind CSS para um design moderno e rápido -->
+    <script src="https://tailwindcss.com"></script>
+    <!-- Ícones Lucide para os botões -->
+    <script src="https://unpkg.com"></script>
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen flex justify-center items-start p-0 sm:p-4">
+
+    <!-- Container simulando a tela de um smartphone -->
+    <div class="w-full max-w-md bg-zinc-900 min-h-screen sm:min-h-[850px] sm:rounded-3xl sm:shadow-2xl border border-zinc-800 overflow-hidden flex flex-col justify-between">
+        
+        <!-- Topo / Header -->
+        <header class="p-6 text-center border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
+            <h1 class="text-3xl font-black tracking-wider text-red-600">MOROTTI GYM</h1>
+            <p class="text-xs uppercase tracking-widest text-zinc-400 mt-1">Força • Disciplina • Evolução</p>
+            
+            <!-- Seletor de Acesso rápido para testes -->
+            <div class="mt-4 inline-flex p-1 bg-zinc-950 rounded-lg border border-zinc-800">
+                <button onclick="mudarAcesso('aluno')" id="btn-aluno" class="px-3 py-1 text-xs font-bold rounded-md bg-red-600 text-white transition-all">
+                    Aluno
+                </button>
+                <button onclick="mudarAcesso('funcionario')" id="btn-funcionario" class="px-3 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-zinc-200 transition-all">
+                    Funcionário
+                </button>
+            </div>
+        </header>
+
+        <!-- Menu Principal / Grid de Botões -->
+        <main class="flex-1 p-6 overflow-y-auto">
+            <div class="grid grid-cols-2 gap-4">
+                
+                <!-- 🏠 Início -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="home" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Início</span>
+                </button>
+
+                <!-- 🏋🏻 Meu treino -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="dumbbell" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Meu treino</span>
+                </button>
+
+                <!-- 📅 Horários -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="calendar" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Horários</span>
+                </button>
+
+                <!-- 💳 Meu plano -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="credit-card" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Meu plano</span>
+                </button>
+
+                <!-- 👤 Meu perfil -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="user" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Meu perfil</span>
+                </button>
+
+                <!-- 📢 Avisos -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="megaphone" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Avisos</span>
+                </button>
+
+                <!-- 📍 Academia -->
+                <button class="flex flex-col items-center justify-center bg-zinc-800/50 hover:bg-zinc-800 p-4 rounded-xl border border-zinc-800 transition-all aspect-square group">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-red-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">Academia</span>
+                </button>
+
+                <!-- 💬 WhatsApp -->
+                <a href="https://wa.me" target="_blank" class="flex flex-col items-center justify-center bg-emerald-950/30 hover:bg-emerald-900/40 p-4 rounded-xl border border-emerald-900/50 transition-all aspect-square group text-center">
+                    <i data-lucide="message-square" class="w-8 h-8 text-emerald-400 mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium text-emerald-400">WhatsApp</span>
+                </a>
+
+            </div>
+
+            <!-- ================= ÁREA EXCLUSIVA DO FUNCIONÁRIO ================= -->
+            <div id="area-funcionario" class="hidden mt-8 pt-6 border-t border-zinc-800">
+                <div class="flex items-center gap-2 mb-4 text-amber-500">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    <h2 class="text-xs font-black uppercase tracking-widest">Painel Administrativo</h2>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- 👥 Gerenciar Alunos -->
+                    <button class="flex flex-col items-center justify-center bg-amber-950/20 hover:bg-amber-950/40 p-4 rounded-xl border border-amber-900/40 transition-all aspect-square group">
+                        <i data-lucide="users" class="w-8 h-8 text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-medium text-amber-400 text-center">Cadastrar Aluno</span>
+                    </button>
+
+                    <!-- 📝 Atualizar Treinos -->
+                    <button class="flex flex-col items-center justify-center bg-amber-950/20 hover:bg-amber-950/40 p-4 rounded-xl border border-amber-900/40 transition-all aspect-square group">
+                        <i data-lucide="file-text" class="w-8 h-8 text-amber-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-medium text-amber-400 text-center">Editar Treinos</span>
+                    </button>
+                </div>
+            </div>
+            <!-- ================================================================= -->
+
+        </main>
+
+        <!-- Rodapé simples -->
+        <footer class="p-4 text-center border-t border-zinc-800 text-[10px] text-zinc-600">
+            Morotti Gym App &copy; 2026 • Todos os direitos reservados.
+        </footer>
+    </div>
+
+    <!-- Scripts para Ícones e Dinâmica da Página -->
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+
+        // Função que muda a visualização dependendo do nível de acesso
+        function mudarAcesso(tipo) {
+            const areaFunc = document.getElementById('area-funcionario');
+            const btnAluno = document.getElementById('btn-aluno');
+            const btnFunc = document.getElementById('btn-funcionario');
+
+            if (tipo === 'funcionario') {
+                areaFunc.classList.remove('hidden');
+                btnFunc.className = "px-3 py-1 text-xs font-bold rounded-md bg-amber-500 text-zinc-950 transition-all";
+                btnAluno.className = "px-3 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-zinc-200 transition-all";
+            } else {
+                areaFunc.classList.add('hidden');
+                btnAluno.className = "px-3 py-1 text-xs font-bold rounded-md bg-red-600 text-white transition-all";
+                btnFunc.className = "px-3 py-1 text-xs font-bold rounded-md text-zinc-400 hover:text-zinc-200 transition-all";
+            }
+        }
+    </script>
+</body>
+</html>
