@@ -52,7 +52,6 @@
         header {
             padding: 24px;
             text-align: center;
-            border-b: 1px solid #27272a;
             background-color: #18181b;
             position: sticky;
             top: 0;
@@ -110,10 +109,6 @@
             color: #a1a1aa;
         }
 
-        .btn-inativo:hover {
-            color: #f4f4f5;
-        }
-
         /* Grid de Botões Principal */
         main {
             flex: 1;
@@ -122,7 +117,7 @@
 
         .menu-grid {
             display: grid;
-            grid-template-cols: repeat(2, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
@@ -158,32 +153,20 @@
             font-weight: 500;
         }
 
-        /* Botão específico do WhatsApp */
         .menu-item.whatsapp {
             background-color: rgba(6, 78, 59, 0.3);
             border-color: rgba(6, 95, 70, 0.5);
             color: #34d399;
         }
 
-        .menu-item.whatsapp:hover {
-            background-color: rgba(6, 78, 59, 0.6);
-        }
-
-        /* Painel Administrativo do Funcionário */
+        /* Painel Administrativo */
         .admin-section {
             margin-top: 32px;
             padding-top: 24px;
             border-top: 1px solid #27272a;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
         .admin-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
             color: #f59e0b;
             font-size: 0.75rem;
             font-weight: 900;
@@ -198,11 +181,46 @@
             color: #fbbf24;
         }
 
-        .menu-item.admin:hover {
-            background-color: rgba(120, 53, 4, 0.4);
+        /* Nova Tela de Treino */
+        .treino-card {
+            background: #27272a;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #dc2626;
         }
 
-        /* Rodapé */
+        .treino-card h3 {
+            font-size: 1rem;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .treino-card p {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+        }
+
+        .btn-voltar {
+            background-color: #27272a;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #3f3f46;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .btn-voltar:hover {
+            background-color: #3f3f46;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         footer {
             padding: 16px;
             text-align: center;
@@ -216,7 +234,7 @@
 
     <div class="app-container">
         <!-- Topo / Header -->
-        <header>
+        <header id="app-header">
             <h1>MOROTTI GYM</h1>
             <p>Força • Disciplina • Evolução</p>
             
@@ -230,8 +248,8 @@
             </div>
         </header>
 
-        <!-- Menu Principal -->
-        <main>
+        <!-- TELA 1: MENU PRINCIPAL -->
+        <main id="tela-menu">
             <div class="menu-grid">
                 
                 <div class="menu-item">
@@ -239,7 +257,8 @@
                     <span>Início</span>
                 </div>
 
-                <div class="menu-item">
+                <!-- Adicionamos a função de clique aqui -->
+                <div class="menu-item" onclick="abrirTela('tela-treino')">
                     <div class="emoji">🏋🏻</div>
                     <span>Meu treino</span>
                 </div>
@@ -278,23 +297,40 @@
 
             <!-- PAINEL EXCLUSIVO DO FUNCIONÁRIO -->
             <div id="area-funcionario" class="admin-section hidden">
-                <div class="admin-title">
-                    <span>⚠️ Painel Administrativo</span>
-                </div>
-                
+                <div class="admin-title">⚠️ Painel Administrativo</div>
                 <div class="menu-grid">
                     <div class="menu-item admin">
                         <div class="emoji">👥</div>
                         <span>Cadastrar Aluno</span>
                     </div>
-
                     <div class="menu-item admin">
                         <div class="emoji">📝</div>
                         <span>Editar Treinos</span>
                     </div>
                 </div>
             </div>
+        </main>
 
+        <!-- TELA 2: FICHA DE TREINO (INICIA ESCONDIDA) -->
+        <main id="tela-treino" class="hidden">
+            <h2 style="margin-bottom: 20px; font-size: 1.4rem; color: #dc2626;">💪 Meu Treino do Dia</h2>
+            
+            <div class="treino-card">
+                <h3>1. Supino Reto com Barra</h3>
+                <p>4 séries de 10 a 12 repetições • 1 min de descanso</p>
+            </div>
+
+            <div class="treino-card">
+                <h3>2. Desenvolvimento com Halteres</h3>
+                <p>4 séries de 12 repetições • Foco na subida</p>
+            </div>
+
+            <div class="treino-card">
+                <h3>3. Tríceps Pulley (Corda)</h3>
+                <p>3 séries de 15 repetições • Até a falha</p>
+            </div>
+
+            <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar ao Menu</button>
         </main>
 
         <!-- Rodapé -->
@@ -303,23 +339,11 @@
         </footer>
     </div>
 
-    <!-- Script de Alternância de Abas -->
+    <!-- Scripts de Navegação -->
     <script>
         function mudarAcesso(tipo) {
             const areaFunc = document.getElementById('area-funcionario');
             const btnAluno = document.getElementById('btn-aluno');
             const btnFunc = document.getElementById('btn-funcionario');
 
-            if (tipo === 'funcionario') {
-                areaFunc.classList.remove('hidden');
-                btnFunc.className = "toggle-btn btn-func-ativo";
-                btnAluno.className = "toggle-btn btn-inativo";
-            } else {
-                areaFunc.classList.add('hidden');
-                btnAluno.className = "toggle-btn btn-aluno-ativo";
-                btnFunc.className = "toggle-btn btn-inativo";
-            }
-        }
-    </script>
-</body>
-</html>
+            // Se mudar de acesso, garante que volta para a tela inicial
