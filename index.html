@@ -289,7 +289,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     <form id="form-aluno" onsubmit="cadastrarAluno(event)">
         <div class="form-grupo"><label for="aluno-nome">Nome completo</label><input id="aluno-nome" required></div>
         <div class="form-grupo"><label for="aluno-telefone">Telefone</label><input id="aluno-telefone"></div>
-        <div class="form-grupo"><label for="aluno-email">E-mail</label><input id="aluno-email" type="email"></div>
+        <div class="form-grupo"><label for="aluno-email">E-mail</label><input id="aluno-email" type="email" required></div>
         <button class="btn-acao sucesso" type="submit">💾 Cadastrar aluno</button>
     </form>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
@@ -609,11 +609,49 @@ async function carregarAvisos() {
 }
 
 async function cadastrarAluno(evento) {
-    evento.preventDefault(); if(!exigirFuncionario()) return;
-    const novo={nome:document.getElementById("aluno-nome").value.trim(),telefone:document.getElementById("aluno-telefone").value.trim(),email:document.getElementById("aluno-email").value.trim(),observacoes:""};
-    const {error}=await supabaseClient.from("alunos").insert(novo);
-    if(error) return alert("Erro ao cadastrar aluno: "+error.message);
-    evento.target.reset(); await atualizarTelas(); alert("Aluno cadastrado com sucesso!"); abrirTela("tela-alunos");
+    evento.preventDefault();
+    if(!exigirFuncionario()) return;
+
+    const nome = document.getElementById("aluno-nome").value.trim();
+    const telefone = document.getElementById("aluno-telefone").value.trim();
+    const email = document.getElementById("aluno-email").value.trim().toLowerCase();
+    const botao = evento.submitter;
+
+    if(!nome || !email) return alert("Preencha o nome e o e-mail do aluno.");
+
+    botao.disabled = true;
+    botao.textContent = "Cadastrando...";
+
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if(!session?.access_token) throw new Error("Sua sessão expirou. Entre novamente como funcionário.");
+
+        const resposta = await fetch(`${SUPABASE_URL}/functions/v1/cadastrar-aluno`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`,
+                "apikey": SUPABASE_PUBLISHABLE_KEY
+            },
+            body: JSON.stringify({ nome, telefone, email })
+        });
+
+        const resultado = await resposta.json().catch(() => ({}));
+        if(!resposta.ok || !resultado.sucesso) {
+            throw new Error(resultado.erro || "Não foi possível cadastrar o aluno.");
+        }
+
+        evento.target.reset();
+        await atualizarTelas();
+        alert("Aluno cadastrado com sucesso! O convite para criar a senha foi enviado para o e-mail informado.");
+        abrirTela("tela-alunos");
+    } catch(error) {
+        console.error(error);
+        alert("Erro ao cadastrar aluno: " + (error?.message || "Erro inesperado."));
+    } finally {
+        botao.disabled = false;
+        botao.textContent = "💾 Cadastrar aluno";
+    }
 }
 
 function renderizarListaAlunos() {
