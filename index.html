@@ -126,10 +126,21 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
         <button class="btn-acao sucesso" type="submit">🔐 Entrar como aluno</button>
     </form>
     <div class="primeiro-acesso">
-        <p class="small">Primeiro acesso ou ainda não criou sua senha?</p>
-        <button class="btn-acao" type="button" onclick="enviarLinkCriarSenha()">📧 Criar / redefinir minha senha</button>
+        <p class="small">Primeiro acesso ou esqueceu sua senha?</p>
+        <button class="btn-acao" type="button" onclick="abrirRecuperarSenha()">📧 Criar / redefinir minha senha</button>
     </div>
     <button class="btn-voltar" type="button" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- SOLICITAR LINK PARA CRIAR/REDEFINIR SENHA -->
+<main id="tela-recuperar-senha" class="hidden">
+    <h2 class="section-title">Criar ou redefinir senha</h2>
+    <p class="text-destaque">Digite o e-mail que está cadastrado na Morotti Gym. Enviaremos um link para você criar uma nova senha.</p>
+    <form onsubmit="enviarLinkCriarSenha(event)">
+        <div class="form-grupo"><label for="recuperar-email">E-mail cadastrado</label><input id="recuperar-email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com" required></div>
+        <button class="btn-acao sucesso" type="submit">📧 Enviar e-mail para criar senha</button>
+    </form>
+    <button class="btn-voltar" type="button" onclick="mudarAcesso('aluno')">⬅️ Voltar para o login</button>
 </main>
 
 <!-- CRIAR SENHA DO CONVITE -->
@@ -479,13 +490,24 @@ async function identificarUsuario(user) {
     usuarioAtual = null; return null;
 }
 
-async function enviarLinkCriarSenha() {
-    const email = document.getElementById("login-aluno-email").value.trim();
-    if (!email) return alert("Digite primeiro o e-mail cadastrado na academia.");
-    const redirectTo = `${location.origin}${location.pathname}`;
+function abrirRecuperarSenha() {
+    const emailLogin = document.getElementById("login-aluno-email").value.trim();
+    esconderTelas();
+    document.getElementById("tela-recuperar-senha").classList.remove("hidden");
+    if (emailLogin) document.getElementById("recuperar-email").value = emailLogin;
+    window.scrollTo({top:0, behavior:"smooth"});
+}
+
+async function enviarLinkCriarSenha(evento) {
+    evento.preventDefault();
+    const email = document.getElementById("recuperar-email").value.trim();
+    const botao = evento.submitter;
+    botao.disabled = true; botao.textContent = "Enviando...";
+    const redirectTo = `${location.origin}${location.pathname}?acao=criar-senha`;
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+    botao.disabled = false; botao.textContent = "📧 Enviar e-mail para criar senha";
     if (error) return alert("Não foi possível enviar o e-mail: " + error.message);
-    alert("Se este e-mail já possui acesso cadastrado, enviaremos um link para criar ou redefinir a senha. Confira também Spam e Promoções.");
+    alert("E-mail solicitado. Se este endereço possui acesso cadastrado, confira sua caixa de entrada, Spam e Promoções para criar ou redefinir a senha.");
 }
 
 async function fazerLoginAluno(evento) {
