@@ -814,8 +814,9 @@ function renderizarPerfil(){
     const souAluno=!!alunoAtual;
     const titulo=document.querySelector("#tela-perfil .section-title");
     if(titulo)titulo.textContent=souAluno?"Meu perfil":"Perfil do aluno";
-    el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>${!souAluno?`<button class="btn-acao ouro" type="button" onclick="abrirTreinoDoAluno(${a.id})">🏋️ Ver treinos deste aluno</button>`:""}`;
-    const botaoEditar=document.querySelector('#tela-perfil > .btn-acao.sucesso');if(botaoEditar)botaoEditar.classList.toggle('hidden',souAluno);
+    const master = perfilAtual?.cargo === "master";
+    el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>${!souAluno?`<button class="btn-acao ouro" type="button" onclick="abrirTreinoDoAluno(${a.id})">🏋️ Ver treinos deste aluno</button>${master?`<button class="btn-acao ouro" type="button" onclick="alterarSenhaAluno(${a.id})">🔑 Definir / alterar senha</button><button class="btn-acao btn-perigo" type="button" onclick="excluirAluno(${a.id})">🗑️ Excluir aluno</button>`:""}`:""}`;
+    const botaoEditar=document.querySelector('#tela-perfil > .btn-acao.sucesso');if(botaoEditar)botaoEditar.classList.toggle('hidden',souAluno || !master);
     const areaFoto=document.getElementById("area-foto-aluno");if(areaFoto)areaFoto.classList.toggle("hidden",!souAluno);
 }
 function mostrarTreinoAba(id,botao){
@@ -825,8 +826,10 @@ function mostrarTreinoAba(id,botao){
     const area=document.getElementById('treino-aba-conteudo');
     area.innerHTML=`<div class="treino-card"><h3>📅 ${esc(t.dia_semana||t.nome||"Treino")}</h3>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`;
 }
-function editarPerfil(){if(!exigirFuncionario())return;if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;const nome=prompt("Nome completo:",a.nome);if(nome===null)return;const telefone=prompt("Telefone:",a.telefone||"");if(telefone===null)return;const email=prompt("E-mail:",a.email||"");if(email===null)return;atualizarAluno(a.id,nome,telefone,email);}
-async function atualizarAluno(id,nome,telefone,email){const{error}=await supabaseClient.from("alunos").update({nome:nome.trim(),telefone:telefone.trim(),email:email.trim()}).eq("id",id);if(error)return alert("Erro ao atualizar perfil: "+error.message);await atualizarTelas();renderizarPerfil();alert("Perfil atualizado.");}
+function editarPerfil(){
+    if(!alunoSelecionadoId) return alert("Selecione um aluno primeiro.");
+    editarAluno(alunoSelecionadoId);
+}
 
 
 function restaurarLogo(){
