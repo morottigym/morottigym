@@ -126,7 +126,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
 <!-- CRIAR SENHA DO CONVITE -->
 <main id="tela-criar-senha" class="hidden">
     <h2 class="section-title">Criar minha senha</h2>
-    <p class="text-destaque">Seu convite foi reconhecido. Crie uma senha para acessar sua área de aluno.</p>
+    <p class="text-destaque">Crie uma senha para acessar sua área de aluno. Esta senha será usada nos próximos acessos.</p>
     <form onsubmit="definirSenhaAluno(event)">
         <div class="form-grupo"><label for="nova-senha">Nova senha</label><input id="nova-senha" type="password" minlength="6" autocomplete="new-password" required></div>
         <div class="form-grupo"><label for="confirmar-senha">Confirmar senha</label><input id="confirmar-senha" type="password" minlength="6" autocomplete="new-password" required></div>
@@ -324,21 +324,57 @@ let treinosCache = [];
 let avisosCache = [];
 let alunoSelecionadoId = null;
 
+let fluxoCriarSenha = false;
+
+function abrirTelaCriarSenha() {
+    fluxoCriarSenha = true;
+    document.getElementById("btn-aluno").className = "toggle-btn btn-aluno-ativo";
+    document.getElementById("btn-funcionario").className = "toggle-btn btn-inativo";
+    document.getElementById("area-funcionario").classList.add("hidden");
+    document.getElementById("area-aluno-logado").classList.add("hidden");
+    esconderTelas();
+    document.getElementById("tela-criar-senha").classList.remove("hidden");
+    window.scrollTo({top:0});
+}
+
 async function inicializar() {
     document.getElementById("ano-atual").textContent = new Date().getFullYear();
-    const urlConvite = location.hash.includes("type=invite") || location.search.includes("type=invite");
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session?.user) {
-        const tipo = await identificarUsuario(session.user);
-        if (tipo === "aluno") {
-            if (urlConvite) { esconderTelas(); document.getElementById("tela-criar-senha").classList.remove("hidden"); }
-            else { mostrarModoAlunoLogado(); await atualizarTelasAluno(); }
-        } else if (tipo === "funcionario") {
-            mostrarModoFuncionario(); await atualizarTelas();
-        } else {
-            await supabaseClient.auth.signOut(); mostrarModoAluno();
+
+    const urlSenha =
+        location.hash.includes("type=invite") ||
+        location.hash.includes("type=recovery") ||
+        location.search.includes("type=invite") ||
+        location.search.includes("type=recovery");
+
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === "PASSWORD_RECOVERY") {
+            abrirTelaCriarSenha();
+            return;
         }
-    } else mostrarModoAluno();
+
+        if (event === "SIGNED_IN" && urlSenha && session?.user) {
+            const tipo = await identificarUsuario(session.user);
+            if (tipo === "aluno") abrirTelaCriarSenha();
+        }
+    });
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session?.user) {
+        mostrarModoAluno();
+        return;
+    }
+
+    const tipo = await identificarUsuario(session.user);
+    if (tipo === "aluno") {
+        if (urlSenha) abrirTelaCriarSenha();
+        else { mostrarModoAlunoLogado(); await atualizarTelasAluno(); }
+    } else if (tipo === "funcionario") {
+        mostrarModoFuncionario();
+        await atualizarTelas();
+    } else if (!fluxoCriarSenha) {
+        await supabaseClient.auth.signOut();
+        mostrarModoAluno();
+    }
 }
 
 function esconderTelas() {
@@ -449,7 +485,8 @@ async function definirSenhaAluno(evento) {
     const {data:{user}}=await supabaseClient.auth.getUser();
     const tipo=user?await identificarUsuario(user):null;
     if(tipo!=="aluno") return alert("Conta autenticada, mas o cadastro do aluno ainda não está vinculado.");
-    history.replaceState({},document.title,location.pathname);
+    history.replaceState({}, document.title, location.pathname);
+    fluxoCriarSenha = false;
     alert("Senha criada com sucesso!"); mostrarModoAlunoLogado(); await atualizarTelasAluno();
 }
 
