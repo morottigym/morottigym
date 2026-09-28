@@ -21,7 +21,8 @@ a{text-decoration:none;color:inherit}
 }
 
 header{padding:22px 20px 18px;text-align:center;background:#18181b;position:sticky;top:0;z-index:50;border-bottom:1px solid #27272a}
-.app-logo{max-width:80px;height:80px;object-fit:contain;margin-bottom:8px;border-radius:50%}
+.app-logo{width:80px;height:80px;object-fit:contain;margin-bottom:8px;border-radius:50%}
+.app-logo.foto-aluno{object-fit:cover;border:3px solid #dc2626;background:#27272a}
 header h1{font-size:1.75rem;font-weight:900;letter-spacing:.1em;color:#dc2626}
 header p{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:#a1a1aa;margin-top:4px}
 .toggle-container{margin-top:15px;display:inline-flex;padding:4px;background:#09090b;border-radius:9px;border:1px solid #27272a}
@@ -106,7 +107,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
 <div class="app-container">
 
 <header id="app-header">
-    <img src="logo.png" alt="Morotti Gym" class="app-logo" onerror="this.style.display='none'">
+    <img id="foto-topo" src="logo.png" alt="Morotti Gym" class="app-logo" onerror="this.src='logo.png'">
     <h1>MOROTTI GYM</h1>
     <p>Força • Disciplina • Evolução</p>
 
@@ -247,6 +248,11 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
 <main id="tela-perfil" class="hidden">
     <h2 class="section-title">Meu perfil</h2>
     <div id="perfil-aluno-conteudo"></div>
+    <div id="area-foto-aluno" class="hidden">
+        <input id="input-foto-aluno" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="enviarFotoAluno(event)">
+        <button class="btn-acao sucesso" type="button" onclick="document.getElementById('input-foto-aluno').click()">📷 Alterar minha foto</button>
+        <p class="small" style="margin-top:8px;text-align:center">Use uma foto JPG, PNG ou WEBP.</p>
+    </div>
     <button class="btn-acao sucesso" onclick="editarPerfil()">✏️ Editar perfil</button>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
@@ -471,6 +477,7 @@ function mostrarModoAlunoLogado() {
 }
 
 function mostrarModoFuncionario() {
+    restaurarLogo();
     document.getElementById("btn-aluno").className = "toggle-btn btn-inativo";
     document.getElementById("btn-funcionario").className = "toggle-btn btn-func-ativo";
     document.getElementById("area-funcionario").classList.remove("hidden");
@@ -542,6 +549,7 @@ async function atualizarTelasAluno() {
     const {data:treinos,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,created_at").eq("aluno_id",alunoAtual.id).order("created_at",{ascending:false});
     treinosCache=error?[]:(treinos||[]);
     renderizarPerfil(); renderizarTreinoAluno();
+    await carregarFotoAluno();
 }
 
 async function fazerLogin(evento) {
@@ -564,6 +572,7 @@ async function carregarUsuario(user) { return (await identificarUsuario(user)) =
 
 async function sair() {
     await supabaseClient.auth.signOut();
+    restaurarLogo();
     usuarioAtual = null; perfilAtual = null; alunoAtual = null; alunosCache=[]; treinosCache=[]; avisosCache=[]; alunoSelecionadoId=null;
     mostrarModoAluno();
 }
@@ -647,7 +656,7 @@ async function excluirTreino(id){if(!exigirFuncionario()||!confirm("Excluir este
 async function publicarAviso(evento){evento.preventDefault();if(!exigirFuncionario())return;const titulo=document.getElementById("aviso-titulo").value.trim();const texto=document.getElementById("aviso-texto").value.trim();if(!titulo||!texto)return;const{error}=await supabaseClient.from("avisos").insert({titulo,texto,data:new Date().toLocaleDateString("pt-BR")});if(error)return alert("Erro ao publicar aviso: "+error.message);evento.target.reset();await atualizarTelas();alert("Aviso publicado!");abrirTela("tela-avisos");}
 function renderizarAvisos(){const el=document.getElementById("avisos-conteudo");if(!el)return;if(!avisosCache.length){el.innerHTML='<div class="empty">Nenhum aviso publicado.</div>';return;}el.innerHTML=avisosCache.map(a=>`<div class="aviso-card"><h3>📢 ${esc(a.titulo)}</h3><p>${esc(a.texto)}</p><p class="aviso-data">${esc(a.data||"")}</p></div>`).join("");}
 
-function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;const a=alunoAtual||(alunoSelecionadoId?alunosCache.find(x=>x.id===alunoSelecionadoId):null);if(!a){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o perfil.</div>';return;}el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>`;const botao=document.querySelector('#tela-perfil .btn-acao.sucesso');if(botao)botao.classList.toggle('hidden',!!alunoAtual);}
+function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;const a=alunoAtual||(alunoSelecionadoId?alunosCache.find(x=>x.id===alunoSelecionadoId):null);if(!a){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o perfil.</div>';return;}el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>`;const botaoEditar=document.querySelector('#tela-perfil > .btn-acao.sucesso');if(botaoEditar)botaoEditar.classList.toggle('hidden',!!alunoAtual);const areaFoto=document.getElementById("area-foto-aluno");if(areaFoto)areaFoto.classList.toggle("hidden",!alunoAtual);}
 function renderizarTreinoAluno(){
     const el=document.getElementById("treino-aluno-conteudo");if(!el)return;
     if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o treino.</div>';return;}
@@ -666,6 +675,58 @@ function mostrarTreinoAba(id,botao){
 }
 function editarPerfil(){if(!exigirFuncionario())return;if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;const nome=prompt("Nome completo:",a.nome);if(nome===null)return;const telefone=prompt("Telefone:",a.telefone||"");if(telefone===null)return;const email=prompt("E-mail:",a.email||"");if(email===null)return;atualizarAluno(a.id,nome,telefone,email);}
 async function atualizarAluno(id,nome,telefone,email){const{error}=await supabaseClient.from("alunos").update({nome:nome.trim(),telefone:telefone.trim(),email:email.trim()}).eq("id",id);if(error)return alert("Erro ao atualizar perfil: "+error.message);await atualizarTelas();renderizarPerfil();alert("Perfil atualizado.");}
+
+
+function restaurarLogo(){
+    const img=document.getElementById("foto-topo");
+    if(!img)return;
+    if(img.dataset.objectUrl){URL.revokeObjectURL(img.dataset.objectUrl);delete img.dataset.objectUrl;}
+    img.src="logo.png";
+    img.classList.remove("foto-aluno");
+}
+
+async function carregarFotoAluno(){
+    if(!usuarioAtual || !alunoAtual){restaurarLogo();return;}
+    const pasta=usuarioAtual.id;
+    const {data,error}=await supabaseClient.storage.from("fotos-alunos").list(pasta,{limit:10});
+    if(error){console.error("Erro ao carregar foto:",error);restaurarLogo();return;}
+    const arquivo=(data||[]).find(f=>f.name==="perfil.jpg"||f.name==="perfil.png"||f.name==="perfil.webp");
+    if(!arquivo){restaurarLogo();return;}
+    const caminho=`${pasta}/${arquivo.name}`;
+    const {data:assinada,error:erroUrl}=await supabaseClient.storage.from("fotos-alunos").createSignedUrl(caminho,3600);
+    if(erroUrl||!assinada?.signedUrl){console.error("Erro ao gerar URL da foto:",erroUrl);restaurarLogo();return;}
+    const img=document.getElementById("foto-topo");
+    img.src=assinada.signedUrl;
+    img.classList.add("foto-aluno");
+}
+
+async function enviarFotoAluno(evento){
+    if(!usuarioAtual || !alunoAtual)return alert("Entre como aluno para alterar sua foto.");
+    const arquivo=evento.target.files?.[0];
+    if(!arquivo)return;
+    const permitidos=["image/jpeg","image/png","image/webp"];
+    if(!permitidos.includes(arquivo.type)){evento.target.value="";return alert("Escolha uma foto JPG, PNG ou WEBP.");}
+    if(arquivo.size>5*1024*1024){evento.target.value="";return alert("A foto deve ter no máximo 5 MB.");}
+
+    const extensao=arquivo.type==="image/png"?"png":arquivo.type==="image/webp"?"webp":"jpg";
+    const pasta=usuarioAtual.id;
+
+    // Remove uma foto anterior com outra extensão, se existir.
+    for(const nome of ["perfil.jpg","perfil.png","perfil.webp"]){
+        if(nome!==`perfil.${extensao}`) await supabaseClient.storage.from("fotos-alunos").remove([`${pasta}/${nome}`]);
+    }
+
+    const caminho=`${pasta}/perfil.${extensao}`;
+    const {error}=await supabaseClient.storage.from("fotos-alunos").upload(caminho,arquivo,{
+        cacheControl:"3600",
+        upsert:true,
+        contentType:arquivo.type
+    });
+    evento.target.value="";
+    if(error)return alert("Não foi possível salvar a foto: "+error.message);
+    await carregarFotoAluno();
+    alert("Foto atualizada com sucesso!");
+}
 
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
 
