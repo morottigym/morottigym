@@ -290,6 +290,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
         <div class="form-grupo"><label for="aluno-nome">Nome completo</label><input id="aluno-nome" required></div>
         <div class="form-grupo"><label for="aluno-telefone">Telefone</label><input id="aluno-telefone"></div>
         <div class="form-grupo"><label for="aluno-email">E-mail</label><input id="aluno-email" type="email" required></div>
+        <div class="form-grupo"><label for="aluno-senha">Senha inicial</label><input id="aluno-senha" type="password" minlength="6" autocomplete="new-password" placeholder="Mínimo de 6 caracteres" required></div>
         <button class="btn-acao sucesso" type="submit">💾 Cadastrar aluno</button>
     </form>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
@@ -615,9 +616,11 @@ async function cadastrarAluno(evento) {
     const nome = document.getElementById("aluno-nome").value.trim();
     const telefone = document.getElementById("aluno-telefone").value.trim();
     const email = document.getElementById("aluno-email").value.trim().toLowerCase();
+    const senha = document.getElementById("aluno-senha").value;
     const botao = evento.submitter;
 
-    if(!nome || !email) return alert("Preencha o nome e o e-mail do aluno.");
+    if(!nome || !email || !senha) return alert("Preencha o nome, o e-mail e a senha inicial do aluno.");
+    if(senha.length < 6) return alert("A senha inicial deve ter pelo menos 6 caracteres.");
 
     botao.disabled = true;
     botao.textContent = "Cadastrando...";
@@ -633,7 +636,7 @@ async function cadastrarAluno(evento) {
                 "Authorization": `Bearer ${session.access_token}`,
                 "apikey": SUPABASE_PUBLISHABLE_KEY
             },
-            body: JSON.stringify({ nome, telefone, email })
+            body: JSON.stringify({ nome, telefone, email, senha })
         });
 
         const resultado = await resposta.json().catch(() => ({}));
@@ -643,7 +646,7 @@ async function cadastrarAluno(evento) {
 
         evento.target.reset();
         await atualizarTelas();
-        alert("Aluno cadastrado com sucesso! O convite para criar a senha foi enviado para o e-mail informado.");
+        alert("Aluno cadastrado com sucesso! A conta já está pronta para acessar.");
         abrirTela("tela-alunos");
     } catch(error) {
         console.error(error);
