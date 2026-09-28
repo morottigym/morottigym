@@ -301,8 +301,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     <h2 class="section-title">Editar treinos</h2>
     <form id="form-treino" onsubmit="salvarTreino(event)">
         <div class="form-grupo"><label for="treino-aluno">Aluno</label><select id="treino-aluno" required></select></div>
-        <div class="form-grupo"><label for="treino-letra">Treino</label><select id="treino-letra" required><option value="A">Treino A</option><option value="B">Treino B</option><option value="C">Treino C</option><option value="D">Treino D</option><option value="E">Treino E</option></select></div>
-        <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option></select></div>
+        <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
         <div class="form-grupo"><label for="treino-exercicios">Exercícios</label><textarea id="treino-exercicios" placeholder="Um exercício por linha. Ex.:&#10;Supino reto - 3x10&#10;Remada - 3x12&#10;Agachamento - 4x8" required></textarea></div>
         <button class="btn-acao sucesso" type="submit">💾 Salvar treino</button>
     </form>
@@ -622,27 +621,26 @@ async function salvarTreino(evento){
     evento.preventDefault();if(!exigirFuncionario())return;
     const alunoId=Number(document.getElementById("treino-aluno").value);
     const aluno=alunosCache.find(a=>a.id===alunoId);
-    const letra=document.getElementById("treino-letra").value;
     const dia_semana=document.getElementById("treino-dia").value;
-    const nome=`Treino ${letra}`;
+    const nome=dia_semana;
     const exercicios=document.getElementById("treino-exercicios").value.split("\n").map(x=>x.trim()).filter(Boolean);
-    if(!aluno||!letra||!dia_semana||!exercicios.length)return alert("Preencha aluno, treino, dia da semana e pelo menos um exercício.");
-    const existente=treinosCache.find(t=>t.aluno_id===aluno.id && (t.letra===letra || (!t.letra && String(t.nome||"").toUpperCase()===`TREINO ${letra}`)));
+    if(!aluno||!dia_semana||!exercicios.length)return alert("Preencha aluno, dia da semana e pelo menos um exercício.");
+    const existente=treinosCache.find(t=>t.aluno_id===aluno.id && t.dia_semana===dia_semana);
     let error;
     if(existente){
-        if(!confirm(`${nome} já existe para ${aluno.nome}. Deseja substituir esse treino?`)) return;
-        ({error}=await supabaseClient.from("treinos").update({aluno_nome:aluno.nome,nome,letra,dia_semana,exercicios,data:new Date().toLocaleDateString("pt-BR")}).eq("id",existente.id));
+        if(!confirm(`Já existe um treino de ${dia_semana} para ${aluno.nome}. Deseja substituir?`)) return;
+        ({error}=await supabaseClient.from("treinos").update({aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR")}).eq("id",existente.id));
     }else{
-        ({error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,letra,dia_semana,exercicios,data:new Date().toLocaleDateString("pt-BR")}));
+        ({error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR")}));
     }
     if(error)return alert("Erro ao salvar treino: "+error.message);evento.target.reset();await atualizarTelas();alert("Treino salvo com sucesso!");
 }
+function ordemDia(dia){return {"Segunda-feira":1,"Terça-feira":2,"Quarta-feira":3,"Quinta-feira":4,"Sexta-feira":5,"Sábado":6,"Domingo":7}[dia]||99;}
 function renderizarTreinosAdmin(){
     const el=document.getElementById("lista-treinos-admin");if(!el)return;
     if(!treinosCache.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado.</div>';return;}
-    const ordem={A:1,B:2,C:3,D:4,E:5};
-    const lista=[...treinosCache].sort((a,b)=>(a.aluno_nome||"").localeCompare(b.aluno_nome||"")-0 || (ordem[a.letra]||99)-(ordem[b.letra]||99));
-    el.innerHTML=lista.map(t=>`<div class="treino-card"><h3>${esc(t.letra?`Treino ${t.letra}`:t.nome)}</h3><p><strong>Aluno:</strong> ${esc(t.aluno_nome)}</p><p class="treino-dia">📅 ${esc(t.dia_semana||"Dia não definido")}</p>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong></div>`).join("")}<button class="btn-acao btn-pequeno btn-perigo" onclick="excluirTreino(${t.id})">Excluir treino</button></div>`).join("");
+    const lista=[...treinosCache].sort((a,b)=>(a.aluno_nome||"").localeCompare(b.aluno_nome||"") || ordemDia(a.dia_semana)-ordemDia(b.dia_semana));
+    el.innerHTML=lista.map(t=>`<div class="treino-card"><h3>📅 ${esc(t.dia_semana||t.nome||"Dia não definido")}</h3><p><strong>Aluno:</strong> ${esc(t.aluno_nome)}</p>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong></div>`).join("")}<button class="btn-acao btn-pequeno btn-perigo" onclick="excluirTreino(${t.id})">Excluir treino</button></div>`).join("");
 }
 async function excluirTreino(id){if(!exigirFuncionario()||!confirm("Excluir este treino?"))return;const{error}=await supabaseClient.from("treinos").delete().eq("id",id);if(error)return alert("Erro ao excluir treino: "+error.message);await atualizarTelas();}
 
@@ -653,11 +651,10 @@ function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conte
 function renderizarTreinoAluno(){
     const el=document.getElementById("treino-aluno-conteudo");if(!el)return;
     if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o treino.</div>';return;}
-    const ordem={A:1,B:2,C:3,D:4,E:5};
-    const ts=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).sort((a,b)=>(ordem[a.letra]||99)-(ordem[b.letra]||99));
+    const ts=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).sort((a,b)=>ordemDia(a.dia_semana)-ordemDia(b.dia_semana));
     if(!ts.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}
     const idAtivo=ts[0].id;
-    el.innerHTML=`<div class="treino-tabs">${ts.map((t,i)=>`<button type="button" class="treino-tab ${i===0?'ativo':''}" onclick="mostrarTreinoAba(${t.id},this)">${esc(t.letra?`Treino ${t.letra}`:t.nome)}</button>`).join("")}</div><div id="treino-aba-conteudo"></div>`;
+    el.innerHTML=`<div class="treino-tabs">${ts.map((t,i)=>`<button type="button" class="treino-tab ${i===0?'ativo':''}" onclick="mostrarTreinoAba(${t.id},this)">${esc(t.dia_semana||t.nome||"Treino")}</button>`).join("")}</div><div id="treino-aba-conteudo"></div>`;
     mostrarTreinoAba(idAtivo,el.querySelector('.treino-tab'));
 }
 function mostrarTreinoAba(id,botao){
@@ -665,7 +662,7 @@ function mostrarTreinoAba(id,botao){
     document.querySelectorAll('#treino-aluno-conteudo .treino-tab').forEach(b=>b.classList.remove('ativo'));
     if(botao)botao.classList.add('ativo');
     const area=document.getElementById('treino-aba-conteudo');
-    area.innerHTML=`<div class="treino-card"><h3>${esc(t.letra?`Treino ${t.letra}`:t.nome)}</h3><p class="treino-dia">📅 ${esc(t.dia_semana||"Dia não definido")}</p>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`;
+    area.innerHTML=`<div class="treino-card"><h3>📅 ${esc(t.dia_semana||t.nome||"Treino")}</h3>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`;
 }
 function editarPerfil(){if(!exigirFuncionario())return;if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;const nome=prompt("Nome completo:",a.nome);if(nome===null)return;const telefone=prompt("Telefone:",a.telefone||"");if(telefone===null)return;const email=prompt("E-mail:",a.email||"");if(email===null)return;atualizarAluno(a.id,nome,telefone,email);}
 async function atualizarAluno(id,nome,telefone,email){const{error}=await supabaseClient.from("alunos").update({nome:nome.trim(),telefone:telefone.trim(),email:email.trim()}).eq("id",id);if(error)return alert("Erro ao atualizar perfil: "+error.message);await atualizarTelas();renderizarPerfil();alert("Perfil atualizado.");}
