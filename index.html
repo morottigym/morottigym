@@ -85,6 +85,11 @@ main{flex:1;padding:22px;overflow-wrap:anywhere}
 .exercise{background:#18181b;border:1px solid #3f3f46;border-radius:9px;padding:12px;margin-top:9px}
 .exercise strong{display:block;margin-bottom:5px}
 .exercise span{font-size:.78rem;color:#a1a1aa}
+.treino-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;margin-bottom:8px}
+.treino-tab{flex:0 0 auto;border:1px solid #3f3f46;background:#27272a;color:#a1a1aa;padding:10px 13px;border-radius:9px;font-weight:800;font-size:.76rem}
+.treino-tab.ativo{background:#dc2626;border-color:#ef4444;color:#fff}
+.treino-dia{font-size:.76rem;color:#fbbf24!important;margin-bottom:10px}
+.primeiro-acesso{margin-top:18px;padding-top:16px;border-top:1px solid #3f3f46}
 .empty{padding:20px;text-align:center;color:#71717a;background:#27272a;border-radius:10px}
 
 .hidden{display:none!important}
@@ -120,6 +125,10 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
         <div class="form-grupo"><label for="login-aluno-senha">Senha</label><input id="login-aluno-senha" type="password" autocomplete="current-password" required></div>
         <button class="btn-acao sucesso" type="submit">🔐 Entrar como aluno</button>
     </form>
+    <div class="primeiro-acesso">
+        <p class="small">Primeiro acesso ou ainda não criou sua senha?</p>
+        <button class="btn-acao" type="button" onclick="enviarLinkCriarSenha()">📧 Criar / redefinir minha senha</button>
+    </div>
     <button class="btn-voltar" type="button" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
@@ -281,7 +290,8 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     <h2 class="section-title">Editar treinos</h2>
     <form id="form-treino" onsubmit="salvarTreino(event)">
         <div class="form-grupo"><label for="treino-aluno">Aluno</label><select id="treino-aluno" required></select></div>
-        <div class="form-grupo"><label for="treino-nome">Nome do treino</label><input id="treino-nome" placeholder="Ex.: Treino A" required></div>
+        <div class="form-grupo"><label for="treino-letra">Treino</label><select id="treino-letra" required><option value="A">Treino A</option><option value="B">Treino B</option><option value="C">Treino C</option><option value="D">Treino D</option><option value="E">Treino E</option></select></div>
+        <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option></select></div>
         <div class="form-grupo"><label for="treino-exercicios">Exercícios</label><textarea id="treino-exercicios" placeholder="Um exercício por linha. Ex.:&#10;Supino reto - 3x10&#10;Remada - 3x12&#10;Agachamento - 4x8" required></textarea></div>
         <button class="btn-acao sucesso" type="submit">💾 Salvar treino</button>
     </form>
@@ -340,11 +350,18 @@ function abrirTelaCriarSenha() {
 async function inicializar() {
     document.getElementById("ano-atual").textContent = new Date().getFullYear();
 
-    const urlSenha =
-        location.hash.includes("type=invite") ||
-        location.hash.includes("type=recovery") ||
-        location.search.includes("type=invite") ||
-        location.search.includes("type=recovery");
+    const paramsBusca = new URLSearchParams(location.search);
+    const paramsHash = new URLSearchParams(location.hash.replace(/^#/, ""));
+    const tipoLink = paramsBusca.get("type") || paramsHash.get("type");
+    const temCodigoAuth = paramsBusca.has("code") || paramsHash.has("access_token");
+    const temErroLink = paramsBusca.has("error") || paramsHash.has("error");
+    const urlSenha = ["invite","recovery"].includes(tipoLink) || temCodigoAuth;
+
+    if (temErroLink) {
+        const mensagem = paramsBusca.get("error_description") || paramsHash.get("error_description") || "O link expirou ou já foi utilizado.";
+        history.replaceState({}, document.title, location.pathname);
+        setTimeout(() => alert(decodeURIComponent(mensagem.replaceAll("+"," "))), 100);
+    }
 
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (event === "PASSWORD_RECOVERY") {
@@ -462,6 +479,15 @@ async function identificarUsuario(user) {
     usuarioAtual = null; return null;
 }
 
+async function enviarLinkCriarSenha() {
+    const email = document.getElementById("login-aluno-email").value.trim();
+    if (!email) return alert("Digite primeiro o e-mail cadastrado na academia.");
+    const redirectTo = `${location.origin}${location.pathname}`;
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) return alert("Não foi possível enviar o e-mail: " + error.message);
+    alert("Se este e-mail já possui acesso cadastrado, enviaremos um link para criar ou redefinir a senha. Confira também Spam e Promoções.");
+}
+
 async function fazerLoginAluno(evento) {
     evento.preventDefault();
     const email=document.getElementById("login-aluno-email").value.trim();
@@ -572,19 +598,53 @@ function renderizarSelectAlunos(){const s=document.getElementById("treino-aluno"
 
 async function salvarTreino(evento){
     evento.preventDefault();if(!exigirFuncionario())return;
-    const alunoId=Number(document.getElementById("treino-aluno").value);const aluno=alunosCache.find(a=>a.id===alunoId);const nome=document.getElementById("treino-nome").value.trim();const exercicios=document.getElementById("treino-exercicios").value.split("\n").map(x=>x.trim()).filter(Boolean);
-    if(!aluno||!nome||!exercicios.length)return alert("Preencha aluno, nome do treino e pelo menos um exercício.");
-    const {error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,exercicios,data:new Date().toLocaleDateString("pt-BR")});
+    const alunoId=Number(document.getElementById("treino-aluno").value);
+    const aluno=alunosCache.find(a=>a.id===alunoId);
+    const letra=document.getElementById("treino-letra").value;
+    const dia_semana=document.getElementById("treino-dia").value;
+    const nome=`Treino ${letra}`;
+    const exercicios=document.getElementById("treino-exercicios").value.split("\n").map(x=>x.trim()).filter(Boolean);
+    if(!aluno||!letra||!dia_semana||!exercicios.length)return alert("Preencha aluno, treino, dia da semana e pelo menos um exercício.");
+    const existente=treinosCache.find(t=>t.aluno_id===aluno.id && (t.letra===letra || (!t.letra && String(t.nome||"").toUpperCase()===`TREINO ${letra}`)));
+    let error;
+    if(existente){
+        if(!confirm(`${nome} já existe para ${aluno.nome}. Deseja substituir esse treino?`)) return;
+        ({error}=await supabaseClient.from("treinos").update({aluno_nome:aluno.nome,nome,letra,dia_semana,exercicios,data:new Date().toLocaleDateString("pt-BR")}).eq("id",existente.id));
+    }else{
+        ({error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,letra,dia_semana,exercicios,data:new Date().toLocaleDateString("pt-BR")}));
+    }
     if(error)return alert("Erro ao salvar treino: "+error.message);evento.target.reset();await atualizarTelas();alert("Treino salvo com sucesso!");
 }
-function renderizarTreinosAdmin(){const el=document.getElementById("lista-treinos-admin");if(!el)return;if(!treinosCache.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado.</div>';return;}el.innerHTML=treinosCache.map(t=>`<div class="treino-card"><h3>${esc(t.nome)}</h3><p><strong>Aluno:</strong> ${esc(t.aluno_nome)}</p>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong></div>`).join("")}<button class="btn-acao btn-pequeno btn-perigo" onclick="excluirTreino(${t.id})">Excluir treino</button></div>`).join("");}
+function renderizarTreinosAdmin(){
+    const el=document.getElementById("lista-treinos-admin");if(!el)return;
+    if(!treinosCache.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado.</div>';return;}
+    const ordem={A:1,B:2,C:3,D:4,E:5};
+    const lista=[...treinosCache].sort((a,b)=>(a.aluno_nome||"").localeCompare(b.aluno_nome||"")-0 || (ordem[a.letra]||99)-(ordem[b.letra]||99));
+    el.innerHTML=lista.map(t=>`<div class="treino-card"><h3>${esc(t.letra?`Treino ${t.letra}`:t.nome)}</h3><p><strong>Aluno:</strong> ${esc(t.aluno_nome)}</p><p class="treino-dia">📅 ${esc(t.dia_semana||"Dia não definido")}</p>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong></div>`).join("")}<button class="btn-acao btn-pequeno btn-perigo" onclick="excluirTreino(${t.id})">Excluir treino</button></div>`).join("");
+}
 async function excluirTreino(id){if(!exigirFuncionario()||!confirm("Excluir este treino?"))return;const{error}=await supabaseClient.from("treinos").delete().eq("id",id);if(error)return alert("Erro ao excluir treino: "+error.message);await atualizarTelas();}
 
 async function publicarAviso(evento){evento.preventDefault();if(!exigirFuncionario())return;const titulo=document.getElementById("aviso-titulo").value.trim();const texto=document.getElementById("aviso-texto").value.trim();if(!titulo||!texto)return;const{error}=await supabaseClient.from("avisos").insert({titulo,texto,data:new Date().toLocaleDateString("pt-BR")});if(error)return alert("Erro ao publicar aviso: "+error.message);evento.target.reset();await atualizarTelas();alert("Aviso publicado!");abrirTela("tela-avisos");}
 function renderizarAvisos(){const el=document.getElementById("avisos-conteudo");if(!el)return;if(!avisosCache.length){el.innerHTML='<div class="empty">Nenhum aviso publicado.</div>';return;}el.innerHTML=avisosCache.map(a=>`<div class="aviso-card"><h3>📢 ${esc(a.titulo)}</h3><p>${esc(a.texto)}</p><p class="aviso-data">${esc(a.data||"")}</p></div>`).join("");}
 
 function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;const a=alunoAtual||(alunoSelecionadoId?alunosCache.find(x=>x.id===alunoSelecionadoId):null);if(!a){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o perfil.</div>';return;}el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>`;const botao=document.querySelector('#tela-perfil .btn-acao.sucesso');if(botao)botao.classList.toggle('hidden',!!alunoAtual);}
-function renderizarTreinoAluno(){const el=document.getElementById("treino-aluno-conteudo");if(!el)return;if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o treino.</div>';return;}const ts=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId);if(!ts.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}el.innerHTML=ts.map(t=>`<div class="treino-card"><h3>${esc(t.nome)}</h3>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`).join("");}
+function renderizarTreinoAluno(){
+    const el=document.getElementById("treino-aluno-conteudo");if(!el)return;
+    if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o treino.</div>';return;}
+    const ordem={A:1,B:2,C:3,D:4,E:5};
+    const ts=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).sort((a,b)=>(ordem[a.letra]||99)-(ordem[b.letra]||99));
+    if(!ts.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}
+    const idAtivo=ts[0].id;
+    el.innerHTML=`<div class="treino-tabs">${ts.map((t,i)=>`<button type="button" class="treino-tab ${i===0?'ativo':''}" onclick="mostrarTreinoAba(${t.id},this)">${esc(t.letra?`Treino ${t.letra}`:t.nome)}</button>`).join("")}</div><div id="treino-aba-conteudo"></div>`;
+    mostrarTreinoAba(idAtivo,el.querySelector('.treino-tab'));
+}
+function mostrarTreinoAba(id,botao){
+    const t=treinosCache.find(x=>x.id===id);if(!t)return;
+    document.querySelectorAll('#treino-aluno-conteudo .treino-tab').forEach(b=>b.classList.remove('ativo'));
+    if(botao)botao.classList.add('ativo');
+    const area=document.getElementById('treino-aba-conteudo');
+    area.innerHTML=`<div class="treino-card"><h3>${esc(t.letra?`Treino ${t.letra}`:t.nome)}</h3><p class="treino-dia">📅 ${esc(t.dia_semana||"Dia não definido")}</p>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`;
+}
 function editarPerfil(){if(!exigirFuncionario())return;if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;const nome=prompt("Nome completo:",a.nome);if(nome===null)return;const telefone=prompt("Telefone:",a.telefone||"");if(telefone===null)return;const email=prompt("E-mail:",a.email||"");if(email===null)return;atualizarAluno(a.id,nome,telefone,email);}
 async function atualizarAluno(id,nome,telefone,email){const{error}=await supabaseClient.from("alunos").update({nome:nome.trim(),telefone:telefone.trim(),email:email.trim()}).eq("id",id);if(error)return alert("Erro ao atualizar perfil: "+error.message);await atualizarTelas();renderizarPerfil();alert("Perfil atualizado.");}
 
