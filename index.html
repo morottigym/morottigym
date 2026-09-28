@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#09090b">
 <title>Morotti Gym - App</title>
+<meta name="app-version" content="2026-09-28-master-aluno-v2">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
@@ -190,7 +191,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
         <div id="funcionario-logado" class="status"></div>
         <button class="btn-acao btn-perigo" type="button" onclick="sair()" style="margin-bottom:14px">Sair</button>
         <div class="menu-grid">
-            <div class="menu-item admin" onclick="abrirTela('tela-cadastrar-aluno')"><div class="emoji">👥</div><span>Cadastrar Aluno</span></div>
+            <div id="menu-cadastrar-aluno" class="menu-item admin" onclick="abrirTela('tela-cadastrar-aluno')"><div class="emoji">👥</div><span>Cadastrar Aluno</span></div>
             <div class="menu-item admin" onclick="abrirTela('tela-alunos')"><div class="emoji">📋</div><span>Alunos</span></div>
             <div class="menu-item admin" onclick="abrirTela('tela-editar-treino')"><div class="emoji">📝</div><span>Editar Treinos</span></div>
             <div class="menu-item admin" onclick="abrirTela('tela-publicar-aviso')"><div class="emoji">📢</div><span>Publicar Aviso</span></div>
@@ -285,7 +286,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
 <!-- CADASTRAR ALUNO -->
 <main id="tela-cadastrar-aluno" class="hidden">
     <h2 class="section-title">Cadastrar aluno</h2>
-    <div class="status">Dados conectados ao sistema online da Morotti Gym.</div>
+    <div class="status">Área exclusiva do Master. O cadastro cria a conta de acesso do aluno no Supabase.</div>
     <form id="form-aluno" onsubmit="cadastrarAluno(event)">
         <div class="form-grupo"><label for="aluno-nome">Nome completo</label><input id="aluno-nome" required></div>
         <div class="form-grupo"><label for="aluno-telefone">Telefone</label><input id="aluno-telefone"></div>
@@ -419,6 +420,7 @@ async function abrirTela(idTela) {
     esconderTelas();
     const tela = document.getElementById(idTela);
     if (!tela) { alert("Esta tela ainda não existe."); return voltarParaMenu(); }
+    if (idTela === "tela-cadastrar-aluno" && !exigirMaster()) return voltarParaMenu();
     tela.classList.remove("hidden");
     window.scrollTo({top:0, behavior:"smooth"});
     if (usuarioAtual && perfilAtual) await atualizarTelas();
@@ -483,7 +485,10 @@ function mostrarModoFuncionario() {
     document.getElementById("btn-funcionario").className = "toggle-btn btn-func-ativo";
     document.getElementById("area-funcionario").classList.remove("hidden");
     const el = document.getElementById("funcionario-logado");
-    el.textContent = `${perfilAtual.nome} • ${perfilAtual.cargo === "master" ? "Master" : "Professor"}`;
+    const master = perfilAtual?.cargo === "master";
+    el.textContent = `${perfilAtual.nome} • ${master ? "Master" : "Professor"}`;
+    const cadastrar=document.getElementById("menu-cadastrar-aluno");
+    if(cadastrar) cadastrar.classList.toggle("hidden",!master);
     voltarParaMenu();
 }
 
@@ -587,6 +592,14 @@ function exigirFuncionario() {
     return true;
 }
 
+function exigirMaster() {
+    if (!usuarioAtual || !perfilAtual || perfilAtual.cargo !== "master") {
+        alert("Somente o usuário Master pode realizar esta ação.");
+        return false;
+    }
+    return true;
+}
+
 async function atualizarTelas() {
     if (!usuarioAtual) return;
     await Promise.all([carregarAlunos(), carregarTreinos(), carregarAvisos()]);
@@ -611,7 +624,7 @@ async function carregarAvisos() {
 
 async function cadastrarAluno(evento) {
     evento.preventDefault();
-    if(!exigirFuncionario()) return;
+    if(!exigirMaster()) return;
 
     const nome = document.getElementById("aluno-nome").value.trim();
     const telefone = document.getElementById("aluno-telefone").value.trim();
@@ -636,7 +649,7 @@ async function cadastrarAluno(evento) {
                 "Authorization": `Bearer ${session.access_token}`,
                 "apikey": SUPABASE_PUBLISHABLE_KEY
             },
-            body: JSON.stringify({ nome, telefone, email, senha })
+            body: JSON.stringify({ operacao: "cadastrar", nome, telefone, email, senha })
         });
 
         const resultado = await resposta.json().catch(() => ({}));
@@ -657,33 +670,130 @@ async function cadastrarAluno(evento) {
     }
 }
 
+async function chamarFuncaoAdministrativa(payload) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if(!session?.access_token) throw new Error("Sua sessão expirou. Entre novamente como Master.");
+
+    const resposta = await fetch(`${SUPABASE_URL}/functions/v1/cadastrar-aluno`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
+            "apikey": SUPABASE_PUBLISHABLE_KEY
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const resultado = await resposta.json().catch(() => ({}));
+    if(!resposta.ok || !resultado.sucesso) {
+        throw new Error(resultado.erro || "Não foi possível concluir a operação.");
+    }
+    return resultado;
+}
+
 function renderizarListaAlunos() {
     const el=document.getElementById("lista-alunos"); if(!el) return;
     if(!alunosCache.length){el.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.</div>';return;}
-    el.innerHTML=alunosCache.map(a=>`<div class="info-card"><h3>👤 ${esc(a.nome)}</h3><p>Telefone: ${esc(a.telefone||"Não informado")}</p><p>E-mail: ${esc(a.email||"Não informado")}</p><button class="btn-acao btn-pequeno" onclick="selecionarAluno(${a.id})">Selecionar aluno</button><button class="btn-acao btn-pequeno btn-perigo" onclick="excluirAluno(${a.id})">Excluir</button></div>`).join("");
+    const master = perfilAtual?.cargo === "master";
+    el.innerHTML=alunosCache.map(a=>`<div class="info-card">
+        <h3>👤 ${esc(a.nome)}</h3>
+        <p>Telefone: ${esc(a.telefone||"Não informado")}</p>
+        <p>E-mail: ${esc(a.email||"Não informado")}</p>
+        <button class="btn-acao btn-pequeno ouro" onclick="selecionarAluno(${a.id}); abrirTela('tela-perfil')">👤 Selecionar aluno</button>
+        <button class="btn-acao btn-pequeno" onclick="abrirTreinoDoAluno(${a.id})">🏋️ Ver treinos</button>
+        ${master ? `
+        <button class="btn-acao btn-pequeno" onclick="editarAluno(${a.id})">✏️ Editar</button>
+        <button class="btn-acao btn-pequeno ouro" onclick="alterarSenhaAluno(${a.id})">🔑 Alterar senha</button>
+        <button class="btn-acao btn-pequeno btn-perigo" onclick="excluirAluno(${a.id})">🗑️ Excluir</button>` : ""}
+    </div>`).join("");
 }
-function selecionarAluno(id){alunoSelecionadoId=id; const a=alunosCache.find(x=>x.id===id); alert(a?`Aluno selecionado: ${a.nome}`:"Aluno não encontrado.");}
-async function excluirAluno(id){if(!exigirFuncionario())return;const a=alunosCache.find(x=>x.id===id);if(!a||!confirm(`Excluir o aluno "${a.nome}"? Os treinos dele também serão excluídos.`))return;const{error}=await supabaseClient.from("alunos").delete().eq("id",id);if(error)return alert("Erro ao excluir: "+error.message);await atualizarTelas();}
 
-function renderizarSelectAlunos(){const s=document.getElementById("treino-aluno");if(!s)return;if(!alunosCache.length){s.innerHTML='<option value="">Cadastre um aluno primeiro</option>';return;}s.innerHTML=alunosCache.map(a=>`<option value="${a.id}">${esc(a.nome)}</option>`).join("");}
+function selecionarAluno(id){
+    alunoSelecionadoId=id;
+    const a=alunosCache.find(x=>x.id===id);
+    if(a) renderizarPerfil();
+    return a||null;
+}
 
-async function salvarTreino(evento){
-    evento.preventDefault();if(!exigirFuncionario())return;
-    const alunoId=Number(document.getElementById("treino-aluno").value);
-    const aluno=alunosCache.find(a=>a.id===alunoId);
-    const dia_semana=document.getElementById("treino-dia").value;
-    const nome=dia_semana;
-    const exercicios=document.getElementById("treino-exercicios").value.split("\n").map(x=>x.trim()).filter(Boolean);
-    if(!aluno||!dia_semana||!exercicios.length)return alert("Preencha aluno, dia da semana e pelo menos um exercício.");
-    const existente=treinosCache.find(t=>t.aluno_id===aluno.id && t.dia_semana===dia_semana);
-    let error;
-    if(existente){
-        if(!confirm(`Já existe um treino de ${dia_semana} para ${aluno.nome}. Deseja substituir?`)) return;
-        ({error}=await supabaseClient.from("treinos").update({aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR")}).eq("id",existente.id));
-    }else{
-        ({error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR")}));
+function abrirAluno(id){
+    const a=selecionarAluno(id);
+    if(!a)return alert("Aluno não encontrado.");
+    abrirTela("tela-perfil");
+}
+
+function abrirTreinoDoAluno(id){
+    const a=selecionarAluno(id);
+    if(!a)return alert("Aluno não encontrado.");
+    abrirTela("tela-treino");
+}
+
+async function editarAluno(id){
+    if(!exigirMaster()) return;
+    const a=alunosCache.find(x=>x.id===id);
+    if(!a) return alert("Aluno não encontrado.");
+
+    const nome=prompt("Nome completo:",a.nome||"");
+    if(nome===null) return;
+    const telefone=prompt("Telefone:",a.telefone||"");
+    if(telefone===null) return;
+    const email=prompt("E-mail:",a.email||"");
+    if(email===null) return;
+
+    if(!nome.trim() || !email.trim()) return alert("Nome e e-mail são obrigatórios.");
+
+    try {
+        await chamarFuncaoAdministrativa({
+            operacao:"editar",
+            aluno_id:id,
+            nome:nome.trim(),
+            telefone:telefone.trim(),
+            email:email.trim().toLowerCase()
+        });
+        await atualizarTelas();
+        if(alunoSelecionadoId===id) renderizarPerfil();
+        alert("Aluno atualizado com sucesso.");
+    } catch(error) {
+        console.error(error);
+        alert("Erro ao editar aluno: "+(error?.message||"Erro inesperado."));
     }
-    if(error)return alert("Erro ao salvar treino: "+error.message);evento.target.reset();await atualizarTelas();alert("Treino salvo com sucesso!");
+}
+
+async function alterarSenhaAluno(id){
+    if(!exigirMaster()) return;
+    const a=alunosCache.find(x=>x.id===id);
+    if(!a) return alert("Aluno não encontrado.");
+
+    const senha=prompt(`Nova senha para ${a.nome}:`);
+    if(senha===null) return;
+    if(senha.length<6) return alert("A senha deve possuir pelo menos 6 caracteres.");
+    const confirmar=prompt("Digite novamente a nova senha para confirmar:");
+    if(confirmar===null) return;
+    if(senha!==confirmar) return alert("As senhas não são iguais.");
+
+    try {
+        await chamarFuncaoAdministrativa({operacao:"senha",aluno_id:id,senha});
+        alert("Senha alterada com sucesso.");
+    } catch(error) {
+        console.error(error);
+        alert("Erro ao alterar senha: "+(error?.message||"Erro inesperado."));
+    }
+}
+
+async function excluirAluno(id){
+    if(!exigirMaster()) return;
+    const a=alunosCache.find(x=>x.id===id);
+    if(!a) return alert("Aluno não encontrado.");
+    if(!confirm(`Excluir o aluno "${a.nome}"?\n\nIsso excluirá também a conta de acesso do Supabase e os treinos vinculados. Essa ação não pode ser desfeita.`)) return;
+
+    try {
+        await chamarFuncaoAdministrativa({operacao:"excluir",aluno_id:id});
+        if(alunoSelecionadoId===id) alunoSelecionadoId=null;
+        await atualizarTelas();
+        alert("Aluno e conta de acesso excluídos com sucesso.");
+    } catch(error) {
+        console.error(error);
+        alert("Erro ao excluir aluno: "+(error?.message||"Erro inesperado."));
+    }
 }
 function ordemDia(dia){return {"Segunda-feira":1,"Terça-feira":2,"Quarta-feira":3,"Quinta-feira":4,"Sexta-feira":5,"Sábado":6,"Domingo":7}[dia]||99;}
 function renderizarTreinosAdmin(){
@@ -697,15 +807,16 @@ async function excluirTreino(id){if(!exigirFuncionario()||!confirm("Excluir este
 async function publicarAviso(evento){evento.preventDefault();if(!exigirFuncionario())return;const titulo=document.getElementById("aviso-titulo").value.trim();const texto=document.getElementById("aviso-texto").value.trim();if(!titulo||!texto)return;const{error}=await supabaseClient.from("avisos").insert({titulo,texto,data:new Date().toLocaleDateString("pt-BR")});if(error)return alert("Erro ao publicar aviso: "+error.message);evento.target.reset();await atualizarTelas();alert("Aviso publicado!");abrirTela("tela-avisos");}
 function renderizarAvisos(){const el=document.getElementById("avisos-conteudo");if(!el)return;if(!avisosCache.length){el.innerHTML='<div class="empty">Nenhum aviso publicado.</div>';return;}el.innerHTML=avisosCache.map(a=>`<div class="aviso-card"><h3>📢 ${esc(a.titulo)}</h3><p>${esc(a.texto)}</p><p class="aviso-data">${esc(a.data||"")}</p></div>`).join("");}
 
-function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;const a=alunoAtual||(alunoSelecionadoId?alunosCache.find(x=>x.id===alunoSelecionadoId):null);if(!a){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o perfil.</div>';return;}el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>`;const botaoEditar=document.querySelector('#tela-perfil > .btn-acao.sucesso');if(botaoEditar)botaoEditar.classList.toggle('hidden',!!alunoAtual);const areaFoto=document.getElementById("area-foto-aluno");if(areaFoto)areaFoto.classList.toggle("hidden",!alunoAtual);}
-function renderizarTreinoAluno(){
-    const el=document.getElementById("treino-aluno-conteudo");if(!el)return;
-    if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o treino.</div>';return;}
-    const ts=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).sort((a,b)=>ordemDia(a.dia_semana)-ordemDia(b.dia_semana));
-    if(!ts.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}
-    const idAtivo=ts[0].id;
-    el.innerHTML=`<div class="treino-tabs">${ts.map((t,i)=>`<button type="button" class="treino-tab ${i===0?'ativo':''}" onclick="mostrarTreinoAba(${t.id},this)">${esc(t.dia_semana||t.nome||"Treino")}</button>`).join("")}</div><div id="treino-aba-conteudo"></div>`;
-    mostrarTreinoAba(idAtivo,el.querySelector('.treino-tab'));
+function renderizarPerfil(){
+    const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;
+    const a=alunoAtual||(alunoSelecionadoId?alunosCache.find(x=>x.id===alunoSelecionadoId):null);
+    if(!a){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o perfil.</div>';return;}
+    const souAluno=!!alunoAtual;
+    const titulo=document.querySelector("#tela-perfil .section-title");
+    if(titulo)titulo.textContent=souAluno?"Meu perfil":"Perfil do aluno";
+    el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>${!souAluno?`<button class="btn-acao ouro" type="button" onclick="abrirTreinoDoAluno(${a.id})">🏋️ Ver treinos deste aluno</button>`:""}`;
+    const botaoEditar=document.querySelector('#tela-perfil > .btn-acao.sucesso');if(botaoEditar)botaoEditar.classList.toggle('hidden',souAluno);
+    const areaFoto=document.getElementById("area-foto-aluno");if(areaFoto)areaFoto.classList.toggle("hidden",!souAluno);
 }
 function mostrarTreinoAba(id,botao){
     const t=treinosCache.find(x=>x.id===id);if(!t)return;
