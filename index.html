@@ -111,6 +111,29 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     </div>
 </header>
 
+<!-- LOGIN DE ALUNO -->
+<main id="tela-login-aluno" class="hidden">
+    <h2 class="section-title">Acesso do aluno</h2>
+    <p class="text-destaque">Entre com o e-mail cadastrado na academia e sua senha.</p>
+    <form id="form-login-aluno" onsubmit="fazerLoginAluno(event)">
+        <div class="form-grupo"><label for="login-aluno-email">E-mail</label><input id="login-aluno-email" type="email" autocomplete="username" required></div>
+        <div class="form-grupo"><label for="login-aluno-senha">Senha</label><input id="login-aluno-senha" type="password" autocomplete="current-password" required></div>
+        <button class="btn-acao sucesso" type="submit">🔐 Entrar como aluno</button>
+    </form>
+    <button class="btn-voltar" type="button" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- CRIAR SENHA DO CONVITE -->
+<main id="tela-criar-senha" class="hidden">
+    <h2 class="section-title">Criar minha senha</h2>
+    <p class="text-destaque">Seu convite foi reconhecido. Crie uma senha para acessar sua área de aluno.</p>
+    <form onsubmit="definirSenhaAluno(event)">
+        <div class="form-grupo"><label for="nova-senha">Nova senha</label><input id="nova-senha" type="password" minlength="6" autocomplete="new-password" required></div>
+        <div class="form-grupo"><label for="confirmar-senha">Confirmar senha</label><input id="confirmar-senha" type="password" minlength="6" autocomplete="new-password" required></div>
+        <button class="btn-acao sucesso" type="submit">✅ Criar senha</button>
+    </form>
+</main>
+
 <!-- LOGIN DE FUNCIONÁRIO -->
 <main id="tela-login" class="hidden">
     <h2 class="section-title">Acesso de funcionário</h2>
@@ -133,6 +156,12 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
         <div class="menu-item" onclick="abrirTela('tela-avisos')"><div class="emoji">📢</div><span>Avisos</span></div>
         <div class="menu-item" onclick="abrirTela('tela-academia')"><div class="emoji">📍</div><span>Academia</span></div>
         <a href="https://api.whatsapp.com/send?phone=5516992239393" target="_blank" rel="noopener" class="menu-item whatsapp"><div class="emoji">💬</div><span>WhatsApp</span></a>
+    </div>
+
+    <div id="area-aluno-logado" class="admin-section hidden">
+        <div class="admin-title" style="color:#dc2626">👤 Área do aluno</div>
+        <div id="aluno-logado" class="status"></div>
+        <button class="btn-acao btn-perigo" type="button" onclick="sair()" style="margin-bottom:14px">Sair</button>
     </div>
 
     <div id="area-funcionario" class="admin-section hidden">
@@ -289,6 +318,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_
 
 let usuarioAtual = null;
 let perfilAtual = null;
+let alunoAtual = null;
 let alunosCache = [];
 let treinosCache = [];
 let avisosCache = [];
@@ -296,9 +326,19 @@ let alunoSelecionadoId = null;
 
 async function inicializar() {
     document.getElementById("ano-atual").textContent = new Date().getFullYear();
+    const urlConvite = location.hash.includes("type=invite") || location.search.includes("type=invite");
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session?.user) await carregarUsuario(session.user);
-    else mostrarModoAluno();
+    if (session?.user) {
+        const tipo = await identificarUsuario(session.user);
+        if (tipo === "aluno") {
+            if (urlConvite) { esconderTelas(); document.getElementById("tela-criar-senha").classList.remove("hidden"); }
+            else { mostrarModoAlunoLogado(); await atualizarTelasAluno(); }
+        } else if (tipo === "funcionario") {
+            mostrarModoFuncionario(); await atualizarTelas();
+        } else {
+            await supabaseClient.auth.signOut(); mostrarModoAluno();
+        }
+    } else mostrarModoAluno();
 }
 
 function esconderTelas() {
@@ -312,9 +352,12 @@ async function abrirTela(idTela) {
     tela.classList.remove("hidden");
     window.scrollTo({top:0, behavior:"smooth"});
     if (usuarioAtual && perfilAtual) await atualizarTelas();
+    else if (usuarioAtual && alunoAtual) await atualizarTelasAluno();
     else {
-        if (idTela === "tela-treino") document.getElementById("treino-aluno-conteudo").innerHTML = '<div class="warning">O acesso individual do aluno será liberado quando o login dos alunos for cadastrado.</div>';
-        if (idTela === "tela-perfil") document.getElementById("perfil-aluno-conteudo").innerHTML = '<div class="warning">O perfil individual do aluno será liberado quando o login dos alunos for cadastrado.</div>';
+        if (["tela-treino","tela-perfil"].includes(idTela)) {
+            alert("Entre como aluno para acessar esta área.");
+            return mudarAcesso("aluno");
+        }
         if (idTela === "tela-avisos") document.getElementById("avisos-conteudo").innerHTML = '<div class="warning">Entre com um usuário autorizado para visualizar os avisos internos.</div>';
     }
 }
@@ -335,7 +378,15 @@ async function mudarAcesso(tipo) {
             document.getElementById("tela-login").classList.remove("hidden");
         }
     } else {
-        mostrarModoAluno();
+        if (usuarioAtual && alunoAtual) mostrarModoAlunoLogado();
+        else {
+            document.getElementById("btn-aluno").className = "toggle-btn btn-aluno-ativo";
+            document.getElementById("btn-funcionario").className = "toggle-btn btn-inativo";
+            document.getElementById("area-funcionario").classList.add("hidden");
+            document.getElementById("area-aluno-logado").classList.add("hidden");
+            esconderTelas();
+            document.getElementById("tela-login-aluno").classList.remove("hidden");
+        }
     }
 }
 
@@ -343,6 +394,16 @@ function mostrarModoAluno() {
     document.getElementById("btn-aluno").className = "toggle-btn btn-aluno-ativo";
     document.getElementById("btn-funcionario").className = "toggle-btn btn-inativo";
     document.getElementById("area-funcionario").classList.add("hidden");
+    document.getElementById("area-aluno-logado").classList.add("hidden");
+    voltarParaMenu();
+}
+
+function mostrarModoAlunoLogado() {
+    document.getElementById("btn-aluno").className = "toggle-btn btn-aluno-ativo";
+    document.getElementById("btn-funcionario").className = "toggle-btn btn-inativo";
+    document.getElementById("area-funcionario").classList.add("hidden");
+    document.getElementById("area-aluno-logado").classList.remove("hidden");
+    document.getElementById("aluno-logado").textContent = `${alunoAtual.nome} • Aluno`;
     voltarParaMenu();
 }
 
@@ -355,6 +416,50 @@ function mostrarModoFuncionario() {
     voltarParaMenu();
 }
 
+
+async function identificarUsuario(user) {
+    usuarioAtual = user; perfilAtual = null; alunoAtual = null;
+    const { data: perfil } = await supabaseClient.from("perfis").select("id,nome,cargo").eq("id", user.id).maybeSingle();
+    if (perfil && ["master","professor"].includes(perfil.cargo)) { perfilAtual = perfil; return "funcionario"; }
+    const { data: aluno } = await supabaseClient.from("alunos").select("id,nome,telefone,email,observacoes,user_id").eq("user_id", user.id).maybeSingle();
+    if (aluno) { alunoAtual = aluno; alunoSelecionadoId = aluno.id; return "aluno"; }
+    usuarioAtual = null; return null;
+}
+
+async function fazerLoginAluno(evento) {
+    evento.preventDefault();
+    const email=document.getElementById("login-aluno-email").value.trim();
+    const password=document.getElementById("login-aluno-senha").value;
+    const botao=evento.submitter; botao.disabled=true; botao.textContent="Entrando...";
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+    botao.disabled=false; botao.textContent="🔐 Entrar como aluno";
+    if(error) return alert("Não foi possível entrar. Confira e-mail e senha.");
+    const tipo=await identificarUsuario(data.user);
+    if(tipo!=="aluno") { await supabaseClient.auth.signOut(); return alert("Esta conta não está vinculada a um aluno."); }
+    evento.target.reset(); mostrarModoAlunoLogado(); await atualizarTelasAluno();
+}
+
+async function definirSenhaAluno(evento) {
+    evento.preventDefault();
+    const senha=document.getElementById("nova-senha").value;
+    const confirmar=document.getElementById("confirmar-senha").value;
+    if(senha!==confirmar) return alert("As senhas não são iguais.");
+    const {error}=await supabaseClient.auth.updateUser({password:senha});
+    if(error) return alert("Não foi possível criar a senha: "+error.message);
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    const tipo=user?await identificarUsuario(user):null;
+    if(tipo!=="aluno") return alert("Conta autenticada, mas o cadastro do aluno ainda não está vinculado.");
+    history.replaceState({},document.title,location.pathname);
+    alert("Senha criada com sucesso!"); mostrarModoAlunoLogado(); await atualizarTelasAluno();
+}
+
+async function atualizarTelasAluno() {
+    if(!usuarioAtual || !alunoAtual) return;
+    const {data:treinos,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,created_at").eq("aluno_id",alunoAtual.id).order("created_at",{ascending:false});
+    treinosCache=error?[]:(treinos||[]);
+    renderizarPerfil(); renderizarTreinoAluno();
+}
+
 async function fazerLogin(evento) {
     evento.preventDefault();
     const email = document.getElementById("login-email").value.trim();
@@ -364,27 +469,18 @@ async function fazerLogin(evento) {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     botao.disabled = false; botao.textContent = "🔐 Entrar";
     if (error) return alert("Não foi possível entrar. Confira e-mail e senha.");
-    const ok = await carregarUsuario(data.user);
-    if (!ok) { await supabaseClient.auth.signOut(); return; }
+    const tipo = await identificarUsuario(data.user);
+    if (tipo !== "funcionario") { await supabaseClient.auth.signOut(); return alert("Esta conta não possui acesso de funcionário."); }
     evento.target.reset();
     mostrarModoFuncionario();
     await atualizarTelas();
 }
 
-async function carregarUsuario(user) {
-    const { data, error } = await supabaseClient.from("perfis").select("id,nome,cargo").eq("id", user.id).single();
-    if (error || !data || !["master","professor"].includes(data.cargo)) {
-        usuarioAtual = null; perfilAtual = null;
-        alert("Este usuário não possui acesso de funcionário.");
-        return false;
-    }
-    usuarioAtual = user; perfilAtual = data;
-    return true;
-}
+async function carregarUsuario(user) { return (await identificarUsuario(user)) === "funcionario"; }
 
 async function sair() {
     await supabaseClient.auth.signOut();
-    usuarioAtual = null; perfilAtual = null; alunosCache=[]; treinosCache=[]; avisosCache=[];
+    usuarioAtual = null; perfilAtual = null; alunoAtual = null; alunosCache=[]; treinosCache=[]; avisosCache=[]; alunoSelecionadoId=null;
     mostrarModoAluno();
 }
 
@@ -404,12 +500,12 @@ async function atualizarTelas() {
 }
 
 async function carregarAlunos() {
-    const {data,error}=await supabaseClient.from("alunos").select("id,nome,telefone,email,observacoes,created_at").order("nome");
+    const {data,error}=await supabaseClient.from("alunos").select("id,nome,telefone,email,observacoes,user_id,created_at").order("nome");
     if (error) { console.error(error); alunosCache=[]; return; }
     alunosCache=data||[];
 }
 async function carregarTreinos() {
-    const {data,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,created_at").order("created_at",{ascending:false});
+    const {data,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,created_at").order("created_at",{ascending:false});
     if (error) { console.error(error); treinosCache=[]; return; }
     treinosCache=data||[];
 }
@@ -450,7 +546,7 @@ async function excluirTreino(id){if(!exigirFuncionario()||!confirm("Excluir este
 async function publicarAviso(evento){evento.preventDefault();if(!exigirFuncionario())return;const titulo=document.getElementById("aviso-titulo").value.trim();const texto=document.getElementById("aviso-texto").value.trim();if(!titulo||!texto)return;const{error}=await supabaseClient.from("avisos").insert({titulo,texto,data:new Date().toLocaleDateString("pt-BR")});if(error)return alert("Erro ao publicar aviso: "+error.message);evento.target.reset();await atualizarTelas();alert("Aviso publicado!");abrirTela("tela-avisos");}
 function renderizarAvisos(){const el=document.getElementById("avisos-conteudo");if(!el)return;if(!avisosCache.length){el.innerHTML='<div class="empty">Nenhum aviso publicado.</div>';return;}el.innerHTML=avisosCache.map(a=>`<div class="aviso-card"><h3>📢 ${esc(a.titulo)}</h3><p>${esc(a.texto)}</p><p class="aviso-data">${esc(a.data||"")}</p></div>`).join("");}
 
-function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o perfil.</div>';return;}const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a){el.innerHTML='<div class="empty">Aluno não encontrado.</div>';return;}el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>`;}
+function renderizarPerfil(){const el=document.getElementById("perfil-aluno-conteudo");if(!el)return;const a=alunoAtual||(alunoSelecionadoId?alunosCache.find(x=>x.id===alunoSelecionadoId):null);if(!a){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o perfil.</div>';return;}el.innerHTML=`<div class="profile-grid"><div class="profile-box"><small>NOME</small><strong>${esc(a.nome)}</strong></div><div class="profile-box"><small>TELEFONE</small><strong>${esc(a.telefone||"Não informado")}</strong></div><div class="profile-box"><small>E-MAIL</small><strong>${esc(a.email||"Não informado")}</strong></div></div>`;const botao=document.querySelector('#tela-perfil .btn-acao.sucesso');if(botao)botao.classList.toggle('hidden',!!alunoAtual);}
 function renderizarTreinoAluno(){const el=document.getElementById("treino-aluno-conteudo");if(!el)return;if(!alunoSelecionadoId){el.innerHTML='<div class="warning">Selecione um aluno no painel administrativo para visualizar o treino.</div>';return;}const ts=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId);if(!ts.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}el.innerHTML=ts.map(t=>`<div class="treino-card"><h3>${esc(t.nome)}</h3>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`).join("");}
 function editarPerfil(){if(!exigirFuncionario())return;if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;const nome=prompt("Nome completo:",a.nome);if(nome===null)return;const telefone=prompt("Telefone:",a.telefone||"");if(telefone===null)return;const email=prompt("E-mail:",a.email||"");if(email===null)return;atualizarAluno(a.id,nome,telefone,email);}
 async function atualizarAluno(id,nome,telefone,email){const{error}=await supabaseClient.from("alunos").update({nome:nome.trim(),telefone:telefone.trim(),email:email.trim()}).eq("id",id);if(error)return alert("Erro ao atualizar perfil: "+error.message);await atualizarTelas();renderizarPerfil();alert("Perfil atualizado.");}
