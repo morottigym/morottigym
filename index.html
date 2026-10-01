@@ -100,6 +100,37 @@ main{flex:1;padding:22px;overflow-wrap:anywhere}
 footer{padding:15px;text-align:center;border-top:1px solid #27272a;font-size:.65rem;color:#52525b;line-height:1.5}
 hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
 .small{font-size:.76rem;color:#71717a}
+
+
+/* ===== MOROTTIGYM APP 2.0 ===== */
+:root{--bg:#09090b;--surface:#151518;--card:#202024;--card2:#27272a;--line:#323238;--red:#e11d2e;--red2:#b91c2b;--gold:#f5b942;--muted:#a1a1aa;--text:#fafafa;--green:#22c55e}
+body{background:radial-gradient(circle at top,#241114 0,#09090b 34%,#050506 100%)}
+.app-container{background:linear-gradient(180deg,#151518 0,#101012 100%);border-color:#2b2b30}
+header{padding:14px 18px 12px;background:rgba(15,15,17,.94);backdrop-filter:blur(18px);display:flex;align-items:center;gap:11px;text-align:left}
+.app-logo{width:48px;height:48px;margin:0;flex:0 0 auto}
+header h1{font-size:1.05rem;letter-spacing:.12em;line-height:1.1}
+header p{font-size:.58rem;margin-top:3px;letter-spacing:.12em}
+.header-brand{flex:1;min-width:0}.header-copy{min-width:0}
+.toggle-container{margin:0 0 0 auto}.toggle-btn{padding:7px 9px;font-size:.66rem}
+main{padding:18px 18px 92px}
+.section-title{font-size:1.05rem;letter-spacing:.04em;text-transform:none;color:#fff;margin-bottom:8px}
+.page-kicker{font-size:.72rem;color:var(--red);font-weight:900;text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
+.app-subtitle{font-size:.82rem;color:var(--muted);line-height:1.45;margin-bottom:18px}
+.hero-app{background:linear-gradient(135deg,#2b1115,#18181b 62%);border:1px solid #482126;border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:0 16px 35px rgba(0,0,0,.2)}
+.hero-app .eyebrow{font-size:.68rem;color:#fda4af;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.hero-app h2{font-size:1.5rem;margin:5px 0 5px}.hero-app p{font-size:.82rem;color:#c4c4c9;line-height:1.45}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick-card{min-height:112px;background:linear-gradient(145deg,#242428,#1b1b1f);border:1px solid #303036;border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:.18s}.quick-card:active{transform:scale(.98)}.quick-card .qicon{font-size:1.55rem}.quick-card strong{font-size:.9rem}.quick-card small{font-size:.68rem;color:#8f8f98;line-height:1.3}.quick-card.gold{border-color:#5a4720;background:linear-gradient(145deg,#2b2518,#1b1b1f)}
+.app-list-card{background:#1d1d21;border:1px solid #303036;border-radius:16px;padding:14px;margin-bottom:10px}.app-list-card h3{font-size:.92rem;margin-bottom:4px}.app-list-card p{font-size:.76rem;color:var(--muted);line-height:1.45}
+.app-row{display:flex;align-items:center;gap:10px}.app-row .grow{flex:1;min-width:0}.avatar-mini{width:42px;height:42px;border-radius:13px;background:#2c171a;color:#fb7185;display:grid;place-items:center;font-weight:900}
+.search-box{width:100%;padding:13px 14px;border-radius:13px;border:1px solid #34343a;background:#202024;color:#fff;outline:none;margin:8px 0 14px}.search-box:focus{border-color:var(--red)}
+.day-card{background:#1d1d21;border:1px solid #303036;border-radius:17px;padding:15px;margin-bottom:10px}.day-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.day-name{font-weight:900;font-size:.9rem}.day-count{font-size:.7rem;color:var(--muted)}.day-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.mini-action{border:1px solid #3a3a40;background:#29292e;color:#fff;border-radius:10px;padding:8px 10px;font-size:.7rem;font-weight:800}.mini-action.red{background:#3a1519;border-color:#6b222b;color:#fecdd3}.mini-action.gold{background:#332913;border-color:#66501d;color:#fde68a}
+.danger-zone{margin-top:18px;padding:14px;border:1px solid #552129;background:rgba(127,29,29,.12);border-radius:16px}.danger-zone h3{font-size:.84rem;color:#fecdd3}.danger-zone p{font-size:.72rem;color:#a1a1aa;margin:5px 0 8px}
+.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(460px,100%);z-index:80;background:rgba(16,16,18,.96);backdrop-filter:blur(18px);border-top:1px solid #2e2e33;padding:8px 8px max(8px,env(safe-area-inset-bottom));display:none;grid-template-columns:repeat(4,1fr)}
+.bottom-nav.show{display:grid}.nav-btn{border:0;background:transparent;color:#7d7d86;padding:7px 2px;font-size:.62rem;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px}.nav-btn .nav-icon{font-size:1.15rem}.nav-btn.active{color:#fb7185}
+.menu-grid{gap:10px}.menu-item{aspect-ratio:auto;min-height:105px;border-radius:18px;background:#202024}.admin-section{border-top:0;margin-top:14px;padding-top:0}.admin-title{display:none}
+.btn-acao,.btn-voltar{border-radius:12px;padding:12px 14px}.btn-voltar{margin-top:14px}.info-card,.treino-card,.plano-card,.aviso-card{border-radius:16px;background:#202024;border-left-width:3px}
+.form-grupo input,.form-grupo select,.form-grupo textarea{border-radius:12px;background:#202024;padding:13px}.exercise{border-radius:12px;background:#17171a}
+@media(min-width:640px){.bottom-nav{bottom:20px;border:1px solid #2e2e33;border-radius:0 0 24px 24px}.app-container{padding-bottom:0}}
+
 </style>
 </head>
 
@@ -108,8 +139,7 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
 
 <header id="app-header">
     <img id="foto-topo" src="logo.png" alt="Morotti Gym" class="app-logo" onerror="this.src='logo.png'">
-    <h1>MOROTTI GYM</h1>
-    <p>Força • Disciplina • Evolução</p>
+    <div class="header-brand"><h1>MOROTTI GYM</h1><p>Força • Disciplina • Evolução</p></div>
 
     <div class="toggle-container">
         <button type="button" onclick="mudarAcesso('aluno')" id="btn-aluno" class="toggle-btn btn-aluno-ativo">Aluno</button>
@@ -167,59 +197,37 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     <button class="btn-voltar" type="button" onclick="mudarAcesso('aluno')">⬅️ Voltar</button>
 </main>
 
-<!-- MENU -->
+<!-- HOME / MENU DO APP -->
 <main id="tela-menu">
-    <div class="menu-grid">
-        <div class="menu-item" onclick="abrirTela('tela-inicio')"><div class="emoji">🏠</div><span>Início</span></div>
-        <div class="menu-item" onclick="abrirTela('tela-treino')"><div class="emoji">🏋🏻</div><span>Meu treino</span></div>
-        <div class="menu-item" onclick="abrirTela('tela-horarios')"><div class="emoji">📅</div><span>Horários</span></div>
-        <div class="menu-item" onclick="abrirTela('tela-perfil')"><div class="emoji">👤</div><span>Meu perfil</span></div>
-        <div class="menu-item" onclick="abrirTela('tela-avisos')"><div class="emoji">📢</div><span>Avisos</span></div>
-        <div class="menu-item" onclick="abrirTela('tela-academia')"><div class="emoji">📍</div><span>Academia</span></div>
-        <a href="https://api.whatsapp.com/send?phone=5516992239393" target="_blank" rel="noopener" class="menu-item whatsapp"><div class="emoji">💬</div><span>WhatsApp</span></a>
-    </div>
-
-    <div id="area-aluno-logado" class="admin-section hidden">
-        <div class="admin-title" style="color:#dc2626">👤 Área do aluno</div>
-        <div id="aluno-logado" class="status"></div>
-        <button class="btn-acao btn-perigo" type="button" onclick="sair()" style="margin-bottom:14px">Sair</button>
-    </div>
-
-    <div id="area-funcionario" class="admin-section hidden">
-        <div class="admin-title">⚠️ Painel Administrativo</div>
-        <div id="funcionario-logado" class="status"></div>
-        <button class="btn-acao btn-perigo" type="button" onclick="sair()" style="margin-bottom:14px">Sair</button>
-        <div class="menu-grid">
-            <div class="menu-item admin" onclick="abrirTela('tela-cadastrar-aluno')"><div class="emoji">👥</div><span>Cadastrar Aluno</span></div>
-            <div class="menu-item admin" onclick="abrirTela('tela-alunos')"><div class="emoji">📋</div><span>Alunos</span></div>
-            <div class="menu-item admin" onclick="abrirTela('tela-editar-treino')"><div class="emoji">📝</div><span>Editar Treinos</span></div>
-            <div class="menu-item admin" onclick="abrirTela('tela-publicar-aviso')"><div class="emoji">📢</div><span>Publicar Aviso</span></div>
+    <div id="home-visitante">
+        <div class="hero-app"><div class="eyebrow">MorottiGym App</div><h2>Seu treino. Sua evolução.</h2><p>Entre como aluno para acessar seus treinos ou como funcionário para gerenciar a academia.</p></div>
+        <div class="quick-grid">
+            <div class="quick-card" onclick="mudarAcesso('aluno')"><div class="qicon">👤</div><div><strong>Área do aluno</strong><br><small>Treinos, avisos e perfil</small></div></div>
+            <div class="quick-card gold" onclick="mudarAcesso('funcionario')"><div class="qicon">⚡</div><div><strong>Funcionário</strong><br><small>Painel de gestão</small></div></div>
         </div>
     </div>
-</main>
 
-<!-- INÍCIO -->
-<main id="tela-inicio" class="hidden">
-    <h2 class="section-title">Sobre a Morotti Gym</h2>
-    <p class="text-destaque">A <strong>Morotti Gym</strong> é o lugar para quem busca mais do que simplesmente treinar. Aqui, cada treino representa uma oportunidade de evoluir, superar limites e cuidar de si.</p>
-    <p class="text-destaque">Nossa proposta é oferecer um ambiente acolhedor, estrutura para diferentes objetivos e uma comunidade que incentiva você a continuar. Seja para ganhar força, melhorar o condicionamento, cuidar da saúde ou simplesmente começar uma nova rotina, você encontra na Morotti Gym um espaço para fazer acontecer.</p>
-    <p class="text-destaque"><strong>Disciplina, foco e constância</strong> fazem parte da nossa essência. Porque resultados são construídos treino após treino.</p>
-
-    <div class="info-card"><h3>💪 Estrutura para Evoluir</h3><p>Um espaço preparado para você realizar seus treinos com qualidade e buscar evolução a cada dia.</p></div>
-    <div class="info-card"><h3>🎯 Foco no seu Objetivo</h3><p>Seja para ganhar força, melhorar o condicionamento ou transformar sua rotina, seu objetivo é o ponto de partida.</p></div>
-    <div class="info-card"><h3>🤝 Ambiente que Motiva</h3><p>Um ambiente onde você pode treinar, evoluir e encontrar motivação para continuar buscando sua melhor versão.</p></div>
-
-    <h2 class="section-title" style="margin-top:24px">Conheça nossa equipe</h2>
-    <p class="text-destaque">Por trás de cada treino existe uma equipe preparada para fazer parte da sua jornada. Na Morotti Gym, valorizamos o atendimento, a orientação e o compromisso com cada pessoa que escolhe treinar conosco.</p>
-    <div class="info-card gold">
-        <h3>Moisés Morotti</h3>
-        <p><strong>Professor, fundador e proprietário da Morotti Gym</strong></p>
-        <p style="margin-top:7px">Atuante na área e formado há mais de 10 anos, Moisés Morotti construiu sua trajetória através da experiência, dedicação e paixão pelo treinamento.</p>
-        <p style="margin-top:7px">A Morotti Gym representa seu segundo projeto à frente de uma academia. Antes dela, esteve à frente da <strong>Caverna Gym</strong>, academia que conquistou seu espaço e se tornou uma referência na comunidade.</p>
-        <p style="margin-top:7px">Agora, com a Morotti Gym, Moisés inicia uma nova fase: trazer uma proposta própria, com personalidade e identidade, buscando seu espaço em um mercado cada vez mais dominado pelas grandes redes.</p>
+    <div id="home-aluno" class="hidden">
+        <div class="hero-app"><div class="eyebrow">Área do aluno</div><h2 id="saudacao-aluno">Olá 👋</h2><p>Seu treino está a poucos toques. Disciplina, foco e constância.</p></div>
+        <div class="quick-grid">
+            <div class="quick-card" onclick="abrirTela('tela-treino')"><div class="qicon">🏋🏻</div><div><strong>Meu treino</strong><br><small>Treinos por dia da semana</small></div></div>
+            <div class="quick-card" onclick="abrirTela('tela-avisos')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Novidades da academia</small></div></div>
+            <div class="quick-card" onclick="abrirTela('tela-perfil')"><div class="qicon">👤</div><div><strong>Meu perfil</strong><br><small>Dados e foto</small></div></div>
+            <div class="quick-card" onclick="abrirTela('tela-horarios')"><div class="qicon">🕒</div><div><strong>Horários</strong><br><small>Funcionamento</small></div></div>
+        </div>
+        <div id="area-aluno-logado" class="admin-section"><div id="aluno-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
     </div>
-    <p class="text-destaque"><strong>Morotti Gym — Treine. Evolua. Supere-se.</strong></p>
-    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+
+    <div id="home-funcionario" class="hidden">
+        <div class="hero-app"><div class="eyebrow">Painel do professor</div><h2 id="saudacao-funcionario">Olá 👋</h2><p>Gerencie alunos e treinos de forma rápida, sem misturar fichas.</p></div>
+        <div class="quick-grid">
+            <div class="quick-card gold" onclick="abrirTela('tela-alunos')"><div class="qicon">👥</div><div><strong>Alunos</strong><br><small>Consultar e gerenciar</small></div></div>
+            <div class="quick-card gold" onclick="abrirTela('tela-editar-treino')"><div class="qicon">🏋️</div><div><strong>Treinos</strong><br><small>Selecionar aluno e editar</small></div></div>
+            <div class="quick-card" onclick="abrirTela('tela-cadastrar-aluno')"><div class="qicon">➕</div><div><strong>Novo aluno</strong><br><small>Cadastro rápido</small></div></div>
+            <div class="quick-card" onclick="abrirTela('tela-publicar-aviso')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Publicar comunicado</small></div></div>
+        </div>
+        <div id="area-funcionario" class="admin-section"><div id="funcionario-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
+    </div>
 </main>
 
 <!-- TREINO -->
@@ -307,18 +315,31 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
-<!-- EDITAR TREINO -->
+<!-- GERENCIAR TREINOS -->
 <main id="tela-editar-treino" class="hidden">
-    <h2 class="section-title">Editar treinos</h2>
-    <form id="form-treino" onsubmit="salvarTreino(event)">
-        <div class="form-grupo"><label for="treino-aluno">Aluno</label><select id="treino-aluno" required></select></div>
-        <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
-        <div class="form-grupo"><label for="treino-exercicios">Exercícios</label><textarea id="treino-exercicios" placeholder="Um exercício por linha. Ex.:&#10;Supino reto - 3x10&#10;Remada - 3x12&#10;Agachamento - 4x8" required></textarea></div>
-        <button class="btn-acao sucesso" type="submit">💾 Salvar treino</button>
-    </form>
-    <hr>
-    <div id="lista-treinos-admin"></div>
-    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+    <div class="page-kicker">Painel do professor</div>
+    <h2 class="section-title">Treinos</h2>
+    <p class="app-subtitle">Primeiro selecione um aluno. Só os treinos dele serão exibidos.</p>
+    <input id="busca-aluno-treino" class="search-box" type="search" placeholder="🔎 Buscar aluno pelo nome..." oninput="filtrarAlunosTreino()">
+    <div id="seletor-alunos-treino"></div>
+
+    <div id="gestao-treino-aluno" class="hidden">
+        <div class="hero-app" style="margin-top:8px"><div class="eyebrow">Aluno selecionado</div><h2 id="nome-aluno-treino">Aluno</h2><p>Gerencie a ficha por dia da semana.</p></div>
+        <button class="btn-acao ouro" type="button" onclick="abrirFormularioNovoTreino()">＋ Adicionar dia de treino</button>
+        <div id="formulario-treino-wrap" class="hidden" style="margin-top:14px">
+            <form id="form-treino" onsubmit="salvarTreino(event)">
+                <input id="treino-aluno" type="hidden">
+                <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
+                <div class="form-grupo"><label for="treino-exercicios">Exercícios</label><textarea id="treino-exercicios" placeholder="Um exercício por linha. Ex.:&#10;Supino reto - 3x10&#10;Remada - 3x12" required></textarea></div>
+                <button class="btn-acao sucesso" type="submit">💾 Salvar dia de treino</button>
+                <button class="btn-voltar" type="button" onclick="fecharFormularioTreino()">Cancelar</button>
+            </form>
+        </div>
+        <div id="lista-treinos-admin" style="margin-top:16px"></div>
+        <div class="danger-zone"><h3>Excluir ficha completa</h3><p>Remove todos os dias de treino cadastrados para este aluno.</p><button class="btn-acao btn-perigo" type="button" onclick="excluirFichaCompleta()">🗑️ Excluir ficha completa</button></div>
+        <button class="btn-voltar" type="button" onclick="trocarAlunoTreino()">← Escolher outro aluno</button>
+    </div>
+    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar ao início</button>
 </main>
 
 <!-- PUBLICAR AVISO -->
@@ -331,6 +352,13 @@ hr{border:0;border-top:1px solid #3f3f46;margin:18px 0}
     </form>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
+
+<nav id="bottom-nav" class="bottom-nav">
+    <button class="nav-btn active" onclick="voltarParaMenu()"><span class="nav-icon">⌂</span><span>Início</span></button>
+    <button id="nav-principal" class="nav-btn" onclick="acaoNavPrincipal()"><span class="nav-icon">🏋️</span><span id="nav-principal-label">Treino</span></button>
+    <button id="nav-secundario" class="nav-btn" onclick="acaoNavSecundario()"><span class="nav-icon">📢</span><span id="nav-secundario-label">Avisos</span></button>
+    <button class="nav-btn" onclick="acaoNavPerfil()"><span class="nav-icon">👤</span><span id="nav-perfil-label">Perfil</span></button>
+</nav>
 
 <footer>
     Morotti Gym © <span id="ano-atual"></span><br>
@@ -841,6 +869,74 @@ async function enviarFotoAluno(evento){
 }
 
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+
+
+
+/* ===== NAVEGAÇÃO E GESTÃO DE TREINOS 2.0 ===== */
+function atualizarHomeApp(){
+    const visitante=document.getElementById('home-visitante'), ha=document.getElementById('home-aluno'), hf=document.getElementById('home-funcionario'), nav=document.getElementById('bottom-nav');
+    if(visitante) visitante.classList.toggle('hidden',!!usuarioAtual);
+    if(ha) ha.classList.toggle('hidden',!(usuarioAtual&&alunoAtual));
+    if(hf) hf.classList.toggle('hidden',!(usuarioAtual&&perfilAtual));
+    if(nav) nav.classList.toggle('show',!!usuarioAtual);
+    const toggle=document.querySelector('.toggle-container'); if(toggle) toggle.classList.toggle('hidden',!!usuarioAtual);
+    if(alunoAtual){const e=document.getElementById('saudacao-aluno');if(e)e.textContent=`Olá, ${String(alunoAtual.nome||'').split(' ')[0]} 👋`; configurarNav('aluno');}
+    if(perfilAtual){const e=document.getElementById('saudacao-funcionario');if(e)e.textContent=`Olá, ${String(perfilAtual.nome||'').split(' ')[0]} 👋`; configurarNav('funcionario');}
+}
+function configurarNav(tipo){
+    const p=document.getElementById('nav-principal-label'),s=document.getElementById('nav-secundario-label'),pf=document.getElementById('nav-perfil-label');
+    if(tipo==='funcionario'){if(p)p.textContent='Alunos';if(s)s.textContent='Treinos';if(pf)pf.textContent='Mais';}
+    else{if(p)p.textContent='Treino';if(s)s.textContent='Avisos';if(pf)pf.textContent='Perfil';}
+}
+function acaoNavPrincipal(){abrirTela(perfilAtual?'tela-alunos':'tela-treino')}
+function acaoNavSecundario(){abrirTela(perfilAtual?'tela-editar-treino':'tela-avisos')}
+function acaoNavPerfil(){if(perfilAtual) voltarParaMenu(); else abrirTela('tela-perfil')}
+
+const _voltarParaMenuOriginal=voltarParaMenu;
+voltarParaMenu=function(){_voltarParaMenuOriginal();atualizarHomeApp();marcarNavInicio();}
+function marcarNavInicio(){document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',i===0));}
+const _abrirTelaOriginal=abrirTela;
+abrirTela=async function(idTela){await _abrirTelaOriginal(idTela);document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));}
+
+const _mostrarModoAlunoLogadoOriginal=mostrarModoAlunoLogado;
+mostrarModoAlunoLogado=function(){_mostrarModoAlunoLogadoOriginal();atualizarHomeApp();}
+const _mostrarModoFuncionarioOriginal=mostrarModoFuncionario;
+mostrarModoFuncionario=function(){_mostrarModoFuncionarioOriginal();atualizarHomeApp();}
+const _mostrarModoAlunoOriginal=mostrarModoAluno;
+mostrarModoAluno=function(){_mostrarModoAlunoOriginal();atualizarHomeApp();}
+
+function renderizarSeletorAlunosTreino(lista=alunosCache){
+    const el=document.getElementById('seletor-alunos-treino');if(!el)return;
+    if(!lista.length){el.innerHTML='<div class="empty">Nenhum aluno encontrado.</div>';return;}
+    el.innerHTML=[...lista].sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR')).map(a=>`<div class="app-list-card" onclick="selecionarAlunoParaTreino(${a.id})"><div class="app-row"><div class="avatar-mini">${esc((a.nome||'?').charAt(0).toUpperCase())}</div><div class="grow"><h3>${esc(a.nome)}</h3><p>${esc(a.email||'Sem e-mail')}</p></div><strong>›</strong></div></div>`).join('');
+}
+function filtrarAlunosTreino(){const q=(document.getElementById('busca-aluno-treino')?.value||'').trim().toLowerCase();renderizarSeletorAlunosTreino(alunosCache.filter(a=>String(a.nome||'').toLowerCase().includes(q)));}
+function selecionarAlunoParaTreino(id){
+    alunoSelecionadoId=Number(id);const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;
+    document.getElementById('seletor-alunos-treino').classList.add('hidden');document.getElementById('busca-aluno-treino').classList.add('hidden');document.getElementById('gestao-treino-aluno').classList.remove('hidden');
+    document.getElementById('nome-aluno-treino').textContent=a.nome;document.getElementById('treino-aluno').value=a.id;fecharFormularioTreino();renderizarTreinosAdmin();window.scrollTo({top:0,behavior:'smooth'});
+}
+function trocarAlunoTreino(){alunoSelecionadoId=null;document.getElementById('gestao-treino-aluno').classList.add('hidden');document.getElementById('seletor-alunos-treino').classList.remove('hidden');document.getElementById('busca-aluno-treino').classList.remove('hidden');document.getElementById('busca-aluno-treino').value='';renderizarSeletorAlunosTreino();window.scrollTo({top:0,behavior:'smooth'});}
+function abrirFormularioNovoTreino(){if(!alunoSelecionadoId)return;document.getElementById('form-treino').reset();document.getElementById('treino-aluno').value=alunoSelecionadoId;document.getElementById('formulario-treino-wrap').classList.remove('hidden');}
+function fecharFormularioTreino(){const w=document.getElementById('formulario-treino-wrap');if(w)w.classList.add('hidden');}
+function editarTreinoCompleto(id){const t=treinosCache.find(x=>x.id===id);if(!t)return;document.getElementById('treino-aluno').value=t.aluno_id;document.getElementById('treino-dia').value=t.dia_semana||t.nome;document.getElementById('treino-exercicios').value=(t.exercicios||[]).join('\n');document.getElementById('formulario-treino-wrap').classList.remove('hidden');document.getElementById('formulario-treino-wrap').scrollIntoView({behavior:'smooth',block:'start'});}
+async function excluirFichaCompleta(){
+    if(!exigirFuncionario()||!alunoSelecionadoId)return;const a=alunosCache.find(x=>x.id===alunoSelecionadoId);const qtd=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).length;if(!qtd)return alert('Este aluno ainda não possui treinos cadastrados.');
+    if(!confirm(`Excluir a ficha completa de ${a?.nome||'este aluno'}? Isso removerá ${qtd} dia(s) de treino.`))return;
+    const {error}=await supabaseClient.from('treinos').delete().eq('aluno_id',alunoSelecionadoId);if(error)return alert('Erro ao excluir a ficha: '+error.message);await atualizarTelas();renderizarTreinosAdmin();alert('Ficha completa excluída com sucesso.');
+}
+
+renderizarTreinosAdmin=function(){
+    const el=document.getElementById('lista-treinos-admin');if(!el)return;
+    if(!alunoSelecionadoId){el.innerHTML='';renderizarSeletorAlunosTreino();return;}
+    const lista=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).sort((a,b)=>ordemDia(a.dia_semana)-ordemDia(b.dia_semana));
+    if(!lista.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}
+    el.innerHTML=lista.map(t=>`<div class="day-card"><div class="day-card-head"><div><div class="day-name">${esc(t.dia_semana||t.nome||'Dia')}</div><div class="day-count">${(t.exercicios||[]).length} exercício(s)</div></div><span>›</span></div><div class="day-actions"><button class="mini-action gold" type="button" onclick="editarTreinoCompleto(${t.id})">✏️ Editar treino</button><button class="mini-action red" type="button" onclick="excluirTreino(${t.id})">🗑️ Excluir dia</button></div></div>`).join('');
+}
+
+const _atualizarTelasOriginal=atualizarTelas;
+atualizarTelas=async function(){await _atualizarTelasOriginal();renderizarSeletorAlunosTreino();if(alunoSelecionadoId&&document.getElementById('gestao-treino-aluno')&&!document.getElementById('gestao-treino-aluno').classList.contains('hidden'))renderizarTreinosAdmin();}
+
 
 document.addEventListener("DOMContentLoaded", inicializar);
 </script>
