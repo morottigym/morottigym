@@ -183,6 +183,15 @@ main{padding:18px 18px 92px}
 .install-app-card{margin:14px 0 0;background:#1d1d21;border:1px solid #36363c;border-radius:16px;padding:14px;display:none}
 .install-app-card.show{display:block}.install-app-card strong{font-size:.86rem}.install-app-card p{font-size:.69rem;color:#a1a1aa;line-height:1.4;margin:4px 0 10px}
 .install-app-btn{width:100%;border:1px solid #5a4720;background:#332913;color:#fde68a;border-radius:12px;padding:11px;font-size:.72rem;font-weight:900}
+/* ===== SOLICITAÇÕES / FUNCIONÁRIOS ===== */
+.request-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:#e11d2e;color:#fff;font-size:.65rem;font-weight:950;margin-left:6px}
+.request-card{background:#1d1d21;border:1px solid #303036;border-radius:16px;padding:14px;margin-bottom:10px}
+.request-card.pending{border-color:#6b4f1c}.request-card.working{border-color:#7f2631}.request-card.done{border-color:#245b38}
+.request-meta{font-size:.68rem;color:#8f8f98;margin-top:5px;line-height:1.45}
+.request-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.request-actions button{flex:1}
+.responsavel-treino{font-size:.68rem;color:#f5b942;margin-top:6px;font-weight:800}
+.master-only.hidden{display:none!important}
 </style>
 
 </head>
@@ -308,6 +317,7 @@ main{padding:18px 18px 92px}
             <div class="quick-card" onclick="abrirTela('tela-avisos')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Novidades da academia</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-perfil')"><div class="qicon">👤</div><div><strong>Meu perfil</strong><br><small>Dados e foto</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-horarios')"><div class="qicon">🕒</div><div><strong>Horários</strong><br><small>Funcionamento</small></div></div>
+            <div class="quick-card gold" onclick="abrirSolicitacoesAluno()"><div class="qicon">📩</div><div><strong>Solicitar treino</strong><br><small>Novo treino ou alteração</small></div></div>
         </div>
         <div id="area-aluno-logado" class="admin-section"><div id="aluno-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
     </div>
@@ -319,6 +329,8 @@ main{padding:18px 18px 92px}
             <div class="quick-card gold" onclick="abrirTela('tela-editar-treino')"><div class="qicon">🏋️</div><div><strong>Treinos</strong><br><small>Selecionar aluno e editar</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-cadastrar-aluno')"><div class="qicon">➕</div><div><strong>Novo aluno</strong><br><small>Cadastro rápido</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-publicar-aviso')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Publicar comunicado</small></div></div>
+            <div class="quick-card" onclick="abrirSolicitacoesFuncionario()"><div class="qicon">📩</div><div><strong>Solicitações <span id="contador-solicitacoes" class="request-badge hidden">0</span></strong><br><small>Pedidos dos alunos</small></div></div>
+            <div id="card-funcionarios-master" class="quick-card master-only hidden" onclick="abrirFuncionariosMaster()"><div class="qicon">🪪</div><div><strong>Funcionários</strong><br><small>Equipe e níveis de acesso</small></div></div>
         </div>
         <div id="install-app-card-funcionario" class="install-app-card">
             <strong>📲 Instale o MorottiGym</strong><p>Tenha o painel da academia direto na tela inicial do celular.</p>
@@ -455,6 +467,46 @@ main{padding:18px 18px 92px}
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar ao início</button>
 </main>
 
+
+<!-- SOLICITAÇÕES DO ALUNO -->
+<main id="tela-solicitacoes-aluno" class="hidden">
+    <div class="page-kicker">Meu treino</div>
+    <h2 class="section-title">📩 Solicitar ajuste</h2>
+    <p class="app-subtitle">Envie um pedido para a equipe de professores. Você poderá acompanhar o andamento aqui.</p>
+    <form id="form-solicitacao-treino" onsubmit="enviarSolicitacaoTreino(event)">
+        <div class="form-grupo"><label for="solicitacao-tipo">O que você precisa?</label>
+            <select id="solicitacao-tipo" required>
+                <option value="novo_treino">Quero um novo treino</option>
+                <option value="alteracao_treino">Quero alterar meu treino atual</option>
+                <option value="outro">Outro ajuste</option>
+            </select>
+        </div>
+        <div class="form-grupo"><label for="solicitacao-observacao">Observação (opcional)</label><textarea id="solicitacao-observacao" maxlength="500" placeholder="Conte brevemente o que você precisa."></textarea></div>
+        <button class="btn-acao sucesso" type="submit">📩 Enviar solicitação</button>
+    </form>
+    <h3 style="margin:20px 0 10px">Minhas solicitações</h3>
+    <div id="lista-solicitacoes-aluno"></div>
+    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- SOLICITAÇÕES DOS PROFESSORES -->
+<main id="tela-solicitacoes-funcionario" class="hidden">
+    <div class="page-kicker">Painel do professor</div>
+    <h2 class="section-title">📩 Solicitações de treino</h2>
+    <p class="app-subtitle">Pedidos enviados pelos alunos. Ao assumir uma solicitação, seu nome fica registrado como responsável.</p>
+    <div id="lista-solicitacoes-funcionario"></div>
+    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- FUNCIONÁRIOS - MASTER -->
+<main id="tela-funcionarios" class="hidden">
+    <div class="page-kicker">Área Master</div>
+    <h2 class="section-title">🪪 Funcionários</h2>
+    <p class="app-subtitle">Visão da equipe cadastrada no sistema. O gerenciamento de contas permanece restrito ao Master.</p>
+    <div id="lista-funcionarios"></div>
+    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
 <!-- PUBLICAR AVISO -->
 <main id="tela-publicar-aviso" class="hidden">
     <h2 class="section-title">Publicar aviso</h2>
@@ -495,6 +547,8 @@ let alunosCache = [];
 let treinosCache = [];
 let avisosCache = [];
 let alunoSelecionadoId = null;
+let solicitacoesCache = [];
+let funcionariosCache = [];
 
 let fluxoCriarSenha = false;
 
@@ -766,7 +820,7 @@ function mostrarModoFuncionario() {
 
 async function identificarUsuario(user) {
     usuarioAtual = user; perfilAtual = null; alunoAtual = null;
-    const { data: perfil } = await supabaseClient.from("perfis").select("id,nome,cargo").eq("id", user.id).maybeSingle();
+    const { data: perfil } = await supabaseClient.from("perfis").select("id,nome,cargo,funcao,ativo").eq("id", user.id).maybeSingle();
     if (perfil && ["master","professor"].includes(perfil.cargo)) { perfilAtual = perfil; return "funcionario"; }
     const { data: aluno } = await supabaseClient.from("alunos").select("id,nome,telefone,email,observacoes,user_id").eq("user_id", user.id).maybeSingle();
     if (aluno) { alunoAtual = aluno; alunoSelecionadoId = aluno.id; return "aluno"; }
@@ -823,7 +877,7 @@ async function definirSenhaAluno(evento) {
 
 async function atualizarTelasAluno() {
     if(!usuarioAtual || !alunoAtual) return;
-    const {data:treinos,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,created_at").eq("aluno_id",alunoAtual.id).order("created_at",{ascending:false});
+    const {data:treinos,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,professor_responsavel,professor_nome,atualizado_em,created_at").eq("aluno_id",alunoAtual.id).order("created_at",{ascending:false});
     treinosCache=error?[]:(treinos||[]);
     renderizarPerfil(); renderizarTreinoAluno();
     await carregarFotoAluno();
@@ -866,7 +920,7 @@ function exigirFuncionario() {
 
 async function atualizarTelas() {
     if (!usuarioAtual) return;
-    await Promise.all([carregarAlunos(), carregarTreinos(), carregarAvisos()]);
+    await Promise.all([carregarAlunos(), carregarTreinos(), carregarAvisos(), carregarSolicitacoesFuncionario()]);
     renderizarListaAlunos(); renderizarSelectAlunos(); renderizarTreinosAdmin(); renderizarAvisos(); renderizarPerfil(); renderizarTreinoAluno();
 }
 
@@ -876,7 +930,7 @@ async function carregarAlunos() {
     alunosCache=data||[];
 }
 async function carregarTreinos() {
-    const {data,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,created_at").order("created_at",{ascending:false});
+    const {data,error}=await supabaseClient.from("treinos").select("id,aluno_id,aluno_nome,nome,exercicios,data,letra,dia_semana,professor_responsavel,professor_nome,atualizado_em,created_at").order("created_at",{ascending:false});
     if (error) { console.error(error); treinosCache=[]; return; }
     treinosCache=data||[];
 }
@@ -1017,9 +1071,9 @@ async function salvarTreino(evento){
     let error;
     if(existente){
         if(!confirm(`Já existe um treino de ${dia_semana} para ${aluno.nome}. Deseja substituir?`)) return;
-        ({error}=await supabaseClient.from("treinos").update({aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR")}).eq("id",existente.id));
+        ({error}=await supabaseClient.from("treinos").update({aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR"),professor_responsavel:usuarioAtual.id,professor_nome:perfilAtual.nome,atualizado_em:new Date().toISOString()}).eq("id",existente.id));
     }else{
-        ({error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR")}));
+        ({error}=await supabaseClient.from("treinos").insert({aluno_id:aluno.id,aluno_nome:aluno.nome,nome,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR"),professor_responsavel:usuarioAtual.id,professor_nome:perfilAtual.nome,atualizado_em:new Date().toISOString()}));
     }
     if(error)return alert("Erro ao salvar treino: "+error.message);evento.target.reset();await atualizarTelas();alert("Treino salvo com sucesso!");
 }
@@ -1056,7 +1110,7 @@ function renderizarTreinoAluno(){
 function mostrarTreinoAba(id,botao){
     const t=treinosCache.find(x=>x.id===id);if(!t)return;
     document.querySelectorAll('#treino-aluno-conteudo .treino-tab').forEach(b=>b.classList.remove('ativo'));if(botao)botao.classList.add('ativo');
-    const area=document.getElementById('treino-aba-conteudo');area.innerHTML=`<div class="treino-card"><h3>📅 ${esc(t.dia_semana||t.nome||"Treino")}</h3>${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`;
+    const area=document.getElementById('treino-aba-conteudo');area.innerHTML=`<div class="treino-card"><h3>📅 ${esc(t.dia_semana||t.nome||"Treino")}</h3>${t.professor_nome?`<div class="responsavel-treino">Professor responsável: ${esc(t.professor_nome)}</div>`:""}${(t.exercicios||[]).map(ex=>`<div class="exercise"><strong>${esc(ex)}</strong><span>Confira a orientação do professor para carga, execução e descanso.</span></div>`).join("")}</div>`;
 }
 function editarPerfil(){if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");return editarAluno(alunoSelecionadoId);}
 function alterarSenhaPerfil(){if(!alunoSelecionadoId)return alert("Selecione um aluno primeiro.");return alterarSenhaAluno(alunoSelecionadoId);}
@@ -1147,7 +1201,7 @@ function atualizarHomeApp(){
     if(nav) nav.classList.toggle('show',!!usuarioAtual);
     const toggle=document.querySelector('.toggle-container'); if(toggle) toggle.classList.toggle('hidden',!!usuarioAtual);
     if(alunoAtual){const e=document.getElementById('saudacao-aluno');if(e)e.textContent=`Olá, ${String(alunoAtual.nome||'').split(' ')[0]} 👋`; configurarNav('aluno');}
-    if(perfilAtual){const e=document.getElementById('saudacao-funcionario');if(e)e.textContent=`Olá, ${String(perfilAtual.nome||'').split(' ')[0]} 👋`; configurarNav('funcionario');}
+    if(perfilAtual){const e=document.getElementById('saudacao-funcionario');if(e)e.textContent=`Olá, ${String(perfilAtual.nome||'').split(' ')[0]} 👋`; configurarNav('funcionario');const cm=document.getElementById('card-funcionarios-master');if(cm)cm.classList.toggle('hidden',perfilAtual.cargo!=='master');}
 }
 function configurarNav(tipo){
     const p=document.getElementById('nav-principal-label'),s=document.getElementById('nav-secundario-label'),pf=document.getElementById('nav-perfil-label');
@@ -1205,7 +1259,7 @@ renderizarTreinosAdmin=function(){
     if(!alunoSelecionadoId){el.innerHTML='';renderizarSeletorAlunosTreino();return;}
     const lista=treinosCache.filter(t=>t.aluno_id===alunoSelecionadoId).sort((a,b)=>ordemDia(a.dia_semana)-ordemDia(b.dia_semana));
     if(!lista.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}
-    el.innerHTML=lista.map(t=>`<div class="day-card"><div class="day-card-head"><div><div class="day-name">${esc(t.dia_semana||t.nome||'Dia')}</div><div class="day-count">${(t.exercicios||[]).length} exercício(s)</div></div><span>›</span></div><div class="day-actions"><button class="mini-action gold" type="button" onclick="editarTreinoCompleto(${t.id})">✏️ Editar treino</button><button class="mini-action red" type="button" onclick="excluirTreino(${t.id})">🗑️ Excluir dia</button></div></div>`).join('');
+    el.innerHTML=lista.map(t=>`<div class="day-card"><div class="day-card-head"><div><div class="day-name">${esc(t.dia_semana||t.nome||'Dia')}</div><div class="day-count">${(t.exercicios||[]).length} exercício(s)</div>${t.professor_nome?`<div class="responsavel-treino">Responsável: ${esc(t.professor_nome)}</div>`:""}</div><span>›</span></div><div class="day-actions"><button class="mini-action gold" type="button" onclick="editarTreinoCompleto(${t.id})">✏️ Editar treino</button><button class="mini-action red" type="button" onclick="excluirTreino(${t.id})">🗑️ Excluir dia</button></div></div>`).join('');
 }
 
 const _atualizarTelasOriginal=atualizarTelas;
@@ -1220,6 +1274,105 @@ atualizarTelas=async function(){
     }
 }
 
+
+
+/* ===== SOLICITAÇÕES DE TREINO ===== */
+function rotuloTipoSolicitacao(tipo){
+    return {novo_treino:"Novo treino",alteracao_treino:"Alteração de treino",outro:"Outro ajuste"}[tipo]||"Solicitação";
+}
+function rotuloStatusSolicitacao(status){
+    return {pendente:"Pendente",em_atendimento:"Em atendimento",concluido:"Concluído",cancelado:"Cancelado"}[status]||status;
+}
+function classeSolicitacao(status){return status==="pendente"?"pending":status==="em_atendimento"?"working":status==="concluido"?"done":""}
+function formatarDataHora(v){if(!v)return "";try{return new Date(v).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}catch{return v}}
+
+async function abrirSolicitacoesAluno(){
+    await abrirTela("tela-solicitacoes-aluno");
+    await carregarSolicitacoesAluno();
+}
+async function carregarSolicitacoesAluno(){
+    if(!alunoAtual)return;
+    const el=document.getElementById("lista-solicitacoes-aluno");if(el)el.innerHTML='<div class="empty">Carregando...</div>';
+    const {data,error}=await supabaseClient.from("solicitacoes_treino")
+      .select("id,aluno_id,tipo,observacao,status,professor_responsavel,professor_nome,created_at,assumido_em,concluido_em")
+      .eq("aluno_id",alunoAtual.id).order("created_at",{ascending:false});
+    if(error){console.error(error);if(el)el.innerHTML='<div class="warning">Não foi possível carregar suas solicitações.</div>';return}
+    solicitacoesCache=data||[];
+    renderizarSolicitacoesAluno();
+}
+function renderizarSolicitacoesAluno(){
+    const el=document.getElementById("lista-solicitacoes-aluno");if(!el)return;
+    if(!solicitacoesCache.length){el.innerHTML='<div class="empty">Você ainda não enviou solicitações.</div>';return}
+    el.innerHTML=solicitacoesCache.map(s=>`<div class="request-card ${classeSolicitacao(s.status)}"><h3>${esc(rotuloTipoSolicitacao(s.tipo))}</h3><p>${esc(s.observacao||"Sem observação.")}</p><div class="request-meta"><strong>Status:</strong> ${esc(rotuloStatusSolicitacao(s.status))}${s.professor_nome?` • <strong>Professor:</strong> ${esc(s.professor_nome)}`:""}<br>Enviado em ${esc(formatarDataHora(s.created_at))}</div></div>`).join("");
+}
+async function enviarSolicitacaoTreino(evento){
+    evento.preventDefault();
+    if(!usuarioAtual||!alunoAtual)return alert("Entre como aluno para enviar uma solicitação.");
+    const tipo=document.getElementById("solicitacao-tipo").value;
+    const observacao=document.getElementById("solicitacao-observacao").value.trim();
+    const btn=evento.submitter;btn.disabled=true;btn.textContent="Enviando...";
+    const {error}=await supabaseClient.from("solicitacoes_treino").insert({aluno_id:alunoAtual.id,tipo,observacao,status:"pendente"});
+    btn.disabled=false;btn.textContent="📩 Enviar solicitação";
+    if(error)return alert("Não foi possível enviar: "+error.message);
+    evento.target.reset();await carregarSolicitacoesAluno();alert("Solicitação enviada aos professores.");
+}
+
+async function abrirSolicitacoesFuncionario(){
+    await abrirTela("tela-solicitacoes-funcionario");
+    await carregarSolicitacoesFuncionario();
+    renderizarSolicitacoesFuncionario();
+}
+async function carregarSolicitacoesFuncionario(){
+    if(!perfilAtual)return;
+    const {data,error}=await supabaseClient.from("solicitacoes_treino")
+      .select("id,aluno_id,tipo,observacao,status,professor_responsavel,professor_nome,created_at,assumido_em,concluido_em")
+      .order("created_at",{ascending:false});
+    if(error){console.error(error);solicitacoesCache=[];return}
+    solicitacoesCache=data||[];
+    const pendentes=solicitacoesCache.filter(s=>s.status==="pendente").length;
+    const badge=document.getElementById("contador-solicitacoes");
+    if(badge){badge.textContent=pendentes;badge.classList.toggle("hidden",pendentes===0)}
+}
+function renderizarSolicitacoesFuncionario(){
+    const el=document.getElementById("lista-solicitacoes-funcionario");if(!el)return;
+    if(!solicitacoesCache.length){el.innerHTML='<div class="empty">Nenhuma solicitação recebida.</div>';return}
+    const ordem={pendente:0,em_atendimento:1,concluido:2,cancelado:3};
+    const lista=[...solicitacoesCache].sort((a,b)=>(ordem[a.status]??9)-(ordem[b.status]??9)||new Date(b.created_at)-new Date(a.created_at));
+    el.innerHTML=lista.map(s=>{
+        const a=alunosCache.find(x=>Number(x.id)===Number(s.aluno_id));
+        const podeAssumir=s.status==="pendente";
+        const minha=s.professor_responsavel===usuarioAtual?.id;
+        const podeConcluir=s.status==="em_atendimento"&&(minha||perfilAtual?.cargo==="master");
+        return `<div class="request-card ${classeSolicitacao(s.status)}"><h3>${esc(a?.nome||`Aluno #${s.aluno_id}`)} • ${esc(rotuloTipoSolicitacao(s.tipo))}</h3><p>${esc(s.observacao||"Sem observação.")}</p><div class="request-meta"><strong>Status:</strong> ${esc(rotuloStatusSolicitacao(s.status))}${s.professor_nome?` • <strong>Responsável:</strong> ${esc(s.professor_nome)}`:""}<br>${esc(formatarDataHora(s.created_at))}</div><div class="request-actions">${podeAssumir?`<button class="mini-action gold" onclick="assumirSolicitacao(${s.id})">Assumir solicitação</button>`:""}${podeConcluir?`<button class="mini-action" onclick="concluirSolicitacao(${s.id})">✓ Concluir</button>`:""}${a?`<button class="mini-action" onclick="abrirTreinoDaSolicitacao(${a.id})">Abrir treino</button>`:""}</div></div>`;
+    }).join("");
+}
+async function assumirSolicitacao(id){
+    if(!exigirFuncionario())return;
+    const {error}=await supabaseClient.from("solicitacoes_treino").update({status:"em_atendimento",professor_responsavel:usuarioAtual.id,professor_nome:perfilAtual.nome,assumido_em:new Date().toISOString()}).eq("id",id).eq("status","pendente");
+    if(error)return alert("Não foi possível assumir: "+error.message);
+    await carregarSolicitacoesFuncionario();renderizarSolicitacoesFuncionario();
+}
+async function concluirSolicitacao(id){
+    if(!exigirFuncionario()||!confirm("Marcar esta solicitação como concluída?"))return;
+    const {error}=await supabaseClient.from("solicitacoes_treino").update({status:"concluido",concluido_em:new Date().toISOString()}).eq("id",id);
+    if(error)return alert("Não foi possível concluir: "+error.message);
+    await carregarSolicitacoesFuncionario();renderizarSolicitacoesFuncionario();
+}
+async function abrirTreinoDaSolicitacao(alunoId){
+    await abrirTela("tela-editar-treino");
+    selecionarAlunoParaTreino(Number(alunoId));
+}
+
+/* ===== FUNCIONÁRIOS - MASTER ===== */
+async function abrirFuncionariosMaster(){
+    if(!perfilAtual||perfilAtual.cargo!=="master")return alert("Esta área é exclusiva do Master.");
+    await abrirTela("tela-funcionarios");
+    const el=document.getElementById("lista-funcionarios");el.innerHTML='<div class="empty">Carregando...</div>';
+    const {data,error}=await supabaseClient.from("perfis").select("id,nome,cargo,funcao,ativo,created_at").order("nome");
+    if(error){console.error(error);el.innerHTML='<div class="warning">Não foi possível carregar a equipe. Confira a política de leitura da tabela perfis.</div>';return}
+    funcionariosCache=data||[];
+    el.innerHTML=funcionariosCache.map(f=>`<div class="app-list-card"><div class="app-row"><div class="avatar-mini">${esc((f.nome||"?").charAt(0).toUpperCase())}</div><div class="grow"><h3>${esc(f.nome||"Funcionário")}</h3><p>${f.cargo==="master"?"Master / Gestor do app":"Professor"} • ${f.ativo===false?"Inativo":"Ativo"}</p></div></div></div>`).join("")||'<div class="empty">Nenhum funcionário encontrado.</div>';
+}
 
 document.addEventListener("DOMContentLoaded", inicializar);
 </script>
