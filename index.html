@@ -208,7 +208,14 @@ main{padding:18px 18px 92px}
     </div>
 
     <div id="home-aluno" class="hidden">
-        <div class="hero-app"><div class="eyebrow">Área do aluno</div><h2 id="saudacao-aluno">Olá 👋</h2><p>Seu treino está a poucos toques. Disciplina, foco e constância.</p></div>
+        <div class="hero-app">
+            <div class="eyebrow">Área do aluno</div>
+            <h2 id="saudacao-aluno">Olá 👋</h2>
+            <p id="data-mensagem-aluno" style="color:#fda4af;font-size:.72rem;font-weight:800;margin-bottom:6px"></p>
+            <div id="feriado-aluno" class="hidden" style="margin:7px 0 7px;padding:8px 10px;border-radius:10px;background:rgba(245,185,66,.10);border:1px solid rgba(245,185,66,.25);color:#fde68a;font-size:.70rem;font-weight:800;line-height:1.35"></div>
+            <p id="horario-hoje-aluno" style="font-size:.72rem;color:#d4d4d8;font-weight:800;margin-bottom:7px"></p>
+            <p id="mensagem-dia-aluno">Seu treino está a poucos toques. Disciplina, foco e constância.</p>
+        </div>
         <div class="quick-grid">
             <div class="quick-card" onclick="abrirTela('tela-treino')"><div class="qicon">🏋🏻</div><div><strong>Meu treino</strong><br><small>Treinos por dia da semana</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-avisos')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Novidades da academia</small></div></div>
@@ -385,6 +392,66 @@ let alunoSelecionadoId = null;
 
 let fluxoCriarSenha = false;
 
+/* ===== HOME INTELIGENTE: DATA, FERIADO, HORÁRIO E MENSAGEM ===== */
+const mensagensMorotti=[
+"Mais um dia para cuidar de você. Se hoje tem treino, a MorottiGym te espera. 💪",
+"Constância se constrói um dia de cada vez. Se hoje for dia de treino, bora!",
+"Seu ritmo também faz parte da evolução. A academia está pronta para receber você.",
+"Treino bom é o que cabe na sua rotina e mantém você em movimento.",
+"Hoje é mais uma oportunidade de continuar o que você começou.",
+"Sem pressa e sem comparação: faça o seu treino no seu ritmo.",
+"Se hoje tem treino na sua programação, faça valer cada série.",
+"A evolução mora na constância. Um treino de cada vez.",
+"Seu compromisso de hoje ajuda a construir a rotina de amanhã.",
+"Foco no que você consegue fazer hoje. A MorottiGym está com você.",
+"Treine com atenção, respeite seu ritmo e siga evoluindo.",
+"Um novo dia, uma nova chance de manter sua constância.",
+"A melhor rotina é aquela que você consegue manter.",
+"Se hoje é seu dia de treino, a MorottiGym te espera.",
+"Faça do treino um momento seu. Foco e constância.",
+"Cada treino concluído é mais um passo na sua caminhada.",
+"Movimento, atenção e constância. Faça um bom treino.",
+"Tem treino hoje? Então prepara a garrafinha e vem para a MorottiGym. 😄",
+"Treinar também é reservar um tempo para você.",
+"Continue construindo sua rotina, um dia de cada vez."
+];
+const mensagensFimDeSemana=[
+"Fim de semana também pode ter treino. Se quiser vir, a MorottiGym te espera. 💪",
+"Seu fim de semana, seu ritmo. Se hoje tem treino, bora!",
+"Sábado ou domingo, quem escolhe o ritmo é você. Se quiser treinar, estamos por aqui.",
+"Se bater vontade de treinar hoje, você já sabe onde nos encontrar. 😉",
+"Fim de semana sem obrigação: se hoje for seu dia de treino, a MorottiGym está aberta para você."
+];
+const mensagensEspeciaisMorotti={
+"01-01":"Um novo ano começou. Continue construindo sua rotina, um dia de cada vez. Feliz Ano Novo! 🎉",
+"10-01":"Outubro começou! Um novo mês, mais oportunidades para continuar evoluindo. Se hoje tem treino, a MorottiGym te espera. 💪",
+"12-25":"Feliz Natal! Aproveite o dia no seu ritmo. 🎄",
+"12-31":"Último dia do ano. Vale lembrar tudo o que você construiu e seguir no seu ritmo. ✨"
+};
+function partesDataSaoPaulo(){const ps=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date()),o={};ps.forEach(p=>{if(p.type!=="literal")o[p.type]=p.value});return o}
+function pascoaGregoriana(a){const b=a%19,c=Math.floor(a/100),d=a%100,e=Math.floor(c/4),f=c%4,g=Math.floor((c+8)/25),h=Math.floor((c-g+1)/3),i=(19*b+c-e-h+15)%30,j=Math.floor(d/4),k=d%4,l=(32+2*f+2*j-i-k)%7,m=Math.floor((b+11*i+22*l)/451),n=Math.floor((i+l-7*m+114)/31),q=((i+l-7*m+114)%31)+1;return new Date(a,n-1,q,12)}
+function adicionarDias(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
+function chaveData(d){return `${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function feriadoRibeirao(ano,chave){
+ const fixos={"01-01":"Ano Novo","01-20":"São Sebastião — Padroeiro de Ribeirão Preto","04-21":"Tiradentes","05-01":"Dia do Trabalho","06-19":"Aniversário de Ribeirão Preto","07-09":"Revolução Constitucionalista","09-07":"Independência do Brasil","10-12":"Nossa Senhora Aparecida","11-02":"Finados","11-15":"Proclamação da República","11-20":"Dia da Consciência Negra","12-25":"Natal"};
+ if(fixos[chave])return fixos[chave];
+ const p=pascoaGregoriana(ano),moveis={[chaveData(adicionarDias(p,-2))]:"Sexta-feira Santa — Paixão de Cristo",[chaveData(adicionarDias(p,60))]:"Corpus Christi"};
+ return moveis[chave]||null;
+}
+function atualizarMensagemDiariaAluno(){
+ const dEl=document.getElementById("data-mensagem-aluno"),fEl=document.getElementById("feriado-aluno"),hEl=document.getElementById("horario-hoje-aluno"),mEl=document.getElementById("mensagem-dia-aluno");if(!dEl||!fEl||!hEl||!mEl)return;
+ const p=partesDataSaoPaulo(),ano=+p.year,mes=+p.month,dia=+p.day,data=new Date(`${p.year}-${p.month}-${p.day}T12:00:00-03:00`);
+ const dias=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"],meses=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"],sem=data.getDay(),chave=`${p.month}-${p.day}`,feriado=feriadoRibeirao(ano,chave);
+ dEl.textContent=`${dias[sem]}, ${dia} de ${meses[mes-1]}`;
+ if(feriado){fEl.textContent=`🇧🇷 Feriado • ${feriado}`;fEl.classList.remove("hidden")}else{fEl.textContent="";fEl.classList.add("hidden")}
+ const horario=feriado?"09h às 12h":sem===6?"08h às 13h":sem===0?"09h às 12h":"05h às 22h";
+ hEl.textContent=`🕒 Hoje • ${horario}`;
+ if(feriado)mEl.textContent="Feriado também pode ter treino. Se quiser aproveitar o dia para se movimentar, a MorottiGym te espera!";
+ else if(mensagensEspeciaisMorotti[chave])mEl.textContent=mensagensEspeciaisMorotti[chave];
+ else{const lista=(sem===0||sem===6)?mensagensFimDeSemana:mensagensMorotti;mEl.textContent=lista[(ano*372+mes*31+dia)%lista.length]}
+}
+
+
 function abrirTelaCriarSenha() {
     fluxoCriarSenha = true;
     document.getElementById("btn-aluno").className = "toggle-btn btn-aluno-ativo";
@@ -398,6 +465,7 @@ function abrirTelaCriarSenha() {
 
 async function inicializar() {
     document.getElementById("ano-atual").textContent = new Date().getFullYear();
+    atualizarMensagemDiariaAluno();
 
     const paramsBusca = new URLSearchParams(location.search);
     const paramsHash = new URLSearchParams(location.hash.replace(/^#/, ""));
