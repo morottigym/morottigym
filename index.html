@@ -131,6 +131,27 @@ main{padding:18px 18px 92px}
 .form-grupo input,.form-grupo select,.form-grupo textarea{border-radius:12px;background:#202024;padding:13px}.exercise{border-radius:12px;background:#17171a}
 @media(min-width:640px){.bottom-nav{bottom:20px;border:1px solid #2e2e33;border-radius:0 0 24px 24px}.app-container{padding-bottom:0}}
 
+
+/* ===== DESAFIO MOROTTIGYM ===== */
+.desafio-card{margin:0 0 16px;background:linear-gradient(145deg,#261317,#19191d 62%);border:1px solid #51242b;border-radius:20px;padding:16px;box-shadow:0 14px 30px rgba(0,0,0,.18)}
+.desafio-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:13px}
+.desafio-kicker{font-size:.64rem;color:#f5b942;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.desafio-head h3{font-size:1rem;margin-top:3px}.desafio-link{border:0;background:transparent;color:#fda4af;font-size:.69rem;font-weight:900;padding:4px}
+.desafio-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.desafio-stat{background:rgba(39,39,42,.65);border:1px solid #36363c;border-radius:13px;padding:10px 7px;text-align:center}
+.desafio-stat strong{display:block;font-size:1.05rem;color:#fff}.desafio-stat span{font-size:.61rem;color:#9f9fa8}
+.checkin-btn{width:100%;border:1px solid #ef4444;background:linear-gradient(135deg,#e11d2e,#a91522);color:#fff;border-radius:14px;padding:14px 12px;font-weight:950;font-size:.82rem;letter-spacing:.035em;box-shadow:0 9px 22px rgba(225,29,46,.2)}
+.checkin-btn:disabled{opacity:.7;cursor:not-allowed}.checkin-btn.realizado{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.38);color:#86efac;box-shadow:none}
+.checkin-feedback{font-size:.68rem;color:#a1a1aa;text-align:center;margin-top:8px;line-height:1.4}
+.ranking-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}
+.ranking-tab{border:1px solid #393940;background:#202024;color:#a1a1aa;border-radius:11px;padding:10px 5px;font-size:.7rem;font-weight:900}
+.ranking-tab.ativo{background:#3b171c;border-color:#7f2631;color:#fecdd3}
+.ranking-item{display:flex;align-items:center;gap:10px;background:#1d1d21;border:1px solid #303036;border-radius:14px;padding:12px;margin-bottom:8px}
+.ranking-pos{width:34px;height:34px;border-radius:11px;background:#29292e;display:grid;place-items:center;font-weight:950;font-size:.78rem}
+.ranking-item.top1 .ranking-pos,.ranking-item.top2 .ranking-pos,.ranking-item.top3 .ranking-pos{color:#fde68a;background:#332913}
+.ranking-nome{flex:1;min-width:0;font-size:.8rem;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ranking-visitas{font-size:.72rem;color:#a1a1aa;font-weight:800}.minha-posicao{margin-top:15px;border:1px solid #55252c;background:#271519;border-radius:16px;padding:14px}
+
 </style>
 </head>
 
@@ -216,6 +237,16 @@ main{padding:18px 18px 92px}
             <p id="horario-hoje-aluno" style="font-size:.72rem;color:#d4d4d8;font-weight:800;margin-bottom:7px"></p>
             <p id="mensagem-dia-aluno">Seu treino está a poucos toques. Disciplina, foco e constância.</p>
         </div>
+        <div class="desafio-card">
+            <div class="desafio-head"><div><div class="desafio-kicker">🏆 Desafio MorottiGym</div><h3>Seu ritmo no ranking</h3></div><button class="desafio-link" type="button" onclick="abrirRanking()">Ver Top 10 →</button></div>
+            <div class="desafio-stats">
+                <div class="desafio-stat"><strong id="desafio-posicao">—</strong><span>posição no mês</span></div>
+                <div class="desafio-stat"><strong id="desafio-mes">0</strong><span>visitas no mês</span></div>
+                <div class="desafio-stat"><strong id="desafio-semana">0</strong><span>esta semana</span></div>
+            </div>
+            <button id="btn-checkin" class="checkin-btn" type="button" onclick="fazerCheckin()">📍 FAZER CHECK-IN</button>
+            <div id="checkin-feedback" class="checkin-feedback">Faça seu check-in quando estiver na MorottiGym.</div>
+        </div>
         <div class="quick-grid">
             <div class="quick-card" onclick="abrirTela('tela-treino')"><div class="qicon">🏋🏻</div><div><strong>Meu treino</strong><br><small>Treinos por dia da semana</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-avisos')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Novidades da academia</small></div></div>
@@ -241,6 +272,21 @@ main{padding:18px 18px 92px}
 <main id="tela-treino" class="hidden">
     <h2 class="section-title">Meu treino</h2>
     <div id="treino-aluno-conteudo"></div>
+    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- RANKING -->
+<main id="tela-ranking" class="hidden">
+    <div class="page-kicker">Desafio MorottiGym</div>
+    <h2 class="section-title">🏆 Ranking de visitas</h2>
+    <p class="app-subtitle">Top 10 de frequência. Cada aluno soma no máximo uma presença válida por dia.</p>
+    <div class="ranking-tabs">
+        <button id="rank-tab-semana" class="ranking-tab" onclick="carregarRanking('semana')">Semana</button>
+        <button id="rank-tab-mes" class="ranking-tab ativo" onclick="carregarRanking('mes')">Mês</button>
+        <button id="rank-tab-ano" class="ranking-tab" onclick="carregarRanking('ano')">Ano</button>
+    </div>
+    <div id="ranking-lista"><div class="empty">Carregando ranking...</div></div>
+    <div id="ranking-minha-posicao" class="minha-posicao hidden"></div>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
@@ -452,6 +498,75 @@ function atualizarMensagemDiariaAluno(){
 }
 
 
+
+let periodoRankingAtual="mes";
+
+async function carregarResumoDesafio(){
+ if(!usuarioAtual||!alunoAtual)return;
+ const [mes,semana]=await Promise.all([
+  supabaseClient.rpc("minha_posicao_ranking",{periodo:"mes"}),
+  supabaseClient.rpc("minha_posicao_ranking",{periodo:"semana"})
+ ]);
+ const m=mes.data?.[0],s=semana.data?.[0];
+ document.getElementById("desafio-posicao").textContent=m?.posicao?`#${m.posicao}`:"—";
+ document.getElementById("desafio-mes").textContent=m?.visitas??0;
+ document.getElementById("desafio-semana").textContent=s?.visitas??0;
+}
+
+async function abrirRanking(){
+ await abrirTela("tela-ranking");
+ await carregarRanking(periodoRankingAtual);
+}
+async function carregarRanking(periodo="mes"){
+ periodoRankingAtual=periodo;
+ ["semana","mes","ano"].forEach(p=>document.getElementById(`rank-tab-${p}`)?.classList.toggle("ativo",p===periodo));
+ const lista=document.getElementById("ranking-lista"),minha=document.getElementById("ranking-minha-posicao");
+ lista.innerHTML='<div class="empty">Carregando ranking...</div>';
+ const [top,eu]=await Promise.all([
+  supabaseClient.rpc("ranking_morottigym",{periodo}),
+  supabaseClient.rpc("minha_posicao_ranking",{periodo})
+ ]);
+ if(top.error){console.error(top.error);lista.innerHTML='<div class="warning">Não foi possível carregar o ranking agora.</div>';return}
+ const dados=top.data||[];
+ lista.innerHTML=dados.length?dados.map((r,i)=>`<div class="ranking-item ${i<3?`top${i+1}`:""}"><div class="ranking-pos">${i===0?"🥇":i===1?"🥈":i===2?"🥉":`#${r.posicao}`}</div><div class="ranking-nome">${esc(r.nome)}</div><div class="ranking-visitas">${r.visitas} ${Number(r.visitas)===1?"visita":"visitas"}</div></div>`).join(""):'<div class="empty">Ainda não há check-ins neste período.</div>';
+ const r=eu.data?.[0];
+ if(r){
+  const falta=r.posicao>10&&r.visitas_decimo>r.visitas?Math.max(0,Number(r.visitas_decimo)-Number(r.visitas)) : 0;
+  minha.classList.remove("hidden");
+  minha.innerHTML=`<div class="desafio-kicker">Sua posição</div><h3 style="margin:4px 0">${r.posicao?`#${r.posicao}`:"—"} • ${esc(r.nome)}</h3><p class="small">${r.visitas} ${Number(r.visitas)===1?"visita":"visitas"} neste período${falta?` • ${falta} para alcançar a pontuação atual do 10º`:""}</p>`;
+ }else minha.classList.add("hidden");
+}
+
+async function fazerCheckin(){
+ if(!usuarioAtual||!alunoAtual)return alert("Entre como aluno para fazer check-in.");
+ if(!navigator.geolocation)return alert("Seu aparelho não disponibilizou localização para o navegador.");
+ const btn=document.getElementById("btn-checkin"),feedback=document.getElementById("checkin-feedback");
+ btn.disabled=true;btn.textContent="📍 VERIFICANDO LOCALIZAÇÃO...";feedback.textContent="Aguarde enquanto confirmamos que você está na MorottiGym.";
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  try{
+   const {data:{session}}=await supabaseClient.auth.getSession();
+   if(!session?.access_token)throw new Error("Sua sessão expirou. Entre novamente.");
+   const resposta=await fetch(`${SUPABASE_URL}/functions/v1/fazer-checkin`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${session.access_token}`,"apikey":SUPABASE_PUBLISHABLE_KEY},
+    body:JSON.stringify({latitude:pos.coords.latitude,longitude:pos.coords.longitude,precisao:pos.coords.accuracy})
+   });
+   const resultado=await resposta.json().catch(()=>({}));
+   if(resultado.ok){
+    btn.classList.add("realizado");btn.textContent="✅ CHECK-IN REALIZADO";feedback.textContent="Presença registrada. Seu ranking foi atualizado!";
+    await carregarResumoDesafio();
+   }else if(resultado.codigo==="JA_REALIZADO"){
+    btn.classList.add("realizado");btn.textContent="✅ CHECK-IN DE HOJE REALIZADO";feedback.textContent=resultado.mensagem||"Seu check-in de hoje já foi realizado.";
+   }else{
+    btn.classList.remove("realizado");btn.textContent="📍 FAZER CHECK-IN";feedback.textContent=resultado.mensagem||"Não foi possível realizar o check-in.";btn.disabled=false;
+   }
+  }catch(e){console.error(e);btn.classList.remove("realizado");btn.textContent="📍 FAZER CHECK-IN";feedback.textContent=e.message||"Erro ao realizar check-in.";btn.disabled=false}
+ },erro=>{
+  btn.disabled=false;btn.classList.remove("realizado");btn.textContent="📍 FAZER CHECK-IN";
+  feedback.textContent=erro.code===1?"Permita o acesso à localização para fazer check-in.":"Não conseguimos confirmar sua localização. Tente novamente.";
+ },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+}
+
 function abrirTelaCriarSenha() {
     fluxoCriarSenha = true;
     document.getElementById("btn-aluno").className = "toggle-btn btn-aluno-ativo";
@@ -651,6 +766,7 @@ async function atualizarTelasAluno() {
     treinosCache=error?[]:(treinos||[]);
     renderizarPerfil(); renderizarTreinoAluno();
     await carregarFotoAluno();
+    await carregarResumoDesafio();
 }
 
 async function fazerLogin(evento) {
