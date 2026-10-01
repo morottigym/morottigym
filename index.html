@@ -153,6 +153,21 @@ main{padding:18px 18px 92px}
 .ranking-visitas{font-size:.72rem;color:#a1a1aa;font-weight:800}.minha-posicao{margin-top:15px;border:1px solid #55252c;background:#271519;border-radius:16px;padding:14px}
 
 </style>
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MorottiGym">
+
+
+<style>
+.install-app-card{margin:14px 0 0;background:#1d1d21;border:1px solid #36363c;border-radius:16px;padding:14px;display:none}
+.install-app-card.show{display:block}.install-app-card strong{font-size:.86rem}.install-app-card p{font-size:.69rem;color:#a1a1aa;line-height:1.4;margin:4px 0 10px}
+.install-app-btn{width:100%;border:1px solid #5a4720;background:#332913;color:#fde68a;border-radius:12px;padding:11px;font-size:.72rem;font-weight:900}
+</style>
+
 </head>
 
 <body>
@@ -246,6 +261,11 @@ main{padding:18px 18px 92px}
             </div>
             <button id="btn-checkin" class="checkin-btn" type="button" onclick="fazerCheckin()">📍 FAZER CHECK-IN</button>
             <div id="checkin-feedback" class="checkin-feedback">Faça seu check-in quando estiver na MorottiGym.</div>
+        </div>
+        <div id="install-app-card" class="install-app-card">
+            <strong>📲 Instale o MorottiGym</strong>
+            <p>Adicione o app à tela inicial do celular para abrir com um toque.</p>
+            <button id="btn-instalar-app" class="install-app-btn" type="button" onclick="instalarMorottiGym()">Adicionar à tela inicial</button>
         </div>
         <div class="quick-grid">
             <div class="quick-card" onclick="abrirTela('tela-treino')"><div class="qicon">🏋🏻</div><div><strong>Meu treino</strong><br><small>Treinos por dia da semana</small></div></div>
@@ -1123,6 +1143,41 @@ atualizarTelas=async function(){await _atualizarTelasOriginal();renderizarSeleto
 
 
 document.addEventListener("DOMContentLoaded", inicializar);
+</script>
+
+
+<script>
+let eventoInstalacaoMorotti=null;
+
+window.addEventListener("beforeinstallprompt",(e)=>{
+  e.preventDefault();
+  eventoInstalacaoMorotti=e;
+  document.getElementById("install-app-card")?.classList.add("show");
+});
+
+async function instalarMorottiGym(){
+  if(eventoInstalacaoMorotti){
+    eventoInstalacaoMorotti.prompt();
+    await eventoInstalacaoMorotti.userChoice;
+    eventoInstalacaoMorotti=null;
+    document.getElementById("install-app-card")?.classList.remove("show");
+    return;
+  }
+  const iphone=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(iphone){
+    alert("No iPhone: toque no botão Compartilhar do Safari e escolha “Adicionar à Tela de Início”.");
+  }else{
+    alert("Abra o menu do navegador e escolha “Instalar app” ou “Adicionar à tela inicial”.");
+  }
+}
+
+window.addEventListener("appinstalled",()=>{
+  document.getElementById("install-app-card")?.classList.remove("show");
+});
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(console.error));
+}
 </script>
 
 </body>
