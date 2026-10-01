@@ -1295,7 +1295,9 @@ async function carregarSolicitacoesAluno(){
     const el=document.getElementById("lista-solicitacoes-aluno");if(el)el.innerHTML='<div class="empty">Carregando...</div>';
     const {data,error}=await supabaseClient.from("solicitacoes_treino")
       .select("id,aluno_id,tipo,observacao,status,professor_responsavel,professor_nome,created_at,assumido_em,concluido_em")
-      .eq("aluno_id",alunoAtual.id).order("created_at",{ascending:false});
+      .eq("aluno_id",alunoAtual.id)
+      .in("status",["pendente","em_atendimento"])
+      .order("created_at",{ascending:false});
     if(error){console.error(error);if(el)el.innerHTML='<div class="warning">Não foi possível carregar suas solicitações.</div>';return}
     solicitacoesCache=data||[];
     renderizarSolicitacoesAluno();
@@ -1310,7 +1312,25 @@ async function enviarSolicitacaoTreino(evento){
     if(!usuarioAtual||!alunoAtual)return alert("Entre como aluno para enviar uma solicitação.");
     const tipo=document.getElementById("solicitacao-tipo").value;
     const observacao=document.getElementById("solicitacao-observacao").value.trim();
-    const btn=evento.submitter;btn.disabled=true;btn.textContent="Enviando...";
+    const btn=evento.submitter;btn.disabled=true;btn.textContent="Verificando...";
+
+    const {data:abertas,error:erroConsulta}=await supabaseClient.from("solicitacoes_treino")
+      .select("id,status")
+      .eq("aluno_id",alunoAtual.id)
+      .in("status",["pendente","em_atendimento"])
+      .limit(1);
+
+    if(erroConsulta){
+        btn.disabled=false;btn.textContent="📩 Enviar solicitação";
+        return alert("Não foi possível verificar suas solicitações: "+erroConsulta.message);
+    }
+    if(abertas&&abertas.length){
+        btn.disabled=false;btn.textContent="📩 Enviar solicitação";
+        await carregarSolicitacoesAluno();
+        return alert("Você já possui uma solicitação em aberto. Aguarde o atendimento do professor antes de enviar outra.");
+    }
+
+    btn.textContent="Enviando...";
     const {error}=await supabaseClient.from("solicitacoes_treino").insert({aluno_id:alunoAtual.id,tipo,observacao,status:"pendente"});
     btn.disabled=false;btn.textContent="📩 Enviar solicitação";
     if(error)return alert("Não foi possível enviar: "+error.message);
@@ -1326,12 +1346,13 @@ async function carregarSolicitacoesFuncionario(){
     if(!perfilAtual)return;
     const {data,error}=await supabaseClient.from("solicitacoes_treino")
       .select("id,aluno_id,tipo,observacao,status,professor_responsavel,professor_nome,created_at,assumido_em,concluido_em")
+      .in("status",["pendente","em_atendimento"])
       .order("created_at",{ascending:false});
     if(error){console.error(error);solicitacoesCache=[];return}
     solicitacoesCache=data||[];
-    const pendentes=solicitacoesCache.filter(s=>s.status==="pendente").length;
+    const abertas=solicitacoesCache.length;
     const badge=document.getElementById("contador-solicitacoes");
-    if(badge){badge.textContent=pendentes;badge.classList.toggle("hidden",pendentes===0)}
+    if(badge){badge.textContent=abertas;badge.classList.toggle("hidden",abertas===0)}
 }
 function renderizarSolicitacoesFuncionario(){
     const el=document.getElementById("lista-solicitacoes-funcionario");if(!el)return;
