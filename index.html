@@ -152,6 +152,23 @@ main{padding:18px 18px 92px}
 .ranking-nome{flex:1;min-width:0;font-size:.8rem;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ranking-visitas{font-size:.72rem;color:#a1a1aa;font-weight:800}.minha-posicao{margin-top:15px;border:1px solid #55252c;background:#271519;border-radius:16px;padding:14px}
 
+
+/* ===== HOME PÚBLICA / ACESSO RÁPIDO ===== */
+.public-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.public-badge{font-size:.64rem;color:#fda4af;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.public-login-btn{border:1px solid #ef4444;background:#e11d2e;color:#fff;border-radius:11px;padding:10px 14px;font-size:.72rem;font-weight:950}
+.public-info{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0 16px}
+.public-info-card{background:#1d1d21;border:1px solid #303036;border-radius:15px;padding:12px}
+.public-info-card small{display:block;color:#8f8f98;font-size:.62rem;margin-bottom:4px}
+.public-info-card strong{font-size:.78rem;line-height:1.35}
+.public-challenge{background:linear-gradient(145deg,#261317,#19191d);border:1px solid #51242b;border-radius:18px;padding:15px;margin-bottom:12px}
+.public-challenge h3{font-size:.92rem;margin:4px 0 5px}.public-challenge p{font-size:.73rem;color:#b7b7bf;line-height:1.45}
+.public-member{background:#1d1d21;border:1px solid #34343a;border-radius:18px;padding:15px;margin-bottom:12px}
+.public-member h3{font-size:.9rem;margin-bottom:5px}.public-member p{font-size:.73rem;color:#a1a1aa;line-height:1.5}
+.public-actions{display:grid;gap:9px}.public-actions .btn-acao{margin:0}
+.login-card{background:#1d1d21;border:1px solid #303036;border-radius:20px;padding:17px;margin-top:12px}
+.login-switch{margin-top:14px;text-align:center}.login-switch button{border:0;background:transparent;color:#f5b942;font-size:.72rem;font-weight:900;padding:8px}
+
 </style>
 
 <link rel="manifest" href="manifest.json">
@@ -185,18 +202,19 @@ main{padding:18px 18px 92px}
 
 <!-- LOGIN DE ALUNO -->
 <main id="tela-login-aluno" class="hidden">
-    <h2 class="section-title">Acesso do aluno</h2>
-    <p class="text-destaque">Entre com o e-mail cadastrado na academia e sua senha.</p>
-    <form id="form-login-aluno" onsubmit="fazerLoginAluno(event)">
-        <div class="form-grupo"><label for="login-aluno-email">E-mail</label><input id="login-aluno-email" type="email" autocomplete="username" required></div>
-        <div class="form-grupo"><label for="login-aluno-senha">Senha</label><input id="login-aluno-senha" type="password" autocomplete="current-password" required></div>
-        <button class="btn-acao sucesso" type="submit">🔐 Entrar como aluno</button>
-    </form>
-    <div class="primeiro-acesso">
-        <p class="small">Primeiro acesso ou esqueceu sua senha?</p>
-        <button class="btn-acao" type="button" onclick="abrirRecuperarSenha()">📧 Criar / redefinir minha senha</button>
+    <div class="page-kicker">Acesso MorottiGym</div>
+    <h2 class="section-title">Entrar no app</h2>
+    <p class="app-subtitle">Use o e-mail e a senha cadastrados pela equipe da MorottiGym.</p>
+    <div class="login-card">
+        <form id="form-login-aluno" onsubmit="fazerLoginAluno(event)">
+            <div class="form-grupo"><label for="login-aluno-email">E-mail</label><input id="login-aluno-email" type="email" autocomplete="username" placeholder="seu e-mail" required></div>
+            <div class="form-grupo"><label for="login-aluno-senha">Senha</label><input id="login-aluno-senha" type="password" autocomplete="current-password" placeholder="Sua senha" required></div>
+            <button class="btn-acao sucesso" type="submit">🔐 ENTRAR</button>
+        </form>
+        <button class="btn-acao" type="button" onclick="abrirRecuperarSenha()">Esqueci / quero criar minha senha</button>
+        <div class="login-switch"><button type="button" onclick="mudarAcesso('funcionario')">Sou funcionário →</button></div>
     </div>
-    <button class="btn-voltar" type="button" onclick="voltarParaMenu()">⬅️ Voltar</button>
+    <button class="btn-voltar" type="button" onclick="voltarParaMenu()">← Voltar para o início</button>
 </main>
 
 <!-- SOLICITAR LINK PARA CRIAR/REDEFINIR SENHA -->
@@ -236,10 +254,28 @@ main{padding:18px 18px 92px}
 <!-- HOME / MENU DO APP -->
 <main id="tela-menu">
     <div id="home-visitante">
-        <div class="hero-app"><div class="eyebrow">MorottiGym App</div><h2>Seu treino. Sua evolução.</h2><p>Entre como aluno para acessar seus treinos ou como funcionário para gerenciar a academia.</p></div>
-        <div class="quick-grid">
-            <div class="quick-card" onclick="mudarAcesso('aluno')"><div class="qicon">👤</div><div><strong>Área do aluno</strong><br><small>Treinos, avisos e perfil</small></div></div>
-            <div class="quick-card gold" onclick="mudarAcesso('funcionario')"><div class="qicon">⚡</div><div><strong>Funcionário</strong><br><small>Painel de gestão</small></div></div>
+        <div class="public-top"><div><div class="public-badge">MorottiGym App</div><strong>Bem-vindo à MorottiGym</strong></div><button class="public-login-btn" type="button" onclick="abrirLoginPublico()">ENTRAR</button></div>
+        <div class="hero-app">
+            <div class="eyebrow">MorottiGym</div>
+            <h2 id="saudacao-visitante">Olá 👋</h2>
+            <p id="data-visitante" style="color:#fda4af;font-size:.72rem;font-weight:800;margin-bottom:6px"></p>
+            <div id="feriado-visitante" class="hidden" style="margin:7px 0;padding:8px 10px;border-radius:10px;background:rgba(245,185,66,.10);border:1px solid rgba(245,185,66,.25);color:#fde68a;font-size:.70rem;font-weight:800"></div>
+            <p id="horario-visitante" style="font-size:.72rem;color:#d4d4d8;font-weight:800;margin-bottom:7px"></p>
+            <p id="mensagem-visitante">Conheça a experiência MorottiGym.</p>
+        </div>
+        <div class="public-info">
+            <div class="public-info-card"><small>HOJE</small><strong id="resumo-dia-visitante">Horário da unidade</strong></div>
+            <div class="public-info-card"><small>ACESSO</small><strong>Treinos e conteúdos no app</strong></div>
+        </div>
+        <div class="public-challenge"><div class="desafio-kicker">🏆 Desafio MorottiGym</div><h3>Presença que vira desafio</h3><p>Alunos cadastrados fazem check-in na unidade e acompanham suas visitas e posições nos rankings semanal, mensal e anual.</p></div>
+        <div class="public-member"><h3>🏋️ Já treina na MorottiGym?</h3><p>Procure um professor da unidade e faça seu cadastro no app para acessar seus <strong>treinos, check-ins, ranking e conteúdos exclusivos</strong>.</p></div>
+        <div class="public-actions">
+            <button class="btn-acao sucesso" type="button" onclick="abrirLoginPublico()">🔐 JÁ SOU ALUNO — ENTRAR</button>
+            <button class="btn-acao" type="button" onclick="window.open('https://api.whatsapp.com/send?phone=5516992239393','_blank')">💬 QUERO CONHECER A MOROTTIGYM</button>
+        </div>
+        <div id="install-app-card-visitante" class="install-app-card">
+            <strong>📲 Instale o MorottiGym</strong><p>Adicione o app à tela inicial do celular para abrir com um toque.</p>
+            <button class="install-app-btn" type="button" onclick="instalarMorottiGym()">Adicionar à tela inicial</button>
         </div>
     </div>
 
@@ -283,6 +319,10 @@ main{padding:18px 18px 92px}
             <div class="quick-card gold" onclick="abrirTela('tela-editar-treino')"><div class="qicon">🏋️</div><div><strong>Treinos</strong><br><small>Selecionar aluno e editar</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-cadastrar-aluno')"><div class="qicon">➕</div><div><strong>Novo aluno</strong><br><small>Cadastro rápido</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-publicar-aviso')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Publicar comunicado</small></div></div>
+        </div>
+        <div id="install-app-card-funcionario" class="install-app-card">
+            <strong>📲 Instale o MorottiGym</strong><p>Tenha o painel da academia direto na tela inicial do celular.</p>
+            <button class="install-app-btn" type="button" onclick="instalarMorottiGym()">Adicionar à tela inicial</button>
         </div>
         <div id="area-funcionario" class="admin-section"><div id="funcionario-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
     </div>
@@ -601,6 +641,7 @@ function abrirTelaCriarSenha() {
 async function inicializar() {
     document.getElementById("ano-atual").textContent = new Date().getFullYear();
     atualizarMensagemDiariaAluno();
+    atualizarHomeVisitante();
 
     const paramsBusca = new URLSearchParams(location.search);
     const paramsHash = new URLSearchParams(location.hash.replace(/^#/, ""));
@@ -1076,8 +1117,29 @@ function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt
 
 
 
+
+/* ===== HOME PÚBLICA ===== */
+function abrirLoginPublico(){
+    esconderTelas();
+    document.getElementById("tela-login-aluno")?.classList.remove("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+function atualizarHomeVisitante(){
+    const h=new Date().getHours(), saud=h<12?"Bom dia":h<18?"Boa tarde":"Boa noite";
+    const s=document.getElementById("saudacao-visitante");if(s)s.textContent=`${saud} 👋`;
+    const p=partesDataSaoPaulo(),ano=+p.year,mes=+p.month,dia=+p.day,data=new Date(`${p.year}-${p.month}-${p.day}T12:00:00-03:00`);
+    const dias=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"],meses=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"],sem=data.getDay(),chave=`${p.month}-${p.day}`,feriado=feriadoRibeirao(ano,chave);
+    const horario=feriado?"09h às 12h":sem===6?"08h às 13h":sem===0?"09h às 12h":"05h às 22h";
+    const d=document.getElementById("data-visitante");if(d)d.textContent=`${dias[sem]}, ${dia} de ${meses[mes-1]}`;
+    const f=document.getElementById("feriado-visitante");if(f){if(feriado){f.textContent=`🇧🇷 Feriado • ${feriado}`;f.classList.remove("hidden")}else f.classList.add("hidden")}
+    const he=document.getElementById("horario-visitante");if(he)he.textContent=`🕒 Hoje • ${horario}`;
+    const r=document.getElementById("resumo-dia-visitante");if(r)r.textContent=horario;
+    const m=document.getElementById("mensagem-visitante");if(m){const lista=(sem===0||sem===6)?mensagensFimDeSemana:mensagensMorotti;m.textContent=feriado?"Feriado também pode ter treino. A MorottiGym está por aqui!":(mensagensEspeciaisMorotti[chave]||lista[(ano*372+mes*31+dia)%lista.length]);}
+}
+
 /* ===== NAVEGAÇÃO E GESTÃO DE TREINOS 2.0 ===== */
 function atualizarHomeApp(){
+    atualizarHomeVisitante();
     const visitante=document.getElementById('home-visitante'), ha=document.getElementById('home-aluno'), hf=document.getElementById('home-funcionario'), nav=document.getElementById('bottom-nav');
     if(visitante) visitante.classList.toggle('hidden',!!usuarioAtual);
     if(ha) ha.classList.toggle('hidden',!(usuarioAtual&&alunoAtual));
@@ -1115,10 +1177,18 @@ function renderizarSeletorAlunosTreino(lista=alunosCache){
     el.innerHTML=[...lista].sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR')).map(a=>`<div class="app-list-card" onclick="selecionarAlunoParaTreino(${a.id})"><div class="app-row"><div class="avatar-mini">${esc((a.nome||'?').charAt(0).toUpperCase())}</div><div class="grow"><h3>${esc(a.nome)}</h3><p>${esc(a.email||'Sem e-mail')}</p></div><strong>›</strong></div></div>`).join('');
 }
 function filtrarAlunosTreino(){const q=(document.getElementById('busca-aluno-treino')?.value||'').trim().toLowerCase();renderizarSeletorAlunosTreino(alunosCache.filter(a=>String(a.nome||'').toLowerCase().includes(q)));}
-function selecionarAlunoParaTreino(id){
-    alunoSelecionadoId=Number(id);const a=alunosCache.find(x=>x.id===alunoSelecionadoId);if(!a)return;
-    document.getElementById('seletor-alunos-treino').classList.add('hidden');document.getElementById('busca-aluno-treino').classList.add('hidden');document.getElementById('gestao-treino-aluno').classList.remove('hidden');
-    document.getElementById('nome-aluno-treino').textContent=a.nome;document.getElementById('treino-aluno').value=a.id;fecharFormularioTreino();renderizarTreinosAdmin();window.scrollTo({top:0,behavior:'smooth'});
+async function selecionarAlunoParaTreino(id){
+    alunoSelecionadoId=Number(id);
+    let a=alunosCache.find(x=>Number(x.id)===alunoSelecionadoId);
+    if(!a)return alert("Aluno não encontrado.");
+    document.getElementById('seletor-alunos-treino')?.classList.add('hidden');
+    document.getElementById('busca-aluno-treino')?.classList.add('hidden');
+    document.getElementById('gestao-treino-aluno')?.classList.remove('hidden');
+    document.getElementById('nome-aluno-treino').textContent=a.nome;
+    document.getElementById('treino-aluno').value=a.id;
+    fecharFormularioTreino();
+    renderizarTreinosAdmin();
+    window.scrollTo({top:0,behavior:'smooth'});
 }
 function trocarAlunoTreino(){alunoSelecionadoId=null;document.getElementById('gestao-treino-aluno').classList.add('hidden');document.getElementById('seletor-alunos-treino').classList.remove('hidden');document.getElementById('busca-aluno-treino').classList.remove('hidden');document.getElementById('busca-aluno-treino').value='';renderizarSeletorAlunosTreino();window.scrollTo({top:0,behavior:'smooth'});}
 function abrirFormularioNovoTreino(){if(!alunoSelecionadoId)return;document.getElementById('form-treino').reset();document.getElementById('treino-aluno').value=alunoSelecionadoId;document.getElementById('formulario-treino-wrap').classList.remove('hidden');}
@@ -1139,7 +1209,16 @@ renderizarTreinosAdmin=function(){
 }
 
 const _atualizarTelasOriginal=atualizarTelas;
-atualizarTelas=async function(){await _atualizarTelasOriginal();renderizarSeletorAlunosTreino();if(alunoSelecionadoId&&document.getElementById('gestao-treino-aluno')&&!document.getElementById('gestao-treino-aluno').classList.contains('hidden'))renderizarTreinosAdmin();}
+atualizarTelas=async function(){
+    await _atualizarTelasOriginal();
+    renderizarSeletorAlunosTreino();
+    if(alunoSelecionadoId){
+        const selecionado=alunosCache.find(x=>Number(x.id)===Number(alunoSelecionadoId));
+        const nome=document.getElementById('nome-aluno-treino');
+        if(selecionado&&nome)nome.textContent=selecionado.nome;
+        if(document.getElementById('gestao-treino-aluno')&&!document.getElementById('gestao-treino-aluno').classList.contains('hidden'))renderizarTreinosAdmin();
+    }
+}
 
 
 document.addEventListener("DOMContentLoaded", inicializar);
@@ -1152,7 +1231,7 @@ let eventoInstalacaoMorotti=null;
 window.addEventListener("beforeinstallprompt",(e)=>{
   e.preventDefault();
   eventoInstalacaoMorotti=e;
-  document.getElementById("install-app-card")?.classList.add("show");
+  ["install-app-card","install-app-card-visitante","install-app-card-funcionario"].forEach(id=>document.getElementById(id)?.classList.add("show"));
 });
 
 async function instalarMorottiGym(){
@@ -1160,7 +1239,7 @@ async function instalarMorottiGym(){
     eventoInstalacaoMorotti.prompt();
     await eventoInstalacaoMorotti.userChoice;
     eventoInstalacaoMorotti=null;
-    document.getElementById("install-app-card")?.classList.remove("show");
+    ["install-app-card","install-app-card-visitante","install-app-card-funcionario"].forEach(id=>document.getElementById(id)?.classList.remove("show"));
     return;
   }
   const iphone=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -1172,7 +1251,7 @@ async function instalarMorottiGym(){
 }
 
 window.addEventListener("appinstalled",()=>{
-  document.getElementById("install-app-card")?.classList.remove("show");
+  ["install-app-card","install-app-card-visitante","install-app-card-funcionario"].forEach(id=>document.getElementById(id)?.classList.remove("show"));
 });
 
 if("serviceWorker" in navigator){
