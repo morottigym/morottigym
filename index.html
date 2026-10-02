@@ -540,6 +540,47 @@ const SUPABASE_URL = "https://xziylolnwtetnhhieqjg.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_QYc7mVu3qDvbyC7RJiQeFQ_01-PrlGf";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
+/* ===== SUPABASE 2 — BIBLIOTECA DE EXERCÍCIOS =====
+   Esta conexão é separada da Supabase principal acima.
+   Por enquanto ela é usada somente para testar a leitura da biblioteca.
+*/
+const BIBLIOTECA_SUPABASE_URL = "https://yccrdossyirfbgioxmwo.supabase.co";
+const BIBLIOTECA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_d0M1Zjejs5l5KVfl0OW5Ng_qlu_EPnt";
+const bibliotecaClient = supabase.createClient(
+    BIBLIOTECA_SUPABASE_URL,
+    BIBLIOTECA_SUPABASE_PUBLISHABLE_KEY,
+    {
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false,
+            storageKey: "morottigym-biblioteca"
+        }
+    }
+);
+
+/* Teste silencioso: não altera nenhuma tela nem os treinos atuais.
+   O resultado aparece apenas no Console do navegador (F12). */
+async function testarConexaoBiblioteca(){
+    try{
+        const [exercicios, maquinas] = await Promise.all([
+            bibliotecaClient.from("exercicios").select("id", { count: "exact", head: true }),
+            bibliotecaClient.from("maquinas").select("id", { count: "exact", head: true })
+        ]);
+
+        if(exercicios.error) throw exercicios.error;
+        if(maquinas.error) throw maquinas.error;
+
+        console.log(
+            `[MorottiGym] Biblioteca conectada: ${exercicios.count ?? 0} exercícios e ${maquinas.count ?? 0} máquinas.`
+        );
+    }catch(erro){
+        console.error("[MorottiGym] Erro ao conectar à Biblioteca de Exercícios:", erro);
+    }
+}
+
+window.addEventListener("load", testarConexaoBiblioteca);
+
 let usuarioAtual = null;
 let perfilAtual = null;
 let alunoAtual = null;
