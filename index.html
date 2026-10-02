@@ -193,6 +193,28 @@ main{padding:18px 18px 92px}
 .responsavel-treino{font-size:.68rem;color:#f5b942;margin-top:6px;font-weight:800}
 .master-only.hidden{display:none!important}
 
+
+.grupos-rapidos{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.grupos-rapidos::-webkit-scrollbar{display:none}
+.grupo-chip{flex:0 0 auto;border:1px solid #3a3a40;background:#202024;color:#c4c4c9;border-radius:999px;padding:9px 12px;font-size:.7rem;font-weight:900}
+.grupo-chip.ativo{background:#e11d2e;border-color:#ef4444;color:#fff}
+.biblioteca-acoes-topo{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 14px}
+.biblioteca-acoes-topo .btn-acao{margin:0}
+.exercicio-biblioteca-card{cursor:pointer}
+.exercicio-biblioteca-card:active{transform:scale(.99)}
+.exercicio-biblioteca-acoes{display:flex;gap:7px;margin-top:11px}
+.exercicio-biblioteca-acoes button{flex:1}
+.form-biblioteca{background:#1d1d21;border:1px solid #303036;border-radius:18px;padding:15px;margin:12px 0}
+.form-biblioteca h3{font-size:.95rem;margin-bottom:5px}
+.form-biblioteca .form-help{font-size:.68rem;color:#8f8f98;line-height:1.45;margin-bottom:13px}
+.media-preview{display:grid;grid-template-columns:88px 1fr;gap:10px;align-items:center;background:#18181b;border:1px solid #303036;border-radius:13px;padding:10px;margin:8px 0 13px}
+.media-preview img{width:88px;height:88px;border-radius:11px;object-fit:cover;background:#27272a}
+.media-preview p{font-size:.68rem;color:#a1a1aa;line-height:1.4}
+.video-link-btn{display:inline-flex;margin-top:8px;border:1px solid #3a3a40;background:#29292e;color:#fff;border-radius:9px;padding:7px 9px;font-size:.67rem;font-weight:800}
+.biblioteca-secao-maquinas{margin-top:14px;padding-top:14px;border-top:1px solid #303036}
+.maquina-sugestao{font-size:.68rem;color:#f5b942;margin-top:7px;line-height:1.4}
+.upload-status{font-size:.68rem;color:#a1a1aa;margin-top:6px;line-height:1.4}
+
 /* ===== BIBLIOTECA DE EXERCÍCIOS ===== */
 .biblioteca-toolbar{display:grid;gap:9px;margin:14px 0}
 .biblioteca-filtros{display:grid;grid-template-columns:1fr 1fr;gap:9px}
@@ -461,12 +483,30 @@ main{padding:18px 18px 92px}
 <main id="tela-biblioteca-exercicios" class="hidden">
     <div class="page-kicker">Painel do professor</div>
     <h2 class="section-title">Biblioteca de Exercícios</h2>
-    <p class="app-subtitle">Consulte os exercícios cadastrados e veja em qual aparelho cada um é realizado.</p>
+    <p class="app-subtitle">Encontre rapidamente por grupo muscular, máquina ou nome. Toque em um exercício para editar.</p>
+
+    <div class="biblioteca-acoes-topo">
+        <button class="btn-acao sucesso" type="button" onclick="abrirNovoExercicio()">➕ Novo exercício</button>
+        <button class="btn-acao ouro" type="button" onclick="mostrarListaMaquinas()">🏷️ Máquinas 01–37</button>
+    </div>
+
+    <div id="grupos-rapidos-biblioteca" class="grupos-rapidos">
+        <button class="grupo-chip ativo" type="button" data-grupo="todos" onclick="selecionarGrupoRapido('todos',this)">Todos</button>
+        <button class="grupo-chip" type="button" data-grupo="peito" onclick="selecionarGrupoRapido('peito',this)">Peito</button>
+        <button class="grupo-chip" type="button" data-grupo="costas" onclick="selecionarGrupoRapido('costas',this)">Costas</button>
+        <button class="grupo-chip" type="button" data-grupo="ombros" onclick="selecionarGrupoRapido('ombros',this)">Ombros</button>
+        <button class="grupo-chip" type="button" data-grupo="biceps" onclick="selecionarGrupoRapido('biceps',this)">Bíceps</button>
+        <button class="grupo-chip" type="button" data-grupo="triceps" onclick="selecionarGrupoRapido('triceps',this)">Tríceps</button>
+        <button class="grupo-chip" type="button" data-grupo="pernas" onclick="selecionarGrupoRapido('pernas',this)">Pernas</button>
+        <button class="grupo-chip" type="button" data-grupo="gluteos" onclick="selecionarGrupoRapido('gluteos',this)">Glúteos</button>
+        <button class="grupo-chip" type="button" data-grupo="panturrilhas" onclick="selecionarGrupoRapido('panturrilhas',this)">Panturrilhas</button>
+        <button class="grupo-chip" type="button" data-grupo="core" onclick="selecionarGrupoRapido('core',this)">Core</button>
+    </div>
 
     <div class="biblioteca-toolbar">
-        <input id="busca-biblioteca" class="search-box" style="margin:0" type="search" placeholder="🔎 Buscar exercício..." oninput="filtrarBibliotecaExercicios()">
+        <input id="busca-biblioteca" class="search-box" style="margin:0" type="search" placeholder="🔎 Buscar exercício ou máquina..." oninput="filtrarBibliotecaExercicios()">
         <div class="biblioteca-filtros">
-            <select id="filtro-grupo-biblioteca" onchange="filtrarBibliotecaExercicios()">
+            <select id="filtro-grupo-biblioteca" onchange="sincronizarFiltroGrupo();filtrarBibliotecaExercicios()">
                 <option value="">Todos os grupos</option>
             </select>
             <select id="filtro-maquina-biblioteca" onchange="filtrarBibliotecaExercicios()">
@@ -477,6 +517,77 @@ main{padding:18px 18px 92px}
 
     <div id="resumo-biblioteca" class="biblioteca-resumo">Carregando biblioteca...</div>
     <div id="lista-biblioteca-exercicios"><div class="empty">Carregando exercícios...</div></div>
+
+    <div id="form-exercicio-biblioteca-wrap" class="form-biblioteca hidden">
+        <h3 id="titulo-form-exercicio">Novo exercício</h3>
+        <p class="form-help">Cadastre ou altere o exercício. Miniatura e vídeo são opcionais e podem ser trocados depois.</p>
+        <form id="form-exercicio-biblioteca" onsubmit="salvarExercicioBiblioteca(event)">
+            <input id="biblioteca-exercicio-id" type="hidden">
+
+            <div class="form-grupo">
+                <label for="biblioteca-exercicio-nome">Nome do exercício</label>
+                <input id="biblioteca-exercicio-nome" required placeholder="Ex.: Supino Hammer Reto">
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-exercicio-grupo">Grupo muscular</label>
+                <select id="biblioteca-exercicio-grupo" required></select>
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-exercicio-maquina">Máquina / aparelho</label>
+                <select id="biblioteca-exercicio-maquina">
+                    <option value="">Sem máquina numerada</option>
+                </select>
+                <div id="sugestao-maquina-exercicio" class="maquina-sugestao"></div>
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-miniatura-arquivo">Miniatura</label>
+                <input id="biblioteca-miniatura-arquivo" type="file" accept="image/*">
+                <input id="biblioteca-miniatura-url" type="url" placeholder="Ou cole a URL de uma imagem">
+                <div class="upload-status">Você pode enviar uma imagem do aparelho/exercício ou colar uma URL.</div>
+            </div>
+
+            <div id="preview-miniatura-wrap" class="media-preview hidden">
+                <img id="preview-miniatura" alt="Prévia da miniatura">
+                <p>Prévia da miniatura atual. Ao enviar outra imagem, ela substituirá esta referência no exercício.</p>
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-video-arquivo">Vídeo da MorottiGym</label>
+                <input id="biblioteca-video-arquivo" type="file" accept="video/mp4,video/webm,video/quicktime">
+                <div class="upload-status">Use seus próprios vídeos quando tiver. Para vídeos maiores, o envio pode levar alguns segundos.</div>
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-video-url">Vídeo por link</label>
+                <input id="biblioteca-video-url" type="url" placeholder="YouTube, Shorts ou outro link público">
+                <div class="upload-status">Também aceita um vídeo público de demonstração. Depois você pode trocar pelo vídeo da MorottiGym.</div>
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-execucao">Execução simples</label>
+                <textarea id="biblioteca-execucao" placeholder="Orientação curta para execução do movimento."></textarea>
+            </div>
+
+            <div class="form-grupo">
+                <label for="biblioteca-cuidados">Cuidados / observações</label>
+                <textarea id="biblioteca-cuidados" placeholder="Observações do professor, ajustes ou cuidados."></textarea>
+            </div>
+
+            <button id="btn-salvar-exercicio-biblioteca" class="btn-acao sucesso" type="submit">💾 Salvar exercício</button>
+            <button class="btn-acao" type="button" onclick="fecharFormExercicioBiblioteca()">Cancelar</button>
+        </form>
+    </div>
+
+    <div id="lista-maquinas-biblioteca" class="form-biblioteca hidden">
+        <h3>Máquinas e aparelhos</h3>
+        <p class="form-help">Numeração provisória da MorottiGym. Um mesmo aparelho pode ter vários exercícios.</p>
+        <div id="conteudo-lista-maquinas"></div>
+        <button class="btn-acao" type="button" onclick="document.getElementById('lista-maquinas-biblioteca').classList.add('hidden')">Fechar</button>
+    </div>
+
     <button class="btn-voltar" type="button" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
@@ -1258,134 +1369,314 @@ function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt
 let bibliotecaExerciciosCache = [];
 let bibliotecaGruposCache = [];
 let bibliotecaMaquinasCache = [];
+let grupoRapidoBiblioteca = "todos";
+
+const gruposRapidosBiblioteca = {
+    todos: [],
+    peito: ["Peito"],
+    costas: ["Costas"],
+    ombros: ["Ombros"],
+    biceps: ["Bíceps"],
+    triceps: ["Tríceps"],
+    pernas: ["Quadríceps","Posterior de Coxa","Adutores","Abdutores"],
+    gluteos: ["Glúteos"],
+    panturrilhas: ["Panturrilhas"],
+    core: ["Abdômen / Core"]
+};
 
 async function abrirBibliotecaExercicios(){
     if(!perfilAtual || !["master","professor"].includes(perfilAtual.cargo)){
         return alert("Esta área é exclusiva da equipe da MorottiGym.");
     }
-
     esconderTelas();
     document.getElementById("tela-biblioteca-exercicios")?.classList.remove("hidden");
     window.scrollTo({top:0,behavior:"smooth"});
-
-    const lista = document.getElementById("lista-biblioteca-exercicios");
-    const resumo = document.getElementById("resumo-biblioteca");
-    if(lista) lista.innerHTML = '<div class="empty">Carregando exercícios...</div>';
-    if(resumo) resumo.textContent = "Carregando biblioteca...";
-
+    const lista=document.getElementById("lista-biblioteca-exercicios");
+    const resumo=document.getElementById("resumo-biblioteca");
+    if(lista) lista.innerHTML='<div class="empty">Carregando exercícios...</div>';
+    if(resumo) resumo.textContent="Carregando biblioteca...";
+    fecharFormExercicioBiblioteca();
+    document.getElementById("lista-maquinas-biblioteca")?.classList.add("hidden");
     await carregarBibliotecaExercicios();
 }
 
 async function carregarBibliotecaExercicios(){
     try{
-        const [exerciciosResp, gruposResp, maquinasResp] = await Promise.all([
-            bibliotecaClient
-                .from("exercicios")
+        const [exerciciosResp,gruposResp,maquinasResp]=await Promise.all([
+            bibliotecaClient.from("exercicios")
                 .select("id,nome,grupo_muscular_id,maquina_id,miniatura_url,video_url,execucao,cuidados,ativo")
-                .eq("ativo",true)
-                .order("nome"),
-            bibliotecaClient
-                .from("grupos_musculares")
-                .select("id,nome,ativo")
-                .eq("ativo",true)
-                .order("nome"),
-            bibliotecaClient
-                .from("maquinas")
-                .select("id,numero,nome,ativo")
-                .eq("ativo",true)
-                .order("numero")
+                .eq("ativo",true).order("nome"),
+            bibliotecaClient.from("grupos_musculares")
+                .select("id,nome,ativo").eq("ativo",true).order("nome"),
+            bibliotecaClient.from("maquinas")
+                .select("id,numero,nome,ativo").eq("ativo",true).order("numero")
         ]);
-
         if(exerciciosResp.error) throw exerciciosResp.error;
         if(gruposResp.error) throw gruposResp.error;
         if(maquinasResp.error) throw maquinasResp.error;
 
-        bibliotecaExerciciosCache = exerciciosResp.data || [];
-        bibliotecaGruposCache = gruposResp.data || [];
-        bibliotecaMaquinasCache = maquinasResp.data || [];
-
+        bibliotecaExerciciosCache=exerciciosResp.data||[];
+        bibliotecaGruposCache=gruposResp.data||[];
+        bibliotecaMaquinasCache=maquinasResp.data||[];
         preencherFiltrosBiblioteca();
+        preencherFormularioBiblioteca();
         filtrarBibliotecaExercicios();
     }catch(erro){
-        console.error("[MorottiGym] Erro ao carregar biblioteca:", erro);
-        const lista = document.getElementById("lista-biblioteca-exercicios");
-        const resumo = document.getElementById("resumo-biblioteca");
-        if(lista) lista.innerHTML = '<div class="warning">Não foi possível carregar a Biblioteca de Exercícios.</div>';
-        if(resumo) resumo.textContent = "Erro ao carregar.";
+        console.error("[MorottiGym] Erro ao carregar biblioteca:",erro);
+        document.getElementById("lista-biblioteca-exercicios").innerHTML='<div class="warning">Não foi possível carregar a Biblioteca de Exercícios.</div>';
+        document.getElementById("resumo-biblioteca").textContent="Erro ao carregar.";
     }
 }
 
 function preencherFiltrosBiblioteca(){
-    const grupoSelect = document.getElementById("filtro-grupo-biblioteca");
-    const maquinaSelect = document.getElementById("filtro-maquina-biblioteca");
+    const grupoSelect=document.getElementById("filtro-grupo-biblioteca");
+    const maquinaSelect=document.getElementById("filtro-maquina-biblioteca");
     if(grupoSelect){
-        const atual = grupoSelect.value;
-        grupoSelect.innerHTML = '<option value="">Todos os grupos</option>' +
-            bibliotecaGruposCache.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join("");
-        grupoSelect.value = atual;
+        const atual=grupoSelect.value;
+        grupoSelect.innerHTML='<option value="">Todos os grupos</option>'+bibliotecaGruposCache.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join("");
+        grupoSelect.value=atual;
     }
     if(maquinaSelect){
-        const atual = maquinaSelect.value;
-        maquinaSelect.innerHTML = '<option value="">Todas as máquinas</option>' +
-            bibliotecaMaquinasCache.map(m=>`<option value="${m.id}">${String(m.numero).padStart(2,"0")} • ${esc(m.nome)}</option>`).join("");
-        maquinaSelect.value = atual;
+        const atual=maquinaSelect.value;
+        maquinaSelect.innerHTML='<option value="">Todas as máquinas</option>'+bibliotecaMaquinasCache.map(m=>`<option value="${m.id}">${String(m.numero).padStart(2,"0")} • ${esc(m.nome)}</option>`).join("");
+        maquinaSelect.value=atual;
     }
 }
 
+function preencherFormularioBiblioteca(){
+    const grupo=document.getElementById("biblioteca-exercicio-grupo");
+    const maquina=document.getElementById("biblioteca-exercicio-maquina");
+    if(grupo) grupo.innerHTML='<option value="">Selecione...</option>'+bibliotecaGruposCache.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join("");
+    if(maquina) maquina.innerHTML='<option value="">Sem máquina numerada</option>'+bibliotecaMaquinasCache.map(m=>`<option value="${m.id}">${String(m.numero).padStart(2,"0")} • ${esc(m.nome)}</option>`).join("");
+}
+
+function selecionarGrupoRapido(chave,botao){
+    grupoRapidoBiblioteca=chave;
+    document.querySelectorAll(".grupo-chip").forEach(b=>b.classList.remove("ativo"));
+    botao?.classList.add("ativo");
+    const seletor=document.getElementById("filtro-grupo-biblioteca");
+    if(seletor) seletor.value="";
+    filtrarBibliotecaExercicios();
+}
+
+function sincronizarFiltroGrupo(){
+    grupoRapidoBiblioteca="todos";
+    document.querySelectorAll(".grupo-chip").forEach(b=>b.classList.toggle("ativo",b.dataset.grupo==="todos"));
+}
+
 function filtrarBibliotecaExercicios(){
-    const busca = (document.getElementById("busca-biblioteca")?.value || "").trim().toLowerCase();
-    const grupo = document.getElementById("filtro-grupo-biblioteca")?.value || "";
-    const maquina = document.getElementById("filtro-maquina-biblioteca")?.value || "";
+    const busca=(document.getElementById("busca-biblioteca")?.value||"").trim().toLowerCase();
+    const grupo=document.getElementById("filtro-grupo-biblioteca")?.value||"";
+    const maquina=document.getElementById("filtro-maquina-biblioteca")?.value||"";
+    const nomesRapidos=gruposRapidosBiblioteca[grupoRapidoBiblioteca]||[];
 
-    const lista = bibliotecaExerciciosCache.filter(ex=>{
-        const grupoObj = bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
-        const maquinaObj = bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
-        const texto = `${ex.nome||""} ${grupoObj?.nome||""} ${maquinaObj?.nome||""} ${maquinaObj?.numero||""}`.toLowerCase();
-
-        return (!busca || texto.includes(busca)) &&
-               (!grupo || String(ex.grupo_muscular_id)===grupo) &&
-               (!maquina || String(ex.maquina_id)===maquina);
+    const lista=bibliotecaExerciciosCache.filter(ex=>{
+        const grupoObj=bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
+        const maquinaObj=bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
+        const texto=`${ex.nome||""} ${grupoObj?.nome||""} ${maquinaObj?.nome||""} ${maquinaObj?.numero||""}`.toLowerCase();
+        const bateRapido=!nomesRapidos.length||nomesRapidos.includes(grupoObj?.nome);
+        return (!busca||texto.includes(busca)) &&
+               (!grupo||String(ex.grupo_muscular_id)===grupo) &&
+               (!maquina||String(ex.maquina_id)===maquina) &&
+               bateRapido;
     });
-
     renderizarBibliotecaExercicios(lista);
 }
 
 function renderizarBibliotecaExercicios(lista){
-    const el = document.getElementById("lista-biblioteca-exercicios");
-    const resumo = document.getElementById("resumo-biblioteca");
-    if(!el) return;
-
-    if(resumo){
-        resumo.textContent = `${lista.length} de ${bibliotecaExerciciosCache.length} exercício(s)`;
-    }
-
+    const el=document.getElementById("lista-biblioteca-exercicios");
+    const resumo=document.getElementById("resumo-biblioteca");
+    if(!el)return;
+    if(resumo) resumo.textContent=`${lista.length} de ${bibliotecaExerciciosCache.length} exercício(s)`;
     if(!lista.length){
-        el.innerHTML = '<div class="biblioteca-vazio">Nenhum exercício encontrado com esses filtros.</div>';
+        el.innerHTML='<div class="biblioteca-vazio">Nenhum exercício encontrado com esses filtros.</div>';
         return;
     }
 
-    el.innerHTML = lista.map(ex=>{
-        const grupo = bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
-        const maquina = bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
-        const miniatura = ex.miniatura_url
+    el.innerHTML=lista.map(ex=>{
+        const grupo=bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
+        const maquina=bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
+        const miniatura=ex.miniatura_url
             ? `<img class="exercicio-biblioteca-miniatura" src="${esc(ex.miniatura_url)}" alt="${esc(ex.nome)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;exercicio-biblioteca-placeholder&quot;>🏋️</div>'">`
             : '<div class="exercicio-biblioteca-placeholder">🏋️</div>';
-
-        const maquinaHtml = maquina
+        const maquinaHtml=maquina
             ? `<div class="maquina-badge">Máquina ${String(maquina.numero).padStart(2,"0")} • ${esc(maquina.nome)}</div>`
             : '<div class="maquina-badge">Sem máquina numerada</div>';
+        const video=ex.video_url
+            ? `<a class="video-link-btn" href="${esc(ex.video_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">▶ Ver vídeo</a>`
+            : "";
 
-        return `<div class="exercicio-biblioteca-card">
+        return `<div class="exercicio-biblioteca-card" onclick="editarExercicioBiblioteca(${ex.id})">
             <div class="exercicio-biblioteca-topo">
                 ${miniatura}
                 <div class="exercicio-biblioteca-info">
                     <h3>${esc(ex.nome)}</h3>
-                    <div class="exercicio-biblioteca-meta">${esc(grupo?.nome || "Grupo não informado")}</div>
+                    <div class="exercicio-biblioteca-meta">${esc(grupo?.nome||"Grupo não informado")}</div>
                     ${maquinaHtml}
+                    ${video}
                 </div>
+            </div>
+            <div class="exercicio-biblioteca-acoes">
+                <button class="mini-action gold" type="button" onclick="event.stopPropagation();editarExercicioBiblioteca(${ex.id})">✏️ Editar</button>
             </div>
         </div>`;
     }).join("");
+}
+
+function abrirNovoExercicio(){
+    preencherFormularioBiblioteca();
+    document.getElementById("form-exercicio-biblioteca")?.reset();
+    document.getElementById("biblioteca-exercicio-id").value="";
+    document.getElementById("titulo-form-exercicio").textContent="Novo exercício";
+    document.getElementById("preview-miniatura-wrap")?.classList.add("hidden");
+    document.getElementById("sugestao-maquina-exercicio").textContent="Selecione uma máquina numerada quando o exercício for realizado em um dos aparelhos 01–37.";
+    document.getElementById("form-exercicio-biblioteca-wrap")?.classList.remove("hidden");
+    document.getElementById("form-exercicio-biblioteca-wrap")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function editarExercicioBiblioteca(id){
+    const ex=bibliotecaExerciciosCache.find(x=>Number(x.id)===Number(id));
+    if(!ex)return;
+    preencherFormularioBiblioteca();
+    document.getElementById("biblioteca-exercicio-id").value=ex.id;
+    document.getElementById("biblioteca-exercicio-nome").value=ex.nome||"";
+    document.getElementById("biblioteca-exercicio-grupo").value=ex.grupo_muscular_id||"";
+    document.getElementById("biblioteca-exercicio-maquina").value=ex.maquina_id||"";
+    document.getElementById("biblioteca-miniatura-url").value=ex.miniatura_url||"";
+    document.getElementById("biblioteca-video-url").value=ex.video_url||"";
+    document.getElementById("biblioteca-execucao").value=ex.execucao||"";
+    document.getElementById("biblioteca-cuidados").value=ex.cuidados||"";
+    document.getElementById("biblioteca-miniatura-arquivo").value="";
+    document.getElementById("biblioteca-video-arquivo").value="";
+    document.getElementById("titulo-form-exercicio").textContent="Editar exercício";
+
+    const previewWrap=document.getElementById("preview-miniatura-wrap");
+    const preview=document.getElementById("preview-miniatura");
+    if(ex.miniatura_url&&preview&&previewWrap){
+        preview.src=ex.miniatura_url;
+        previewWrap.classList.remove("hidden");
+    }else previewWrap?.classList.add("hidden");
+
+    atualizarSugestaoMaquinaFormulario();
+    document.getElementById("form-exercicio-biblioteca-wrap")?.classList.remove("hidden");
+    document.getElementById("form-exercicio-biblioteca-wrap")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function fecharFormExercicioBiblioteca(){
+    document.getElementById("form-exercicio-biblioteca-wrap")?.classList.add("hidden");
+}
+
+document.addEventListener("change",e=>{
+    if(e.target?.id==="biblioteca-exercicio-maquina") atualizarSugestaoMaquinaFormulario();
+    if(e.target?.id==="biblioteca-miniatura-arquivo"){
+        const arq=e.target.files?.[0];
+        if(arq){
+            const url=URL.createObjectURL(arq);
+            const preview=document.getElementById("preview-miniatura");
+            if(preview)preview.src=url;
+            document.getElementById("preview-miniatura-wrap")?.classList.remove("hidden");
+        }
+    }
+});
+
+function atualizarSugestaoMaquinaFormulario(){
+    const id=document.getElementById("biblioteca-exercicio-maquina")?.value;
+    const m=bibliotecaMaquinasCache.find(x=>String(x.id)===String(id));
+    const el=document.getElementById("sugestao-maquina-exercicio");
+    if(!el)return;
+    el.textContent=m?`Selecionada: Máquina ${String(m.numero).padStart(2,"0")} — ${m.nome}`:"Exercício sem máquina numerada.";
+}
+
+function nomeArquivoSeguro(nome){
+    return String(nome||"arquivo").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .replace(/[^a-zA-Z0-9._-]+/g,"-").replace(/-+/g,"-").toLowerCase();
+}
+
+async function enviarMidiaBiblioteca(arquivo,pasta){
+    if(!arquivo)return null;
+    const extensao=(arquivo.name.split(".").pop()||"bin").toLowerCase();
+    const base=nomeArquivoSeguro(arquivo.name.replace(/\.[^.]+$/,""));
+    const caminho=`${pasta}/${Date.now()}-${base}.${extensao}`;
+    const {error}=await bibliotecaClient.storage.from("exercicios").upload(caminho,arquivo,{
+        cacheControl:"3600",
+        upsert:false,
+        contentType:arquivo.type||undefined
+    });
+    if(error)throw error;
+    const {data}=bibliotecaClient.storage.from("exercicios").getPublicUrl(caminho);
+    return data?.publicUrl||null;
+}
+
+async function salvarExercicioBiblioteca(evento){
+    evento.preventDefault();
+    if(!perfilAtual||!["master","professor"].includes(perfilAtual.cargo))return alert("Acesso não autorizado.");
+
+    const btn=document.getElementById("btn-salvar-exercicio-biblioteca");
+    btn.disabled=true;btn.textContent="Salvando...";
+
+    try{
+        const id=document.getElementById("biblioteca-exercicio-id").value;
+        const nome=document.getElementById("biblioteca-exercicio-nome").value.trim();
+        const grupoId=document.getElementById("biblioteca-exercicio-grupo").value;
+        const maquinaId=document.getElementById("biblioteca-exercicio-maquina").value||null;
+        let miniaturaUrl=document.getElementById("biblioteca-miniatura-url").value.trim()||null;
+        let videoUrl=document.getElementById("biblioteca-video-url").value.trim()||null;
+        const execucao=document.getElementById("biblioteca-execucao").value.trim()||null;
+        const cuidados=document.getElementById("biblioteca-cuidados").value.trim()||null;
+        const miniaturaArquivo=document.getElementById("biblioteca-miniatura-arquivo").files?.[0];
+        const videoArquivo=document.getElementById("biblioteca-video-arquivo").files?.[0];
+
+        if(!nome||!grupoId)throw new Error("Informe o nome e o grupo muscular.");
+
+        if(miniaturaArquivo){
+            btn.textContent="Enviando miniatura...";
+            miniaturaUrl=await enviarMidiaBiblioteca(miniaturaArquivo,"miniaturas");
+        }
+        if(videoArquivo){
+            btn.textContent="Enviando vídeo...";
+            videoUrl=await enviarMidiaBiblioteca(videoArquivo,"videos");
+        }
+
+        const payload={
+            nome,
+            grupo_muscular_id:Number(grupoId),
+            maquina_id:maquinaId?Number(maquinaId):null,
+            miniatura_url:miniaturaUrl,
+            video_url:videoUrl,
+            execucao,
+            cuidados,
+            ativo:true
+        };
+
+        let resposta;
+        if(id) resposta=await bibliotecaClient.from("exercicios").update(payload).eq("id",Number(id));
+        else resposta=await bibliotecaClient.from("exercicios").insert(payload);
+        if(resposta.error)throw resposta.error;
+
+        fecharFormExercicioBiblioteca();
+        await carregarBibliotecaExercicios();
+        alert(id?"Exercício atualizado com sucesso!":"Exercício cadastrado com sucesso!");
+    }catch(erro){
+        console.error(erro);
+        alert("Não foi possível salvar o exercício: "+(erro.message||erro));
+    }finally{
+        btn.disabled=false;btn.textContent="💾 Salvar exercício";
+    }
+}
+
+function mostrarListaMaquinas(){
+    const wrap=document.getElementById("lista-maquinas-biblioteca");
+    const conteudo=document.getElementById("conteudo-lista-maquinas");
+    if(!wrap||!conteudo)return;
+    conteudo.innerHTML=bibliotecaMaquinasCache.map(m=>`
+        <div class="app-list-card">
+            <div class="app-row">
+                <div class="avatar-mini">${String(m.numero).padStart(2,"0")}</div>
+                <div class="grow"><h3>${esc(m.nome)}</h3><p>Máquina / aparelho ${String(m.numero).padStart(2,"0")}</p></div>
+            </div>
+        </div>`).join("");
+    wrap.classList.remove("hidden");
+    wrap.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 /* ===== HOME PÚBLICA ===== */
