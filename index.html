@@ -1401,19 +1401,32 @@ document.addEventListener("DOMContentLoaded", inicializar);
 
 <script>
 let eventoInstalacaoMorotti=null;
+const cardsInstalacaoMorotti=["install-app-card","install-app-card-visitante","install-app-card-funcionario"];
+
+function estaRodandoComoAppMorotti(){
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function atualizarCardsInstalacaoMorotti(){
+  const iphone=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const mostrar=!estaRodandoComoAppMorotti() && (iphone || !!eventoInstalacaoMorotti);
+  cardsInstalacaoMorotti.forEach(id=>document.getElementById(id)?.classList.toggle("show",mostrar));
+}
 
 window.addEventListener("beforeinstallprompt",(e)=>{
   e.preventDefault();
   eventoInstalacaoMorotti=e;
-  ["install-app-card","install-app-card-visitante","install-app-card-funcionario"].forEach(id=>document.getElementById(id)?.classList.add("show"));
+  atualizarCardsInstalacaoMorotti();
 });
+
+document.addEventListener("DOMContentLoaded",atualizarCardsInstalacaoMorotti);
 
 async function instalarMorottiGym(){
   if(eventoInstalacaoMorotti){
     eventoInstalacaoMorotti.prompt();
     await eventoInstalacaoMorotti.userChoice;
     eventoInstalacaoMorotti=null;
-    ["install-app-card","install-app-card-visitante","install-app-card-funcionario"].forEach(id=>document.getElementById(id)?.classList.remove("show"));
+    cardsInstalacaoMorotti.forEach(id=>document.getElementById(id)?.classList.remove("show"));
     return;
   }
   const iphone=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -1425,7 +1438,7 @@ async function instalarMorottiGym(){
 }
 
 window.addEventListener("appinstalled",()=>{
-  ["install-app-card","install-app-card-visitante","install-app-card-funcionario"].forEach(id=>document.getElementById(id)?.classList.remove("show"));
+  cardsInstalacaoMorotti.forEach(id=>document.getElementById(id)?.classList.remove("show"));
 });
 
 if("serviceWorker" in navigator){
