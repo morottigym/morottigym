@@ -230,6 +230,37 @@ main{padding:18px 18px 92px}
 .maquina-badge{display:inline-flex;margin-top:7px;padding:5px 8px;border-radius:8px;background:#3b171c;border:1px solid #6b222b;color:#fecdd3;font-size:.66rem;font-weight:900}
 .biblioteca-vazio{padding:22px 14px;text-align:center;color:#8f8f98;background:#1d1d21;border:1px solid #303036;border-radius:16px}
 
+
+/* ===== MONTAGEM DE TREINO INTEGRADA À BIBLIOTECA ===== */
+.montador-box{background:#18181b;border:1px solid #303036;border-radius:16px;padding:13px;margin-top:10px}
+.montador-grupos{display:flex;gap:7px;overflow-x:auto;padding-bottom:9px;scrollbar-width:none}
+.montador-grupos::-webkit-scrollbar{display:none}
+.montador-chip{flex:0 0 auto;border:1px solid #3a3a40;background:#232327;color:#d4d4d8;border-radius:999px;padding:8px 11px;font-size:.68rem;font-weight:900}
+.montador-chip.ativo{background:#e11d2e;border-color:#ef4444;color:#fff}
+.montador-resultados{max-height:340px;overflow:auto;margin-top:9px}
+.montador-exercicio{display:flex;align-items:center;gap:9px;background:#222226;border:1px solid #34343a;border-radius:13px;padding:10px;margin-bottom:7px}
+.montador-exercicio img,.montador-thumb{width:48px;height:48px;flex:0 0 48px;border-radius:10px;object-fit:cover;background:#2d2d32;display:grid;place-items:center}
+.montador-exercicio .grow{min-width:0}
+.montador-exercicio h4{font-size:.76rem;line-height:1.25;margin:0}
+.montador-exercicio p{font-size:.62rem;color:#9f9fa8;margin:3px 0 0}
+.montador-add{border:0;background:#e11d2e;color:#fff;border-radius:10px;padding:9px 11px;font-weight:900;font-size:.68rem}
+.treino-selecionados{margin-top:13px}
+.treino-item-edit{background:#202024;border:1px solid #34343a;border-radius:14px;padding:11px;margin-bottom:8px}
+.treino-item-head{display:flex;gap:9px;align-items:center}
+.treino-item-head strong{font-size:.76rem}
+.treino-item-head small{display:block;color:#9f9fa8;font-size:.61rem;margin-top:2px}
+.treino-campos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px}
+.treino-campos input{min-width:0;padding:9px 7px;border-radius:9px;border:1px solid #3a3a40;background:#18181b;color:#fff;font-size:.7rem}
+.treino-remover{margin-top:8px;border:1px solid #5b252b;background:#35191d;color:#fecdd3;border-radius:9px;padding:7px 9px;font-size:.65rem;font-weight:800}
+.aluno-exercicio-card{display:flex;gap:11px;background:#202024;border:1px solid #34343a;border-radius:15px;padding:12px;margin:9px 0}
+.aluno-exercicio-thumb{width:72px;height:72px;flex:0 0 72px;border-radius:12px;object-fit:cover;background:#2b2b30}
+.aluno-exercicio-sem-thumb{width:72px;height:72px;flex:0 0 72px;border-radius:12px;background:#2b2b30;display:grid;place-items:center;font-size:1.5rem}
+.aluno-exercicio-info{min-width:0;flex:1}
+.aluno-exercicio-info h4{font-size:.82rem;line-height:1.25;margin:0 0 5px}
+.aluno-prescricao{font-size:.68rem;color:#e4e4e7;font-weight:800;margin-top:5px}
+.aluno-maquina{display:inline-block;background:#3b171c;border:1px solid #6b222b;color:#fecdd3;border-radius:8px;padding:4px 7px;font-size:.62rem;font-weight:900;margin-top:5px}
+.aluno-video{display:inline-block;margin-top:7px;border:1px solid #44444b;background:#29292e;color:#fff;border-radius:8px;padding:6px 8px;font-size:.63rem;font-weight:800;text-decoration:none}
+
 </style>
 
 </head>
@@ -606,7 +637,27 @@ main{padding:18px 18px 92px}
             <form id="form-treino" onsubmit="salvarTreino(event)">
                 <input id="treino-aluno" type="hidden">
                 <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
-                <div class="form-grupo"><label for="treino-exercicios">Exercícios</label><textarea id="treino-exercicios" placeholder="Um exercício por linha. Ex.:&#10;Supino reto - 3x10&#10;Remada - 3x12" required></textarea></div>
+                <div class="form-grupo">
+                    <label>Exercícios do treino</label>
+                    <textarea id="treino-exercicios" class="hidden"></textarea>
+                    <div class="montador-box">
+                        <div class="montador-grupos">
+                            <button class="montador-chip ativo" type="button" data-mgrupo="todos" onclick="selecionarGrupoMontador('todos',this)">Todos</button>
+                            <button class="montador-chip" type="button" data-mgrupo="peito" onclick="selecionarGrupoMontador('peito',this)">Peito</button>
+                            <button class="montador-chip" type="button" data-mgrupo="costas" onclick="selecionarGrupoMontador('costas',this)">Costas</button>
+                            <button class="montador-chip" type="button" data-mgrupo="ombros" onclick="selecionarGrupoMontador('ombros',this)">Ombros</button>
+                            <button class="montador-chip" type="button" data-mgrupo="biceps" onclick="selecionarGrupoMontador('biceps',this)">Bíceps</button>
+                            <button class="montador-chip" type="button" data-mgrupo="triceps" onclick="selecionarGrupoMontador('triceps',this)">Tríceps</button>
+                            <button class="montador-chip" type="button" data-mgrupo="pernas" onclick="selecionarGrupoMontador('pernas',this)">Pernas</button>
+                            <button class="montador-chip" type="button" data-mgrupo="gluteos" onclick="selecionarGrupoMontador('gluteos',this)">Glúteos</button>
+                            <button class="montador-chip" type="button" data-mgrupo="panturrilhas" onclick="selecionarGrupoMontador('panturrilhas',this)">Panturrilhas</button>
+                            <button class="montador-chip" type="button" data-mgrupo="core" onclick="selecionarGrupoMontador('core',this)">Core</button>
+                        </div>
+                        <input id="busca-exercicio-montador" class="search-box" style="margin:0" type="search" placeholder="🔎 Buscar exercício..." oninput="renderizarOpcoesMontador()">
+                        <div id="opcoes-exercicios-montador" class="montador-resultados"></div>
+                    </div>
+                    <div id="treino-exercicios-selecionados" class="treino-selecionados"></div>
+                </div>
                 <button class="btn-acao sucesso" type="submit">💾 Salvar dia de treino</button>
                 <button class="btn-voltar" type="button" onclick="fecharFormularioTreino()">Cancelar</button>
             </form>
@@ -1781,6 +1832,152 @@ atualizarTelas=async function(){
     }
 }
 
+
+
+
+/* ===== INTEGRAÇÃO BIBLIOTECA + MONTAGEM DE TREINO ===== */
+let treinoBibliotecaSelecionados=[];
+let grupoMontadorAtual="todos";
+
+function dadosExercicioBiblioteca(id){
+    const ex=bibliotecaExerciciosCache.find(x=>Number(x.id)===Number(id));
+    if(!ex)return null;
+    const grupo=bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
+    const maquina=bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
+    return {ex,grupo,maquina};
+}
+async function garantirBibliotecaCarregada(){
+    if(!bibliotecaExerciciosCache.length) await carregarBibliotecaExercicios();
+}
+function selecionarGrupoMontador(chave,botao){
+    grupoMontadorAtual=chave;
+    document.querySelectorAll(".montador-chip").forEach(b=>b.classList.remove("ativo"));
+    botao?.classList.add("ativo");
+    renderizarOpcoesMontador();
+}
+function renderizarOpcoesMontador(){
+    const el=document.getElementById("opcoes-exercicios-montador");if(!el)return;
+    const q=(document.getElementById("busca-exercicio-montador")?.value||"").trim().toLowerCase();
+    const nomes=gruposRapidosBiblioteca[grupoMontadorAtual]||[];
+    const lista=bibliotecaExerciciosCache.filter(ex=>{
+        const d=dadosExercicioBiblioteca(ex.id); if(!d)return false;
+        const texto=`${ex.nome||""} ${d.grupo?.nome||""} ${d.maquina?.nome||""} ${d.maquina?.numero||""}`.toLowerCase();
+        return (!nomes.length||nomes.includes(d.grupo?.nome)) && (!q||texto.includes(q));
+    }).slice(0,60);
+    if(!lista.length){el.innerHTML='<div class="empty">Nenhum exercício encontrado.</div>';return;}
+    el.innerHTML=lista.map(ex=>{
+        const d=dadosExercicioBiblioteca(ex.id);
+        const thumb=ex.miniatura_url?`<img src="${esc(ex.miniatura_url)}" alt="">`:'<div class="montador-thumb">🏋️</div>';
+        const maq=d.maquina?`Máquina ${String(d.maquina.numero).padStart(2,"0")} • ${d.maquina.nome}`:"Sem máquina numerada";
+        return `<div class="montador-exercicio">${thumb}<div class="grow"><h4>${esc(ex.nome)}</h4><p>${esc(d.grupo?.nome||"")} • ${esc(maq)}</p></div><button class="montador-add" type="button" onclick="adicionarExercicioAoTreino(${ex.id})">＋</button></div>`;
+    }).join("");
+}
+function adicionarExercicioAoTreino(id){
+    const d=dadosExercicioBiblioteca(id);if(!d)return;
+    treinoBibliotecaSelecionados.push({biblioteca_id:Number(id),nome:d.ex.nome,series:"3",repeticoes:"10",carga:""});
+    renderizarSelecionadosTreino();
+}
+function removerExercicioTreino(indice){
+    treinoBibliotecaSelecionados.splice(indice,1);renderizarSelecionadosTreino();
+}
+function atualizarCampoTreino(indice,campo,valor){
+    if(treinoBibliotecaSelecionados[indice]) treinoBibliotecaSelecionados[indice][campo]=valor;
+}
+function renderizarSelecionadosTreino(){
+    const el=document.getElementById("treino-exercicios-selecionados");if(!el)return;
+    if(!treinoBibliotecaSelecionados.length){el.innerHTML='<div class="empty">Nenhum exercício adicionado ao treino.</div>';return;}
+    el.innerHTML=treinoBibliotecaSelecionados.map((item,i)=>{
+        const d=dadosExercicioBiblioteca(item.biblioteca_id);
+        const maq=d?.maquina?`Máquina ${String(d.maquina.numero).padStart(2,"0")} • ${d.maquina.nome}`:"Sem máquina numerada";
+        return `<div class="treino-item-edit"><div class="treino-item-head"><div class="grow"><strong>${esc(item.nome)}</strong><small>${esc(maq)}</small></div></div><div class="treino-campos"><input aria-label="Séries" placeholder="Séries" value="${esc(item.series)}" oninput="atualizarCampoTreino(${i},'series',this.value)"><input aria-label="Repetições" placeholder="Reps" value="${esc(item.repeticoes)}" oninput="atualizarCampoTreino(${i},'repeticoes',this.value)"><input aria-label="Carga" placeholder="Carga opc." value="${esc(item.carga)}" oninput="atualizarCampoTreino(${i},'carga',this.value)"></div><button class="treino-remover" type="button" onclick="removerExercicioTreino(${i})">Remover</button></div>`;
+    }).join("");
+}
+function serializarExercicioTreino(item){
+    return `MGYM|${item.biblioteca_id}|${encodeURIComponent(item.nome||"")}|${encodeURIComponent(item.series||"")}|${encodeURIComponent(item.repeticoes||"")}|${encodeURIComponent(item.carga||"")}`;
+}
+function lerExercicioTreino(valor){
+    const s=String(valor||"");
+    if(!s.startsWith("MGYM|")) return {legado:true,nome:s};
+    const p=s.split("|");
+    return {legado:false,biblioteca_id:Number(p[1]),nome:decodeURIComponent(p[2]||""),series:decodeURIComponent(p[3]||""),repeticoes:decodeURIComponent(p[4]||""),carga:decodeURIComponent(p[5]||"")};
+}
+
+/* Substitui a abertura do formulário para carregar a biblioteca e o montador */
+abrirFormularioNovoTreino=async function(){
+    if(!alunoSelecionadoId)return;
+    await garantirBibliotecaCarregada();
+    document.getElementById("form-treino").reset();
+    document.getElementById("treino-aluno").value=alunoSelecionadoId;
+    treinoBibliotecaSelecionados=[];
+    grupoMontadorAtual="todos";
+    document.querySelectorAll(".montador-chip").forEach(b=>b.classList.toggle("ativo",b.dataset.mgrupo==="todos"));
+    document.getElementById("formulario-treino-wrap").classList.remove("hidden");
+    renderizarSelecionadosTreino();renderizarOpcoesMontador();
+}
+editarTreinoCompleto=async function(id){
+    const t=treinosCache.find(x=>x.id===id);if(!t)return;
+    await garantirBibliotecaCarregada();
+    document.getElementById("treino-aluno").value=t.aluno_id;
+    document.getElementById("treino-dia").value=t.dia_semana||t.nome;
+    treinoBibliotecaSelecionados=(t.exercicios||[]).map(lerExercicioTreino).filter(x=>!x.legado);
+    /* Treinos antigos continuam editáveis: entram como nome simples no novo montador */
+    (t.exercicios||[]).map(lerExercicioTreino).filter(x=>x.legado).forEach(x=>treinoBibliotecaSelecionados.push({biblioteca_id:0,nome:x.nome,series:"",repeticoes:"",carga:""}));
+    document.getElementById("formulario-treino-wrap").classList.remove("hidden");
+    renderizarSelecionadosTreino();renderizarOpcoesMontador();
+    document.getElementById("formulario-treino-wrap").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* Salva no campo exercicios existente para não exigir mudança de banco agora */
+salvarTreino=async function(evento){
+    evento.preventDefault();if(!exigirFuncionario())return;
+    const alunoId=Number(document.getElementById("treino-aluno").value);
+    const aluno=alunosCache.find(a=>a.id===alunoId);
+    const dia_semana=document.getElementById("treino-dia").value;
+    if(!aluno||!dia_semana||!treinoBibliotecaSelecionados.length)return alert("Selecione o aluno, o dia e pelo menos um exercício.");
+    const exercicios=treinoBibliotecaSelecionados.map(item=>item.biblioteca_id?serializarExercicioTreino(item):item.nome);
+    const existente=treinosCache.find(t=>t.aluno_id===aluno.id&&t.dia_semana===dia_semana);
+    const payload={aluno_nome:aluno.nome,nome:dia_semana,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR"),professor_responsavel:usuarioAtual.id,professor_nome:perfilAtual.nome,atualizado_em:new Date().toISOString()};
+    let error;
+    if(existente){
+        if(!confirm(`Já existe um treino de ${dia_semana} para ${aluno.nome}. Deseja substituir?`))return;
+        ({error}=await supabaseClient.from("treinos").update(payload).eq("id",existente.id));
+    }else{
+        ({error}=await supabaseClient.from("treinos").insert({...payload,aluno_id:aluno.id}));
+    }
+    if(error)return alert("Erro ao salvar treino: "+error.message);
+    evento.target.reset();treinoBibliotecaSelecionados=[];await atualizarTelas();fecharFormularioTreino();alert("Treino salvo com sucesso!");
+}
+
+/* Visual do aluno: usa a biblioteca para miniatura, máquina e vídeo */
+function htmlExercicioAluno(valor){
+    const item=lerExercicioTreino(valor);
+    if(item.legado)return `<div class="exercise"><strong>${esc(item.nome)}</strong></div>`;
+    const d=dadosExercicioBiblioteca(item.biblioteca_id);
+    const ex=d?.ex;
+    const nome=ex?.nome||item.nome;
+    const thumb=ex?.miniatura_url?`<img class="aluno-exercicio-thumb" src="${esc(ex.miniatura_url)}" alt="${esc(nome)}">`:'<div class="aluno-exercicio-sem-thumb">🏋️</div>';
+    const maq=d?.maquina?`<div class="aluno-maquina">Máquina ${String(d.maquina.numero).padStart(2,"0")} • ${esc(d.maquina.nome)}</div>`:"";
+    const pres=[item.series?`${esc(item.series)} séries`:"",item.repeticoes?`${esc(item.repeticoes)} repetições`:"",item.carga?`Carga: ${esc(item.carga)}`:""].filter(Boolean).join(" • ");
+    const video=ex?.video_url?`<br><a class="aluno-video" href="${esc(ex.video_url)}" target="_blank" rel="noopener">▶ Ver execução</a>`:"";
+    return `<div class="aluno-exercicio-card">${thumb}<div class="aluno-exercicio-info"><h4>${esc(nome)}</h4>${maq}${pres?`<div class="aluno-prescricao">${pres}</div>`:""}${video}</div></div>`;
+}
+const _renderizarTreinoAlunoIntegracao=renderizarTreinoAluno;
+renderizarTreinoAluno=async function(){
+    await garantirBibliotecaCarregada();
+    const el=document.getElementById("treino-aluno-conteudo");if(!el)return;
+    const alunoId=alunoAtual?.id||alunoSelecionadoId;
+    if(!alunoId){el.innerHTML='<div class="warning">Selecione um aluno para visualizar o treino.</div>';return;}
+    const ts=treinosCache.filter(t=>Number(t.aluno_id)===Number(alunoId)).sort((a,b)=>ordemDia(a.dia_semana)-ordemDia(b.dia_semana));
+    if(!ts.length){el.innerHTML='<div class="empty">Nenhum treino cadastrado para este aluno.</div>';return;}
+    el.innerHTML=`<div class="treino-tabs">${ts.map((t,i)=>`<button type="button" class="treino-tab ${i===0?'ativo':''}" onclick="mostrarTreinoAba(${t.id},this)">${esc(t.dia_semana||t.nome||"Treino")}</button>`).join("")}</div><div id="treino-aba-conteudo"></div>`;
+    mostrarTreinoAba(ts[0].id,el.querySelector(".treino-tab"));
+}
+mostrarTreinoAba=function(id,botao){
+    const t=treinosCache.find(x=>Number(x.id)===Number(id));if(!t)return;
+    document.querySelectorAll("#treino-aluno-conteudo .treino-tab").forEach(b=>b.classList.remove("ativo"));if(botao)botao.classList.add("ativo");
+    const area=document.getElementById("treino-aba-conteudo");if(!area)return;
+    area.innerHTML=`<div class="treino-card"><h3>📅 ${esc(t.dia_semana||t.nome||"Treino")}</h3>${t.professor_nome?`<p class="responsavel-treino">Responsável: ${esc(t.professor_nome)}</p>`:""}${(t.exercicios||[]).map(htmlExercicioAluno).join("")}</div>`;
+}
 
 
 /* ===== SOLICITAÇÕES DE TREINO ===== */
