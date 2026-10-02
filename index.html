@@ -192,6 +192,22 @@ main{padding:18px 18px 92px}
 .request-actions button{flex:1}
 .responsavel-treino{font-size:.68rem;color:#f5b942;margin-top:6px;font-weight:800}
 .master-only.hidden{display:none!important}
+
+/* ===== BIBLIOTECA DE EXERCÍCIOS ===== */
+.biblioteca-toolbar{display:grid;gap:9px;margin:14px 0}
+.biblioteca-filtros{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.biblioteca-filtros select{width:100%;padding:12px;background:#202024;border:1px solid #34343a;border-radius:12px;color:#fff;outline:none}
+.biblioteca-resumo{font-size:.72rem;color:#a1a1aa;margin:3px 0 12px}
+.exercicio-biblioteca-card{background:#1d1d21;border:1px solid #303036;border-radius:16px;padding:14px;margin-bottom:10px}
+.exercicio-biblioteca-topo{display:flex;align-items:flex-start;gap:11px}
+.exercicio-biblioteca-miniatura{width:64px;height:64px;flex:0 0 64px;border-radius:13px;object-fit:cover;background:#29292e;border:1px solid #3a3a40}
+.exercicio-biblioteca-placeholder{width:64px;height:64px;flex:0 0 64px;border-radius:13px;background:#29292e;border:1px solid #3a3a40;display:grid;place-items:center;font-size:1.45rem}
+.exercicio-biblioteca-info{flex:1;min-width:0}
+.exercicio-biblioteca-info h3{font-size:.9rem;line-height:1.3;margin-bottom:5px}
+.exercicio-biblioteca-meta{font-size:.69rem;color:#a1a1aa;line-height:1.45}
+.maquina-badge{display:inline-flex;margin-top:7px;padding:5px 8px;border-radius:8px;background:#3b171c;border:1px solid #6b222b;color:#fecdd3;font-size:.66rem;font-weight:900}
+.biblioteca-vazio{padding:22px 14px;text-align:center;color:#8f8f98;background:#1d1d21;border:1px solid #303036;border-radius:16px}
+
 </style>
 
 </head>
@@ -329,6 +345,7 @@ main{padding:18px 18px 92px}
             <div class="quick-card gold" onclick="abrirTela('tela-editar-treino')"><div class="qicon">🏋️</div><div><strong>Treinos</strong><br><small>Selecionar aluno e editar</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-cadastrar-aluno')"><div class="qicon">➕</div><div><strong>Novo aluno</strong><br><small>Cadastro rápido</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-publicar-aviso')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Publicar comunicado</small></div></div>
+            <div class="quick-card" onclick="abrirBibliotecaExercicios()"><div class="qicon">📚</div><div><strong>Biblioteca</strong><br><small>Exercícios e aparelhos</small></div></div>
             <div class="quick-card" onclick="abrirSolicitacoesFuncionario()"><div class="qicon">📩</div><div><strong>Solicitações <span id="contador-solicitacoes" class="request-badge hidden">0</span></strong><br><small>Pedidos dos alunos</small></div></div>
             <div id="card-funcionarios-master" class="quick-card master-only hidden" onclick="abrirFuncionariosMaster()"><div class="qicon">🪪</div><div><strong>Funcionários</strong><br><small>Equipe e níveis de acesso</small></div></div>
         </div>
@@ -438,6 +455,29 @@ main{padding:18px 18px 92px}
     <h2 class="section-title">Alunos cadastrados</h2>
     <div id="lista-alunos"></div>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- BIBLIOTECA DE EXERCÍCIOS -->
+<main id="tela-biblioteca-exercicios" class="hidden">
+    <div class="page-kicker">Painel do professor</div>
+    <h2 class="section-title">Biblioteca de Exercícios</h2>
+    <p class="app-subtitle">Consulte os exercícios cadastrados e veja em qual aparelho cada um é realizado.</p>
+
+    <div class="biblioteca-toolbar">
+        <input id="busca-biblioteca" class="search-box" style="margin:0" type="search" placeholder="🔎 Buscar exercício..." oninput="filtrarBibliotecaExercicios()">
+        <div class="biblioteca-filtros">
+            <select id="filtro-grupo-biblioteca" onchange="filtrarBibliotecaExercicios()">
+                <option value="">Todos os grupos</option>
+            </select>
+            <select id="filtro-maquina-biblioteca" onchange="filtrarBibliotecaExercicios()">
+                <option value="">Todas as máquinas</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="resumo-biblioteca" class="biblioteca-resumo">Carregando biblioteca...</div>
+    <div id="lista-biblioteca-exercicios"><div class="empty">Carregando exercícios...</div></div>
+    <button class="btn-voltar" type="button" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
 <!-- GERENCIAR TREINOS -->
@@ -1212,6 +1252,141 @@ function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt
 
 
 
+
+
+/* ===== BIBLIOTECA DE EXERCÍCIOS DO PROFESSOR ===== */
+let bibliotecaExerciciosCache = [];
+let bibliotecaGruposCache = [];
+let bibliotecaMaquinasCache = [];
+
+async function abrirBibliotecaExercicios(){
+    if(!perfilAtual || !["master","professor"].includes(perfilAtual.cargo)){
+        return alert("Esta área é exclusiva da equipe da MorottiGym.");
+    }
+
+    esconderTelas();
+    document.getElementById("tela-biblioteca-exercicios")?.classList.remove("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+
+    const lista = document.getElementById("lista-biblioteca-exercicios");
+    const resumo = document.getElementById("resumo-biblioteca");
+    if(lista) lista.innerHTML = '<div class="empty">Carregando exercícios...</div>';
+    if(resumo) resumo.textContent = "Carregando biblioteca...";
+
+    await carregarBibliotecaExercicios();
+}
+
+async function carregarBibliotecaExercicios(){
+    try{
+        const [exerciciosResp, gruposResp, maquinasResp] = await Promise.all([
+            bibliotecaClient
+                .from("exercicios")
+                .select("id,nome,grupo_muscular_id,maquina_id,miniatura_url,video_url,execucao,cuidados,ativo")
+                .eq("ativo",true)
+                .order("nome"),
+            bibliotecaClient
+                .from("grupos_musculares")
+                .select("id,nome,ativo")
+                .eq("ativo",true)
+                .order("nome"),
+            bibliotecaClient
+                .from("maquinas")
+                .select("id,numero,nome,ativo")
+                .eq("ativo",true)
+                .order("numero")
+        ]);
+
+        if(exerciciosResp.error) throw exerciciosResp.error;
+        if(gruposResp.error) throw gruposResp.error;
+        if(maquinasResp.error) throw maquinasResp.error;
+
+        bibliotecaExerciciosCache = exerciciosResp.data || [];
+        bibliotecaGruposCache = gruposResp.data || [];
+        bibliotecaMaquinasCache = maquinasResp.data || [];
+
+        preencherFiltrosBiblioteca();
+        filtrarBibliotecaExercicios();
+    }catch(erro){
+        console.error("[MorottiGym] Erro ao carregar biblioteca:", erro);
+        const lista = document.getElementById("lista-biblioteca-exercicios");
+        const resumo = document.getElementById("resumo-biblioteca");
+        if(lista) lista.innerHTML = '<div class="warning">Não foi possível carregar a Biblioteca de Exercícios.</div>';
+        if(resumo) resumo.textContent = "Erro ao carregar.";
+    }
+}
+
+function preencherFiltrosBiblioteca(){
+    const grupoSelect = document.getElementById("filtro-grupo-biblioteca");
+    const maquinaSelect = document.getElementById("filtro-maquina-biblioteca");
+    if(grupoSelect){
+        const atual = grupoSelect.value;
+        grupoSelect.innerHTML = '<option value="">Todos os grupos</option>' +
+            bibliotecaGruposCache.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join("");
+        grupoSelect.value = atual;
+    }
+    if(maquinaSelect){
+        const atual = maquinaSelect.value;
+        maquinaSelect.innerHTML = '<option value="">Todas as máquinas</option>' +
+            bibliotecaMaquinasCache.map(m=>`<option value="${m.id}">${String(m.numero).padStart(2,"0")} • ${esc(m.nome)}</option>`).join("");
+        maquinaSelect.value = atual;
+    }
+}
+
+function filtrarBibliotecaExercicios(){
+    const busca = (document.getElementById("busca-biblioteca")?.value || "").trim().toLowerCase();
+    const grupo = document.getElementById("filtro-grupo-biblioteca")?.value || "";
+    const maquina = document.getElementById("filtro-maquina-biblioteca")?.value || "";
+
+    const lista = bibliotecaExerciciosCache.filter(ex=>{
+        const grupoObj = bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
+        const maquinaObj = bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
+        const texto = `${ex.nome||""} ${grupoObj?.nome||""} ${maquinaObj?.nome||""} ${maquinaObj?.numero||""}`.toLowerCase();
+
+        return (!busca || texto.includes(busca)) &&
+               (!grupo || String(ex.grupo_muscular_id)===grupo) &&
+               (!maquina || String(ex.maquina_id)===maquina);
+    });
+
+    renderizarBibliotecaExercicios(lista);
+}
+
+function renderizarBibliotecaExercicios(lista){
+    const el = document.getElementById("lista-biblioteca-exercicios");
+    const resumo = document.getElementById("resumo-biblioteca");
+    if(!el) return;
+
+    if(resumo){
+        resumo.textContent = `${lista.length} de ${bibliotecaExerciciosCache.length} exercício(s)`;
+    }
+
+    if(!lista.length){
+        el.innerHTML = '<div class="biblioteca-vazio">Nenhum exercício encontrado com esses filtros.</div>';
+        return;
+    }
+
+    el.innerHTML = lista.map(ex=>{
+        const grupo = bibliotecaGruposCache.find(g=>Number(g.id)===Number(ex.grupo_muscular_id));
+        const maquina = bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex.maquina_id));
+        const miniatura = ex.miniatura_url
+            ? `<img class="exercicio-biblioteca-miniatura" src="${esc(ex.miniatura_url)}" alt="${esc(ex.nome)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;exercicio-biblioteca-placeholder&quot;>🏋️</div>'">`
+            : '<div class="exercicio-biblioteca-placeholder">🏋️</div>';
+
+        const maquinaHtml = maquina
+            ? `<div class="maquina-badge">Máquina ${String(maquina.numero).padStart(2,"0")} • ${esc(maquina.nome)}</div>`
+            : '<div class="maquina-badge">Sem máquina numerada</div>';
+
+        return `<div class="exercicio-biblioteca-card">
+            <div class="exercicio-biblioteca-topo">
+                ${miniatura}
+                <div class="exercicio-biblioteca-info">
+                    <h3>${esc(ex.nome)}</h3>
+                    <div class="exercicio-biblioteca-meta">${esc(grupo?.nome || "Grupo não informado")}</div>
+                    ${maquinaHtml}
+                </div>
+            </div>
+        </div>`;
+    }).join("");
+}
 
 /* ===== HOME PÚBLICA ===== */
 function abrirLoginPublico(){
