@@ -1963,14 +1963,53 @@ editarTreinoCompleto=async function(id){
 
 /* Salva no campo exercicios existente para não exigir mudança de banco agora */
 salvarTreino=async function(evento){
-    evento.preventDefault();if(!exigirFuncionario())return;
-    const alunoId=Number(document.getElementById("treino-aluno").value);
-    const aluno=alunosCache.find(a=>a.id===alunoId);
-    const dia_semana=document.getElementById("treino-dia").value;
-    if(!aluno||!dia_semana||!treinoBibliotecaSelecionados.length)return alert("Selecione o aluno, o dia e pelo menos um exercício.");
-    const exercicios=treinoBibliotecaSelecionados.map(item=>item.biblioteca_id?serializarExercicioTreino(item):item.nome);
-    const existente=treinosCache.find(t=>t.aluno_id===aluno.id&&t.dia_semana===dia_semana);
-    const payload={aluno_nome:aluno.nome,nome:dia_semana,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString("pt-BR"),professor_responsavel:usuarioAtual.id,professor_nome:perfilAtual.nome,atualizado_em:new Date().toISOString()};
+    evento.preventDefault();
+    if(!exigirFuncionario())return;
+
+    /* Usa o aluno selecionado como fonte principal.
+       O campo hidden continua sendo mantido para compatibilidade. */
+    const campoAluno=document.getElementById("treino-aluno");
+    const idCampo=campoAluno?.value;
+    const alunoId=Number(idCampo || alunoSelecionadoId || 0);
+    const aluno=alunosCache.find(a=>Number(a.id)===alunoId);
+
+    const campoDia=document.getElementById("treino-dia");
+    const dia_semana=String(campoDia?.value||"").trim();
+
+    /* Mensagens separadas facilitam identificar qualquer falha futura. */
+    if(!aluno){
+        if(alunoSelecionadoId && campoAluno)campoAluno.value=alunoSelecionadoId;
+        return alert("Não foi possível identificar o aluno selecionado. Escolha o aluno novamente.");
+    }
+    if(!dia_semana)return alert("Selecione o dia da semana.");
+    if(!Array.isArray(treinoBibliotecaSelecionados)||!treinoBibliotecaSelecionados.length){
+        return alert("Adicione pelo menos um exercício ao treino.");
+    }
+
+    /* Garante que o hidden nunca perca o aluno enquanto o formulário estiver aberto. */
+    if(campoAluno)campoAluno.value=aluno.id;
+
+    const exercicios=treinoBibliotecaSelecionados.map(item=>
+        item.biblioteca_id?serializarExercicioTreino(item):item.nome
+    );
+
+    const existente=treinosCache.find(t=>
+        Number(t.aluno_id)===Number(aluno.id) &&
+        String(t.dia_semana||"")===dia_semana
+    );
+
+    const payload={
+        aluno_nome:aluno.nome,
+        nome:dia_semana,
+        dia_semana,
+        letra:null,
+        exercicios,
+        data:new Date().toLocaleDateString("pt-BR"),
+        professor_responsavel:usuarioAtual.id,
+        professor_nome:perfilAtual.nome,
+        atualizado_em:new Date().toISOString()
+    };
+
     let error;
     if(existente){
         if(!confirm(`Já existe um treino de ${dia_semana} para ${aluno.nome}. Deseja substituir?`))return;
@@ -1978,8 +2017,14 @@ salvarTreino=async function(evento){
     }else{
         ({error}=await supabaseClient.from("treinos").insert({...payload,aluno_id:aluno.id}));
     }
+
     if(error)return alert("Erro ao salvar treino: "+error.message);
-    evento.target.reset();treinoBibliotecaSelecionados=[];await atualizarTelas();fecharFormularioTreino();alert("Treino salvo com sucesso!");
+
+    evento.target.reset();
+    treinoBibliotecaSelecionados=[];
+    await atualizarTelas();
+    fecharFormularioTreino();
+    alert("Treino salvo com sucesso!");
 }
 
 /* Visual do aluno: usa a biblioteca para miniatura, máquina e vídeo */
