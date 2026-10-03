@@ -263,6 +263,40 @@ main{padding:18px 18px 92px}
 
 </style>
 
+
+<style>
+/* ===== MOROTTIGYM • MODO TREINO 3.0 ===== */
+.treino-campos{grid-template-columns:repeat(2,1fr)}
+.mgym-treino-head{background:linear-gradient(145deg,#251316,#171719 68%);border:1px solid #51242b;border-radius:20px;padding:16px;margin-bottom:12px}
+.mgym-treino-head-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.mgym-treino-head h3{font-size:1.12rem;margin:2px 0 4px}.mgym-treino-head p{font-size:.72rem;color:#a1a1aa}
+.mgym-progress{height:8px;background:#2b2b30;border-radius:999px;overflow:hidden;margin-top:13px}
+.mgym-progress>span{display:block;height:100%;background:linear-gradient(90deg,#e11d2e,#fb7185);border-radius:inherit;transition:.25s}
+.mgym-progress-copy{font-size:.66rem;color:#a1a1aa;margin-top:6px;display:flex;justify-content:space-between}
+.mgym-ex-card{background:#1d1d21;border:1px solid #303036;border-radius:18px;margin:10px 0;overflow:hidden;transition:.2s}
+.mgym-ex-card.concluido{border-color:#245b38;background:#172019}.mgym-ex-main{display:flex;gap:12px;padding:13px;align-items:center}
+.mgym-ex-thumb{width:70px;height:70px;border-radius:14px;object-fit:cover;background:#29292e;flex:0 0 70px}
+.mgym-ex-info{flex:1;min-width:0}.mgym-ex-info h4{font-size:.86rem;line-height:1.25;margin:0 0 5px}
+.mgym-ex-meta{font-size:.67rem;color:#d4d4d8;font-weight:800;line-height:1.45}.mgym-ex-machine{font-size:.62rem;color:#fda4af;font-weight:900;margin-bottom:5px}
+.mgym-ex-actions{display:flex;gap:7px;padding:0 13px 13px}.mgym-ex-actions button{flex:1;border:1px solid #3a3a40;background:#29292e;color:#fff;border-radius:11px;padding:10px 8px;font-size:.67rem;font-weight:900}
+.mgym-ex-actions .primary{background:#e11d2e;border-color:#ef4444}.mgym-check{font-size:1.2rem;color:#86efac}
+.mgym-start-workout{width:100%;border:1px solid #ef4444;background:linear-gradient(135deg,#e11d2e,#a91522);color:#fff;border-radius:15px;padding:14px;font-weight:950;margin:12px 0}
+.mgym-finish-workout{width:100%;border:1px solid #2f7d49;background:#173820;color:#bbf7d0;border-radius:15px;padding:14px;font-weight:950;margin:14px 0}
+.mgym-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px}
+.mgym-modal.hidden{display:none!important}.mgym-modal-card{width:min(440px,100%);max-height:92vh;overflow:auto;background:#151518;border:1px solid #34343a;border-radius:22px;box-shadow:0 28px 70px rgba(0,0,0,.55)}
+.mgym-modal-head{display:flex;align-items:center;gap:10px;padding:14px 15px;border-bottom:1px solid #2e2e33}.mgym-modal-head strong{flex:1;font-size:.86rem}.mgym-close{width:36px;height:36px;border-radius:50%;border:1px solid #3f3f46;background:#27272a;color:#fff;font-size:1rem}
+.mgym-video-body{background:#000;aspect-ratio:9/16;max-height:72vh;display:grid;place-items:center}.mgym-video-body iframe,.mgym-video-body video{width:100%;height:100%;border:0;object-fit:contain}
+.mgym-video-fallback{padding:12px 15px;font-size:.68rem;color:#a1a1aa;line-height:1.45}
+.mgym-mode-card{padding:18px}.mgym-mode-kicker{font-size:.64rem;color:#fda4af;text-transform:uppercase;font-weight:950;letter-spacing:.12em}.mgym-mode-card h2{font-size:1.18rem;margin:5px 0 5px}
+.mgym-set-counter{text-align:center;margin:18px 0}.mgym-set-counter strong{display:block;font-size:2rem}.mgym-set-counter span{font-size:.72rem;color:#a1a1aa}
+.mgym-big-btn{width:100%;border:1px solid #ef4444;background:#e11d2e;color:#fff;border-radius:15px;padding:15px;font-weight:950}
+.mgym-timer{text-align:center;padding:18px 0 12px}.mgym-timer-ring{width:190px;height:190px;margin:0 auto 16px;border-radius:50%;border:8px solid #3a171c;display:grid;place-items:center;background:radial-gradient(circle,#241114,#151518 68%)}
+.mgym-timer-ring strong{font-size:3rem;letter-spacing:-.04em}.mgym-timer small{color:#a1a1aa}.mgym-timer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mgym-timer-actions button{border:1px solid #3f3f46;background:#27272a;color:#fff;border-radius:12px;padding:11px;font-weight:850}
+.mgym-done{text-align:center;padding:22px 10px}.mgym-done .icon{font-size:3rem}.mgym-done h2{margin:8px 0}.mgym-done p{font-size:.76rem;color:#a1a1aa;line-height:1.5}
+body.mgym-modal-open{overflow:hidden}
+</style>
+
 </head>
 
 <body>
@@ -1874,7 +1908,7 @@ function renderizarOpcoesMontador(){
 }
 function adicionarExercicioAoTreino(id){
     const d=dadosExercicioBiblioteca(id);if(!d)return;
-    treinoBibliotecaSelecionados.push({biblioteca_id:Number(id),nome:d.ex.nome,series:"3",repeticoes:"10",carga:""});
+    treinoBibliotecaSelecionados.push({biblioteca_id:Number(id),nome:d.ex.nome,series:"3",repeticoes:"10",carga:"",descanso:"60"});
     renderizarSelecionadosTreino();
 }
 function removerExercicioTreino(indice){
@@ -1889,17 +1923,17 @@ function renderizarSelecionadosTreino(){
     el.innerHTML=treinoBibliotecaSelecionados.map((item,i)=>{
         const d=dadosExercicioBiblioteca(item.biblioteca_id);
         const maq=d?.maquina?`Máquina ${String(d.maquina.numero).padStart(2,"0")} • ${d.maquina.nome}`:"Sem máquina numerada";
-        return `<div class="treino-item-edit"><div class="treino-item-head"><div class="grow"><strong>${esc(item.nome)}</strong><small>${esc(maq)}</small></div></div><div class="treino-campos"><input aria-label="Séries" placeholder="Séries" value="${esc(item.series)}" oninput="atualizarCampoTreino(${i},'series',this.value)"><input aria-label="Repetições" placeholder="Reps" value="${esc(item.repeticoes)}" oninput="atualizarCampoTreino(${i},'repeticoes',this.value)"><input aria-label="Carga" placeholder="Carga opc." value="${esc(item.carga)}" oninput="atualizarCampoTreino(${i},'carga',this.value)"></div><button class="treino-remover" type="button" onclick="removerExercicioTreino(${i})">Remover</button></div>`;
+        return `<div class="treino-item-edit"><div class="treino-item-head"><div class="grow"><strong>${esc(item.nome)}</strong><small>${esc(maq)}</small></div></div><div class="treino-campos"><input aria-label="Séries" placeholder="Séries" value="${esc(item.series)}" oninput="atualizarCampoTreino(${i},'series',this.value)"><input aria-label="Repetições" placeholder="Reps" value="${esc(item.repeticoes)}" oninput="atualizarCampoTreino(${i},'repeticoes',this.value)"><input aria-label="Carga" placeholder="Carga opc." value="${esc(item.carga)}" oninput="atualizarCampoTreino(${i},'carga',this.value)"><input aria-label="Descanso em segundos" type="number" min="0" max="600" inputmode="numeric" placeholder="Descanso (s)" value="${esc(item.descanso||"60")}" oninput="atualizarCampoTreino(${i},'descanso',this.value)"></div><button class="treino-remover" type="button" onclick="removerExercicioTreino(${i})">Remover</button></div>`;
     }).join("");
 }
 function serializarExercicioTreino(item){
-    return `MGYM|${item.biblioteca_id}|${encodeURIComponent(item.nome||"")}|${encodeURIComponent(item.series||"")}|${encodeURIComponent(item.repeticoes||"")}|${encodeURIComponent(item.carga||"")}`;
+    return `MGYM|${item.biblioteca_id}|${encodeURIComponent(item.nome||"")}|${encodeURIComponent(item.series||"")}|${encodeURIComponent(item.repeticoes||"")}|${encodeURIComponent(item.carga||"")}|${encodeURIComponent(item.descanso||"60")}`;
 }
 function lerExercicioTreino(valor){
     const s=String(valor||"");
     if(!s.startsWith("MGYM|")) return {legado:true,nome:s};
     const p=s.split("|");
-    return {legado:false,biblioteca_id:Number(p[1]),nome:decodeURIComponent(p[2]||""),series:decodeURIComponent(p[3]||""),repeticoes:decodeURIComponent(p[4]||""),carga:decodeURIComponent(p[5]||"")};
+    return {legado:false,biblioteca_id:Number(p[1]),nome:decodeURIComponent(p[2]||""),series:decodeURIComponent(p[3]||""),repeticoes:decodeURIComponent(p[4]||""),carga:decodeURIComponent(p[5]||""),descanso:decodeURIComponent(p[6]||"60")};
 }
 
 /* Substitui a abertura do formulário para carregar a biblioteca e o montador */
@@ -1921,7 +1955,7 @@ editarTreinoCompleto=async function(id){
     document.getElementById("treino-dia").value=t.dia_semana||t.nome;
     treinoBibliotecaSelecionados=(t.exercicios||[]).map(lerExercicioTreino).filter(x=>!x.legado);
     /* Treinos antigos continuam editáveis: entram como nome simples no novo montador */
-    (t.exercicios||[]).map(lerExercicioTreino).filter(x=>x.legado).forEach(x=>treinoBibliotecaSelecionados.push({biblioteca_id:0,nome:x.nome,series:"",repeticoes:"",carga:""}));
+    (t.exercicios||[]).map(lerExercicioTreino).filter(x=>x.legado).forEach(x=>treinoBibliotecaSelecionados.push({biblioteca_id:0,nome:x.nome,series:"",repeticoes:"",carga:"",descanso:"60"}));
     document.getElementById("formulario-treino-wrap").classList.remove("hidden");
     renderizarSelecionadosTreino();renderizarOpcoesMontador();
     document.getElementById("formulario-treino-wrap").scrollIntoView({behavior:"smooth",block:"start"});
@@ -2149,6 +2183,175 @@ if("serviceWorker" in navigator){
   window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(console.error));
 }
 </script>
+
+
+<script>
+/* ===== MOROTTIGYM • MODO TREINO 3.0 ===== */
+let mgymSessaoAtual=null, mgymProgresso=[], mgymTreinoAtual=null;
+let mgymTimerInterval=null, mgymTimerEnd=0, mgymTimerRestante=0, mgymTimerPausado=false, mgymExercicioAtivo=null;
+
+function mgymYoutubeId(url){
+  try{
+    const u=new URL(url);
+    if(u.hostname.includes("youtu.be")) return u.pathname.split("/").filter(Boolean)[0]||"";
+    if(u.pathname.includes("/shorts/")) return u.pathname.split("/shorts/")[1]?.split("/")[0]||"";
+    if(u.pathname.includes("/embed/")) return u.pathname.split("/embed/")[1]?.split("/")[0]||"";
+    return u.searchParams.get("v")||"";
+  }catch{return ""}
+}
+function abrirVideoExecucao(url,nome="Execução do exercício"){
+  const modal=document.getElementById("mgym-video-modal"),body=document.getElementById("mgym-video-body"),titulo=document.getElementById("mgym-video-title");
+  if(!modal||!body)return;
+  titulo.textContent=nome; body.innerHTML="";
+  const id=mgymYoutubeId(url);
+  if(id){
+    const f=document.createElement("iframe");f.src=`https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";f.allowFullscreen=true;body.appendChild(f);
+  }else{
+    const v=document.createElement("video");v.src=url;v.controls=true;v.playsInline=true;v.autoplay=true;body.appendChild(v);
+  }
+  modal.classList.remove("hidden");document.body.classList.add("mgym-modal-open");
+}
+function fecharVideoExecucao(){
+  document.getElementById("mgym-video-body").innerHTML="";
+  document.getElementById("mgym-video-modal").classList.add("hidden");document.body.classList.remove("mgym-modal-open");
+}
+function mgymEscJs(v){return String(v??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g," ")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){fecharVideoExecucao();fecharModoTreino();}});
+
+function mgymItensTreino(t){
+  return (t?.exercicios||[]).map(lerExercicioTreino).filter(x=>!x.legado&&x.biblioteca_id);
+}
+function mgymProgressoDo(item,ordem){
+  return mgymProgresso.find(p=>Number(p.ordem)===Number(ordem+1) || (Number(p.exercicio_biblioteca_id)===Number(item.biblioteca_id)&&!p._usado));
+}
+function mgymResumoPrescricao(item){
+  return [item.series?`${esc(item.series)} séries`:"",item.repeticoes?`${esc(item.repeticoes)} reps`:"",item.carga?`Carga ${esc(item.carga)}`:"",`${esc(item.descanso||"60")}s descanso`].filter(Boolean).join(" • ");
+}
+function mgymCardExercicio(item,i){
+  const d=dadosExercicioBiblioteca(item.biblioteca_id), ex=d?.ex, p=mgymProgresso.find(x=>Number(x.ordem)===i+1);
+  const nome=ex?.nome||item.nome, concluido=!!p?.concluido;
+  const thumb=ex?.miniatura_url?`<img class="mgym-ex-thumb" src="${esc(ex.miniatura_url)}" alt="${esc(nome)}">`:"";
+  const maq=d?.maquina?`<div class="mgym-ex-machine">MÁQUINA ${String(d.maquina.numero).padStart(2,"0")} • ${esc(d.maquina.nome)}</div>`:"";
+  const video=ex?.video_url?`<button type="button" onclick="abrirVideoExecucao('${mgymEscJs(ex.video_url)}','${mgymEscJs(nome)}')">▶ Ver execução</button>`:"";
+  return `<div class="mgym-ex-card ${concluido?"concluido":""}"><div class="mgym-ex-main">${thumb}<div class="mgym-ex-info">${maq}<h4>${esc(nome)}</h4><div class="mgym-ex-meta">${mgymResumoPrescricao(item)}</div></div>${concluido?'<div class="mgym-check">✓</div>':""}</div><div class="mgym-ex-actions">${video}<button type="button" class="${concluido?"":"primary"}" onclick="abrirModoExercicio(${i})">${concluido?"Reabrir":"Iniciar exercício"}</button></div></div>`;
+}
+function mgymRenderTreino(t){
+  mgymTreinoAtual=t;
+  const area=document.getElementById("treino-aba-conteudo");if(!area)return;
+  const itens=mgymItensTreino(t);
+  if(!itens.length){area.innerHTML=`<div class="treino-card"><h3>${esc(t.dia_semana||t.nome||"Treino")}</h3><div class="warning">Este treino ainda está no formato antigo. Peça ao professor para salvá-lo novamente usando a Biblioteca.</div></div>`;return;}
+  const concluidos=mgymProgresso.filter(x=>x.concluido).length, pct=itens.length?Math.round(concluidos/itens.length*100):0;
+  area.innerHTML=`<div class="mgym-treino-head"><div class="mgym-treino-head-top"><div><div class="page-kicker">Modo Treino</div><h3>${esc(t.dia_semana||t.nome||"Treino")}</h3><p>${t.professor_nome?`Professor: ${esc(t.professor_nome)} • `:""}${itens.length} exercícios</p></div><strong>${pct}%</strong></div><div class="mgym-progress"><span style="width:${pct}%"></span></div><div class="mgym-progress-copy"><span>${concluidos} de ${itens.length} concluídos</span><span>${pct}%</span></div></div>${!mgymSessaoAtual?'<button class="mgym-start-workout" type="button" onclick="iniciarSessaoTreino()">▶ INICIAR TREINO</button>':""}${itens.map(mgymCardExercicio).join("")}${mgymSessaoAtual&&concluidos===itens.length?'<button class="mgym-finish-workout" type="button" onclick="concluirSessaoTreino()">✓ CONCLUIR TREINO</button>':""}`;
+}
+async function mgymCarregarSessao(t){
+  mgymSessaoAtual=null;mgymProgresso=[];mgymTreinoAtual=t;
+  if(!alunoAtual)return mgymRenderTreino(t);
+  const {data:sessao,error}=await supabaseClient.from("sessoes_treino").select("*").eq("aluno_id",alunoAtual.id).eq("treino_id",t.id).eq("status","em_andamento").order("iniciado_em",{ascending:false}).limit(1).maybeSingle();
+  if(!error&&sessao){
+    mgymSessaoAtual=sessao;
+    const {data}=await supabaseClient.from("progresso_exercicios").select("*").eq("sessao_id",sessao.id).order("ordem");
+    mgymProgresso=data||[];
+  }
+  mgymRenderTreino(t);
+}
+async function iniciarSessaoTreino(){
+  if(!alunoAtual||!mgymTreinoAtual)return;
+  const itens=mgymItensTreino(mgymTreinoAtual);if(!itens.length)return;
+  const {data:sessao,error}=await supabaseClient.from("sessoes_treino").insert({aluno_id:alunoAtual.id,treino_id:mgymTreinoAtual.id,status:"em_andamento"}).select().single();
+  if(error)return alert("Não foi possível iniciar o treino: "+error.message);
+  const linhas=itens.map((x,i)=>({sessao_id:sessao.id,exercicio_biblioteca_id:x.biblioteca_id,nome_exercicio:x.nome,ordem:i+1,series_total:Math.max(1,parseInt(x.series)||1),series_concluidas:0,repeticoes:x.repeticoes||null,carga:x.carga||null,descanso_segundos:Math.max(0,parseInt(x.descanso)||60),concluido:false}));
+  const {data:prog,error:pe}=await supabaseClient.from("progresso_exercicios").insert(linhas).select().order("ordem");
+  if(pe){await supabaseClient.from("sessoes_treino").delete().eq("id",sessao.id);return alert("Não foi possível preparar o treino: "+pe.message)}
+  mgymSessaoAtual=sessao;mgymProgresso=prog||[];mgymRenderTreino(mgymTreinoAtual);abrirModoExercicio(0);
+}
+function abrirModoExercicio(indice){
+  if(!mgymSessaoAtual)return iniciarSessaoTreino();
+  const itens=mgymItensTreino(mgymTreinoAtual), item=itens[indice];if(!item)return;
+  const p=mgymProgresso.find(x=>Number(x.ordem)===indice+1);if(!p)return;
+  mgymExercicioAtivo={indice,item,p};
+  const d=dadosExercicioBiblioteca(item.biblioteca_id),nome=d?.ex?.nome||item.nome;
+  const modal=document.getElementById("mgym-mode-modal"),body=document.getElementById("mgym-mode-body");
+  const atual=Math.min(Number(p.series_concluidas||0)+1,Number(p.series_total||1));
+  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-mode-kicker">${p.concluido?"Exercício concluído":"Exercício em andamento"}</div><h2>${esc(nome)}</h2><div class="mgym-ex-meta">${mgymResumoPrescricao(item)}</div><div class="mgym-set-counter"><strong>${p.concluido?"✓":atual+" / "+p.series_total}</strong><span>${p.concluido?"Todas as séries concluídas":"Série atual"}</span></div>${p.concluido?'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">Voltar ao treino</button>':`<button class="mgym-big-btn" type="button" onclick="concluirSerieAtual()">✓ CONCLUIR SÉRIE ${atual}</button>`}</div>`;
+  modal.classList.remove("hidden");document.body.classList.add("mgym-modal-open");
+}
+async function concluirSerieAtual(){
+  if(!mgymExercicioAtivo)return;
+  const p=mgymExercicioAtivo.p, novas=Math.min(Number(p.series_total),Number(p.series_concluidas||0)+1), terminou=novas>=Number(p.series_total);
+  const payload={series_concluidas:novas,concluido:terminou,concluido_em:terminou?new Date().toISOString():null};
+  const {error}=await supabaseClient.from("progresso_exercicios").update(payload).eq("id",p.id);
+  if(error)return alert("Não foi possível registrar a série: "+error.message);
+  Object.assign(p,payload);
+  if(terminou){mgymAvisoFimDescanso(true);mostrarExercicioConcluido();}else iniciarDescanso(Number(p.descanso_segundos||60));
+}
+function iniciarDescanso(segundos){
+  clearInterval(mgymTimerInterval);mgymTimerRestante=Math.max(0,segundos);mgymTimerEnd=Date.now()+mgymTimerRestante*1000;mgymTimerPausado=false;renderDescanso();mgymTimerInterval=setInterval(atualizarTimerDescanso,250);
+}
+function renderDescanso(){
+  const body=document.getElementById("mgym-mode-body"),p=mgymExercicioAtivo?.p;if(!body||!p)return;
+  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-mode-kicker">Recuperação</div><h2>Descanso</h2><div class="mgym-timer"><div class="mgym-timer-ring"><strong id="mgym-timer-num">${mgymFormatTimer(mgymTimerRestante)}</strong></div><small>Próxima: série ${Math.min(Number(p.series_concluidas)+1,Number(p.series_total))} de ${p.series_total}</small></div><div class="mgym-timer-actions"><button type="button" id="mgym-pause-btn" onclick="pausarRetomarDescanso()">Pausar</button><button type="button" onclick="pularDescanso()">Pular descanso</button></div></div>`;
+}
+function mgymFormatTimer(s){s=Math.max(0,Math.ceil(s));return `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`}
+function atualizarTimerDescanso(){
+  if(mgymTimerPausado)return;
+  mgymTimerRestante=Math.max(0,Math.ceil((mgymTimerEnd-Date.now())/1000));
+  const el=document.getElementById("mgym-timer-num");if(el)el.textContent=mgymFormatTimer(mgymTimerRestante);
+  if(mgymTimerRestante<=0){clearInterval(mgymTimerInterval);mgymAvisoFimDescanso(false);mostrarProximaSerie();}
+}
+function pausarRetomarDescanso(){
+  const b=document.getElementById("mgym-pause-btn");
+  if(!mgymTimerPausado){mgymTimerRestante=Math.max(0,Math.ceil((mgymTimerEnd-Date.now())/1000));mgymTimerPausado=true;if(b)b.textContent="Retomar";}
+  else{mgymTimerEnd=Date.now()+mgymTimerRestante*1000;mgymTimerPausado=false;if(b)b.textContent="Pausar";}
+}
+function pularDescanso(){clearInterval(mgymTimerInterval);mgymTimerRestante=0;mostrarProximaSerie()}
+function mgymAvisoFimDescanso(exercicioFinalizado){
+  try{if(navigator.vibrate)navigator.vibrate(exercicioFinalizado?[120,70,120]:[180,80,180]);}catch{}
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;if(C){const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);g.gain.value=.08;o.frequency.value=740;o.start();o.stop(c.currentTime+.16);}
+  }catch{}
+}
+function mostrarProximaSerie(){
+  const p=mgymExercicioAtivo?.p;if(!p)return;
+  const body=document.getElementById("mgym-mode-body");
+  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-mode-kicker">Descanso concluído</div><div class="mgym-done"><div class="icon">⏱️</div><h2>Pronto para continuar</h2><p>Série ${Number(p.series_concluidas)+1} de ${p.series_total}</p></div><button class="mgym-big-btn" type="button" onclick="abrirModoExercicio(${mgymExercicioAtivo.indice})">▶ INICIAR NOVA SÉRIE</button></div>`;
+}
+function mostrarExercicioConcluido(){
+  const body=document.getElementById("mgym-mode-body"),idx=mgymExercicioAtivo?.indice??0,itens=mgymItensTreino(mgymTreinoAtual),proximo=idx+1<itens.length?idx+1:null;
+  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-done"><div class="icon">✅</div><h2>Exercício concluído</h2><p>Todas as séries foram registradas.</p></div>${proximo!==null?`<button class="mgym-big-btn" type="button" onclick="mgymIrProximo(${proximo})">PRÓXIMO EXERCÍCIO →</button>`:'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">VER RESUMO DO TREINO</button>'}</div>`;
+  mgymRenderTreino(mgymTreinoAtual);
+}
+function mgymIrProximo(i){fecharModoTreino();setTimeout(()=>abrirModoExercicio(i),80)}
+function fecharModoTreino(){clearInterval(mgymTimerInterval);document.getElementById("mgym-mode-modal")?.classList.add("hidden");document.body.classList.remove("mgym-modal-open")}
+async function concluirSessaoTreino(){
+  if(!mgymSessaoAtual)return;
+  const {error}=await supabaseClient.from("sessoes_treino").update({status:"concluido",finalizado_em:new Date().toISOString()}).eq("id",mgymSessaoAtual.id);
+  if(error)return alert("Não foi possível concluir o treino: "+error.message);
+  const inicio=new Date(mgymSessaoAtual.iniciado_em).getTime(),mins=Math.max(1,Math.round((Date.now()-inicio)/60000));
+  mgymSessaoAtual=null;mgymProgresso=[];
+  const area=document.getElementById("treino-aba-conteudo");if(area)area.innerHTML=`<div class="mgym-treino-head"><div class="mgym-done"><div class="icon">🏁</div><h2>Treino concluído!</h2><p>${mins} min de treino • todos os exercícios concluídos.</p></div><button class="mgym-start-workout" type="button" onclick="mgymCarregarSessao(mgymTreinoAtual)">VOLTAR AO TREINO</button></div>`;
+}
+
+/* Substitui a visualização da aba do aluno pelo Modo Treino */
+mostrarTreinoAba=async function(id,botao){
+  const t=treinosCache.find(x=>Number(x.id)===Number(id));if(!t)return;
+  document.querySelectorAll("#treino-aluno-conteudo .treino-tab").forEach(b=>b.classList.remove("ativo"));if(botao)botao.classList.add("ativo");
+  await mgymCarregarSessao(t);
+};
+</script>
+
+<div id="mgym-video-modal" class="mgym-modal hidden" onclick="if(event.target===this)fecharVideoExecucao()">
+  <div class="mgym-modal-card">
+    <div class="mgym-modal-head"><strong id="mgym-video-title">Execução do exercício</strong><button class="mgym-close" type="button" onclick="fecharVideoExecucao()">✕</button></div>
+    <div id="mgym-video-body" class="mgym-video-body"></div>
+    <div class="mgym-video-fallback">O vídeo fica sobre o MorottiGym. Ao fechar, você continua no mesmo ponto do treino.</div>
+  </div>
+</div>
+<div id="mgym-mode-modal" class="mgym-modal hidden">
+  <div class="mgym-modal-card">
+    <div class="mgym-modal-head"><strong>MorottiGym • Modo Treino</strong><button class="mgym-close" type="button" onclick="fecharModoTreino()">✕</button></div>
+    <div id="mgym-mode-body"></div>
+  </div>
+</div>
 
 </body>
 </html>
