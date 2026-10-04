@@ -297,6 +297,11 @@ main{padding:18px 18px 92px}
 body.mgym-modal-open{overflow:hidden}
 </style>
 
+
+<style>
+/* ===== MODELOS / VÁRIOS DIAS / BI-SET ===== */
+.treino-dias-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:4px}.treino-dias-grid label{background:#202024;border:1px solid #3a3a40;border-radius:11px;padding:10px 5px;text-align:center;font-size:.68rem;font-weight:900;color:#d4d4d8}.treino-dias-grid label:has(input:checked){background:#3b171c;border-color:#e11d2e;color:#fecdd3}.treino-dias-grid input{accent-color:#e11d2e}.modelo-treino-box{background:#1d1d21;border:1px solid #4b3b1c;border-radius:16px;padding:13px;margin-bottom:13px}.modelo-treino-head{display:flex;align-items:center;gap:10px}.modelo-treino-head>div{flex:1}.modelo-treino-head strong{display:block;font-size:.82rem}.modelo-treino-head small{display:block;color:#a1a1aa;font-size:.64rem;margin-top:3px}.modelos-treino-rapidos{display:flex;gap:7px;overflow-x:auto;margin-top:10px}.modelo-chip{flex:0 0 auto;border:1px solid #5a4720;background:#332913;color:#fde68a;border-radius:999px;padding:8px 11px;font-size:.66rem;font-weight:900}.treino-builder-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.treino-builder-actions .btn-acao{margin-top:0;text-transform:none}.combo-badge{display:inline-flex;margin-top:6px;padding:4px 7px;border-radius:7px;background:#172c24;border:1px solid #245b38;color:#86efac;font-size:.61rem;font-weight:900}.combo-line{border-left:3px solid #22c55e!important}.modelo-card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.modelo-card-actions button{flex:1}.install-app-btn{font-size:.76rem;letter-spacing:.02em}.install-app-card strong{display:block;color:#fff;font-size:.9rem}.install-app-card{border-color:#5a4720;background:linear-gradient(145deg,#2b2518,#1d1d21)}
+</style>
 </head>
 
 <body>
@@ -386,8 +391,8 @@ body.mgym-modal-open{overflow:hidden}
             <button class="btn-acao" type="button" onclick="window.open('https://api.whatsapp.com/send?phone=5516992239393','_blank')">💬 QUERO CONHECER A MOROTTIGYM</button>
         </div>
         <div id="install-app-card-visitante" class="install-app-card">
-            <strong>📲 Instale o MorottiGym</strong><p>Adicione o app à tela inicial do celular para abrir com um toque.</p>
-            <button class="install-app-btn" type="button" onclick="instalarMorottiGym()">Adicionar à tela inicial</button>
+            <strong>📲 Baixe o app MorottiGym</strong><p>Tenha treinos, check-ins e ranking direto no celular. Instale gratuitamente e abra como um aplicativo.</p>
+            <button class="install-app-btn" type="button" onclick="instalarMorottiGym()">BAIXAR / INSTALAR APP</button>
         </div>
     </div>
 
@@ -411,9 +416,9 @@ body.mgym-modal-open{overflow:hidden}
             <div id="checkin-feedback" class="checkin-feedback">Faça seu check-in quando estiver na MorottiGym.</div>
         </div>
         <div id="install-app-card" class="install-app-card">
-            <strong>📲 Instale o MorottiGym</strong>
-            <p>Adicione o app à tela inicial do celular para abrir com um toque.</p>
-            <button id="btn-instalar-app" class="install-app-btn" type="button" onclick="instalarMorottiGym()">Adicionar à tela inicial</button>
+            <strong>📲 Baixe o app MorottiGym</strong>
+            <p>Tenha treinos, check-ins e ranking direto no celular. Instale gratuitamente e abra como um aplicativo.</p>
+            <button id="btn-instalar-app" class="install-app-btn" type="button" onclick="instalarMorottiGym()">BAIXAR / INSTALAR APP</button>
         </div>
         <div class="quick-grid">
             <div class="quick-card" onclick="abrirTela('tela-treino')"><div class="qicon">🏋🏻</div><div><strong>Meu treino</strong><br><small>Treinos por dia da semana</small></div></div>
@@ -437,8 +442,8 @@ body.mgym-modal-open{overflow:hidden}
             <div id="card-funcionarios-master" class="quick-card master-only hidden" onclick="abrirFuncionariosMaster()"><div class="qicon">🪪</div><div><strong>Funcionários</strong><br><small>Equipe e níveis de acesso</small></div></div>
         </div>
         <div id="install-app-card-funcionario" class="install-app-card">
-            <strong>📲 Instale o MorottiGym</strong><p>Tenha o painel da academia direto na tela inicial do celular.</p>
-            <button class="install-app-btn" type="button" onclick="instalarMorottiGym()">Adicionar à tela inicial</button>
+            <strong>📲 Baixe o app MorottiGym</strong><p>Tenha o painel da academia direto no celular e abra o MorottiGym como um aplicativo.</p>
+            <button class="install-app-btn" type="button" onclick="instalarMorottiGym()">BAIXAR / INSTALAR APP</button>
         </div>
         <div id="area-funcionario" class="admin-section"><div id="funcionario-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
     </div>
@@ -670,7 +675,18 @@ body.mgym-modal-open{overflow:hidden}
         <div id="formulario-treino-wrap" class="hidden" style="margin-top:14px">
             <form id="form-treino" onsubmit="salvarTreino(event)">
                 <input id="treino-aluno" type="hidden">
-                <div class="form-grupo"><label for="treino-dia">Dia da semana</label><select id="treino-dia" required><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
+                <div class="modelo-treino-box">
+                    <div class="modelo-treino-head"><div><strong>📚 Modelos de treino</strong><small>Use um treino pronto ou monte um novo.</small></div><button class="mini-action gold" type="button" onclick="abrirGerenciadorModelos()">Ver modelos</button></div>
+                    <div id="modelos-treino-rapidos" class="modelos-treino-rapidos"></div>
+                </div>
+                <div class="form-grupo">
+                    <label>Em quais dias este treino será realizado?</label>
+                    <div id="treino-dias-grid" class="treino-dias-grid">
+                        <label><input type="checkbox" value="Segunda-feira"> Seg</label><label><input type="checkbox" value="Terça-feira"> Ter</label><label><input type="checkbox" value="Quarta-feira"> Qua</label><label><input type="checkbox" value="Quinta-feira"> Qui</label><label><input type="checkbox" value="Sexta-feira"> Sex</label><label><input type="checkbox" value="Sábado"> Sáb</label><label><input type="checkbox" value="Domingo"> Dom</label>
+                    </div>
+                    <input id="treino-dia" type="hidden">
+                    <div class="form-help">Marque somente os dias em que este aluno faz este treino.</div>
+                </div>
                 <div class="form-grupo">
                     <label>Exercícios do treino</label>
                     <textarea id="treino-exercicios" class="hidden"></textarea>
@@ -692,7 +708,11 @@ body.mgym-modal-open{overflow:hidden}
                     </div>
                     <div id="treino-exercicios-selecionados" class="treino-selecionados"></div>
                 </div>
-                <button class="btn-acao sucesso" type="submit">💾 Salvar dia de treino</button>
+                <div class="treino-builder-actions">
+                    <button class="btn-acao" type="button" onclick="salvarTreinoAtualComoModelo()">📚 Salvar como modelo</button>
+                    <button class="btn-acao" type="button" onclick="agruparSelecionadosAutomatico()">🔗 Intercalar últimos 2</button>
+                </div>
+                <button class="btn-acao sucesso" type="submit">💾 Salvar treino nos dias marcados</button>
                 <button class="btn-voltar" type="button" onclick="fecharFormularioTreino()">Cancelar</button>
             </form>
         </div>
@@ -703,6 +723,15 @@ body.mgym-modal-open{overflow:hidden}
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar ao início</button>
 </main>
 
+
+<!-- MODELOS DE TREINO -->
+<main id="tela-modelos-treino" class="hidden">
+    <div class="page-kicker">Painel do professor</div>
+    <h2 class="section-title">📚 Modelos de treino</h2>
+    <p class="app-subtitle">Treinos prontos podem ser usados com qualquer aluno. Os dias são escolhidos somente na hora de aplicar.</p>
+    <div id="lista-modelos-treino"><div class="empty">Carregando modelos...</div></div>
+    <button class="btn-voltar" type="button" onclick="voltarParaTreinosDoAluno()">⬅️ Voltar aos treinos</button>
+</main>
 
 <!-- SOLICITAÇÕES DO ALUNO -->
 <main id="tela-solicitacoes-aluno" class="hidden">
@@ -2353,5 +2382,87 @@ mostrarTreinoAba=async function(id,botao){
   </div>
 </div>
 
+\n<script>
+/* ===== MOROTTIGYM • TREINOS 4.0 ===== */
+let modelosTreinoCache=[];
+let treinoEditandoId=null;
+
+function diasTreinoMarcados(){return [...document.querySelectorAll('#treino-dias-grid input:checked')].map(i=>i.value)}
+function marcarDiasTreino(dias=[]){document.querySelectorAll('#treino-dias-grid input').forEach(i=>i.checked=dias.includes(i.value))}
+function novoGrupoCombo(){return 'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+serializarExercicioTreino=function(item){
+  const dados={biblioteca_id:Number(item.biblioteca_id)||0,nome:item.nome||'',series:item.series||'',repeticoes:item.repeticoes||'',carga:item.carga||'',descanso:item.descanso||'60',grupo_combo:item.grupo_combo||''};
+  return 'MGYM2|'+encodeURIComponent(JSON.stringify(dados));
+};
+lerExercicioTreino=function(valor){
+  const s=String(valor||'');
+  if(s.startsWith('MGYM2|')){try{return {legado:false,...JSON.parse(decodeURIComponent(s.slice(6)))}}catch{}}
+  if(s.startsWith('MGYM|')){const p=s.split('|');return {legado:false,biblioteca_id:Number(p[1]),nome:decodeURIComponent(p[2]||''),series:decodeURIComponent(p[3]||''),repeticoes:decodeURIComponent(p[4]||''),carga:decodeURIComponent(p[5]||''),descanso:decodeURIComponent(p[6]||'60'),grupo_combo:''}}
+  return {legado:true,nome:s,grupo_combo:''};
+};
+
+renderizarSelecionadosTreino=function(){
+  const el=document.getElementById('treino-exercicios-selecionados');if(!el)return;
+  if(!treinoBibliotecaSelecionados.length){el.innerHTML='<div class="empty">Nenhum exercício adicionado ao treino.</div>';return}
+  const grupos={};treinoBibliotecaSelecionados.forEach(x=>{if(x.grupo_combo)(grupos[x.grupo_combo]??=[]).push(x)});
+  el.innerHTML=treinoBibliotecaSelecionados.map((item,i)=>{
+    const d=dadosExercicioBiblioteca(item.biblioteca_id);const maq=d?.maquina?`Máquina ${String(d.maquina.numero).padStart(2,'0')} • ${d.maquina.nome}`:'Sem máquina numerada';
+    const combinado=item.grupo_combo&&grupos[item.grupo_combo]?.length>1;
+    return `<div class="treino-item-edit ${combinado?'combo-line':''}"><div class="treino-item-head"><div class="grow"><strong>${esc(item.nome)}</strong><small>${esc(maq)}</small>${combinado?'<span class="combo-badge">🔗 EXERCÍCIO INTERCALADO</span>':''}</div></div><div class="treino-campos"><input aria-label="Séries" placeholder="Séries" value="${esc(item.series)}" oninput="atualizarCampoTreino(${i},'series',this.value)"><input aria-label="Repetições" placeholder="Reps" value="${esc(item.repeticoes)}" oninput="atualizarCampoTreino(${i},'repeticoes',this.value)"><input aria-label="Carga" placeholder="Carga opc." value="${esc(item.carga)}" oninput="atualizarCampoTreino(${i},'carga',this.value)"><input aria-label="Descanso" type="number" min="0" max="600" placeholder="Descanso (s)" value="${esc(item.descanso||'60')}" oninput="atualizarCampoTreino(${i},'descanso',this.value)"></div><div class="day-actions"><button class="treino-remover" type="button" onclick="alternarComboComAnterior(${i})">${i>0?(combinado?'Desagrupar':'🔗 Intercalar com anterior'): 'Exercício inicial'}</button><button class="treino-remover" type="button" onclick="removerExercicioTreino(${i})">Remover</button></div></div>`;
+  }).join('');
+};
+function alternarComboComAnterior(i){if(i<=0)return;const atual=treinoBibliotecaSelecionados[i],ant=treinoBibliotecaSelecionados[i-1];if(atual.grupo_combo&&atual.grupo_combo===ant.grupo_combo){atual.grupo_combo='';const g=ant.grupo_combo;if(treinoBibliotecaSelecionados.filter(x=>x.grupo_combo===g).length<2)ant.grupo_combo=''}else{const g=ant.grupo_combo||novoGrupoCombo();ant.grupo_combo=g;atual.grupo_combo=g}renderizarSelecionadosTreino()}
+function agruparSelecionadosAutomatico(){const n=treinoBibliotecaSelecionados.length;if(n<2)return alert('Adicione pelo menos 2 exercícios.');const g=novoGrupoCombo();treinoBibliotecaSelecionados[n-2].grupo_combo=g;treinoBibliotecaSelecionados[n-1].grupo_combo=g;renderizarSelecionadosTreino()}
+
+async function carregarModelosTreino(){
+  const {data,error}=await supabaseClient.from('modelos_treino').select('*').order('nome');
+  if(error){console.warn('Modelos de treino:',error.message);modelosTreinoCache=[];return false}
+  modelosTreinoCache=data||[];renderizarModelosRapidos();return true;
+}
+function renderizarModelosRapidos(){const el=document.getElementById('modelos-treino-rapidos');if(!el)return;el.innerHTML=modelosTreinoCache.length?modelosTreinoCache.slice(0,8).map(m=>`<button class="modelo-chip" type="button" onclick="aplicarModeloTreino(${m.id})">${esc(m.nome)}</button>`).join(''):'<span class="small">Nenhum modelo salvo ainda.</span>'}
+function exerciciosDoModelo(m){return Array.isArray(m.exercicios)?m.exercicios:[]}
+async function aplicarModeloTreino(id){const m=modelosTreinoCache.find(x=>Number(x.id)===Number(id));if(!m)return;await garantirBibliotecaCarregada();treinoBibliotecaSelecionados=exerciciosDoModelo(m).map(x=>({...x}));renderizarSelecionadosTreino();renderizarOpcoesMontador();alert(`Modelo “${m.nome}” carregado. Agora marque os dias deste aluno.`)}
+async function salvarTreinoAtualComoModelo(){
+  if(!exigirFuncionario())return;if(!treinoBibliotecaSelecionados.length)return alert('Monte o treino antes de salvar como modelo.');
+  const nome=prompt('Nome do modelo de treino:','Treino A');if(!nome?.trim())return;
+  const payload={nome:nome.trim(),exercicios:treinoBibliotecaSelecionados.map(x=>({...x})),criado_por:usuarioAtual?.id||null,criado_por_nome:perfilAtual?.nome||''};
+  const {error}=await supabaseClient.from('modelos_treino').insert(payload);if(error)return alert('Não foi possível salvar o modelo. Execute primeiro o SQL dos modelos no Supabase.\n\n'+error.message);
+  await carregarModelosTreino();alert('Modelo salvo! Ele poderá ser usado com outros alunos.');
+}
+async function abrirGerenciadorModelos(){await carregarModelosTreino();await abrirTela('tela-modelos-treino');renderizarGerenciadorModelos()}
+function renderizarGerenciadorModelos(){const el=document.getElementById('lista-modelos-treino');if(!el)return;el.innerHTML=modelosTreinoCache.length?modelosTreinoCache.map(m=>`<div class="app-list-card"><h3>${esc(m.nome)}</h3><p>${exerciciosDoModelo(m).length} exercício(s) • ${m.criado_por_nome?`Criado por ${esc(m.criado_por_nome)}`:'Modelo MorottiGym'}</p><div class="modelo-card-actions"><button class="mini-action gold" type="button" onclick="usarModeloEVoltar(${m.id})">Usar neste aluno</button><button class="mini-action red" type="button" onclick="excluirModeloTreino(${m.id})">Excluir</button></div></div>`).join(''):'<div class="empty">Nenhum modelo salvo ainda. Monte um treino e toque em “Salvar como modelo”.</div>'}
+async function usarModeloEVoltar(id){await voltarParaTreinosDoAluno();document.getElementById('formulario-treino-wrap')?.classList.remove('hidden');await aplicarModeloTreino(id)}
+async function excluirModeloTreino(id){const m=modelosTreinoCache.find(x=>Number(x.id)===Number(id));if(!m||!confirm(`Excluir o modelo “${m.nome}”?`))return;const {error}=await supabaseClient.from('modelos_treino').delete().eq('id',id);if(error)return alert(error.message);await carregarModelosTreino();renderizarGerenciadorModelos()}
+async function voltarParaTreinosDoAluno(){await abrirTela('tela-editar-treino');if(alunoSelecionadoId){document.getElementById('gestao-treino-aluno')?.classList.remove('hidden');renderizarTreinosAdmin()}}
+
+abrirFormularioNovoTreino=async function(){
+  if(!alunoSelecionadoId)return;await garantirBibliotecaCarregada();await carregarModelosTreino();document.getElementById('form-treino').reset();document.getElementById('treino-aluno').value=alunoSelecionadoId;treinoEditandoId=null;marcarDiasTreino([]);treinoBibliotecaSelecionados=[];grupoMontadorAtual='todos';document.querySelectorAll('.montador-chip').forEach(b=>b.classList.toggle('ativo',b.dataset.mgrupo==='todos'));document.getElementById('formulario-treino-wrap').classList.remove('hidden');renderizarSelecionadosTreino();renderizarOpcoesMontador();renderizarModelosRapidos();
+};
+editarTreinoCompleto=async function(id){
+  const t=treinosCache.find(x=>Number(x.id)===Number(id));if(!t)return;await garantirBibliotecaCarregada();await carregarModelosTreino();document.getElementById('treino-aluno').value=t.aluno_id;treinoEditandoId=Number(t.id);marcarDiasTreino([t.dia_semana||t.nome]);treinoBibliotecaSelecionados=(t.exercicios||[]).map(lerExercicioTreino).map(x=>x.legado?{biblioteca_id:0,nome:x.nome,series:'',repeticoes:'',carga:'',descanso:'60',grupo_combo:''}:x);document.getElementById('formulario-treino-wrap').classList.remove('hidden');renderizarSelecionadosTreino();renderizarOpcoesMontador();renderizarModelosRapidos();document.getElementById('formulario-treino-wrap').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+salvarTreino=async function(evento){
+  evento.preventDefault();if(!exigirFuncionario())return;const alunoId=Number(document.getElementById('treino-aluno').value),aluno=alunosCache.find(a=>a.id===alunoId),dias=diasTreinoMarcados();
+  if(!aluno||!dias.length||!treinoBibliotecaSelecionados.length)return alert('Selecione o aluno, marque pelo menos um dia e adicione pelo menos um exercício.');
+  const exercicios=treinoBibliotecaSelecionados.map(serializarExercicioTreino);let substituidos=0;
+  for(const dia_semana of dias){const existente=treinosCache.find(t=>Number(t.aluno_id)===aluno.id&&t.dia_semana===dia_semana);if(existente&&!treinoEditandoId){if(!confirm(`Já existe um treino de ${dia_semana} para ${aluno.nome}. Deseja substituir?`))continue}
+    const payload={aluno_nome:aluno.nome,nome:dia_semana,dia_semana,letra:null,exercicios,data:new Date().toLocaleDateString('pt-BR'),professor_responsavel:usuarioAtual.id,professor_nome:perfilAtual.nome,atualizado_em:new Date().toISOString()};let error;
+    if(existente){({error}=await supabaseClient.from('treinos').update(payload).eq('id',existente.id));substituidos++}else{({error}=await supabaseClient.from('treinos').insert({...payload,aluno_id:aluno.id}))}if(error)return alert('Erro ao salvar '+dia_semana+': '+error.message);
+  }
+  evento.target.reset();treinoEditandoId=null;marcarDiasTreino([]);treinoBibliotecaSelecionados=[];await atualizarTelas();fecharFormularioTreino();alert(`Treino salvo em ${dias.length} dia(s)!${substituidos?' Treinos existentes foram atualizados.':''}`);
+};
+
+function duplicarTreinoParaDias(id){const t=treinosCache.find(x=>Number(x.id)===Number(id));if(!t)return;editarTreinoCompleto(id).then(()=>{treinoEditandoId=null;marcarDiasTreino([]);alert('Treino copiado. Marque o(s) novo(s) dia(s) e salve.')})}
+const _renderTreinosAdmin40=renderizarTreinosAdmin;
+renderizarTreinosAdmin=function(){_renderTreinosAdmin40();const el=document.getElementById('lista-treinos-admin');if(!el||!alunoSelecionadoId)return;el.querySelectorAll('.day-card').forEach(card=>{const texto=card.textContent||'';const t=treinosCache.filter(x=>Number(x.aluno_id)===Number(alunoSelecionadoId)).find(x=>texto.includes(x.dia_semana||x.nome));if(t&&!card.querySelector('.duplicar40')){const a=card.querySelector('.day-actions');if(a)a.insertAdjacentHTML('beforeend',`<button class="mini-action gold duplicar40" type="button" onclick="duplicarTreinoParaDias(${t.id})">📋 Duplicar</button>`)}})};
+
+/* Instalação: não insiste durante a sessão após instalação/dispensa e some no modo standalone */
+const _atualizarCardsInstalacao40=atualizarCardsInstalacaoMorotti;
+atualizarCardsInstalacaoMorotti=function(){const instalado=estaRodandoComoAppMorotti()||localStorage.getItem('morotti_app_instalado')==='1';const iphone=/iphone|ipad|ipod/i.test(navigator.userAgent);const mostrar=!instalado&&(iphone||!!eventoInstalacaoMorotti);cardsInstalacaoMorotti.forEach(id=>document.getElementById(id)?.classList.toggle('show',mostrar))};
+window.addEventListener('appinstalled',()=>{localStorage.setItem('morotti_app_instalado','1');atualizarCardsInstalacaoMorotti()});
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change',atualizarCardsInstalacaoMorotti);
+</script>
 </body>
 </html>
