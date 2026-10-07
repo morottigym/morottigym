@@ -2382,7 +2382,7 @@ mostrarTreinoAba=async function(id,botao){
   </div>
 </div>
 
-\n<script>
+<script>
 /* ===== MOROTTIGYM • TREINOS 4.0 ===== */
 let modelosTreinoCache=[];
 let treinoEditandoId=null;
@@ -2464,5 +2464,215 @@ atualizarCardsInstalacaoMorotti=function(){const instalado=estaRodandoComoAppMor
 window.addEventListener('appinstalled',()=>{localStorage.setItem('morotti_app_instalado','1');atualizarCardsInstalacaoMorotti()});
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change',atualizarCardsInstalacaoMorotti);
 </script>
-\n<script>\n/* ===== MOROTTIGYM • COMPATIBILIDADE LEGADA + ALTERNADO REAL ===== */\nlet mgymProximoIndiceAposDescanso=null;\n\nfunction mgymNormalizarNome(v){\n  return String(v||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();\n}\n\nasync function mgymTentarMigrarTreinoLegado(t){\n  const orig=Array.isArray(t?.exercicios)?t.exercicios:[];\n  if(!orig.some(v=>lerExercicioTreino(v).legado)) return {ok:true,migrado:false};\n  await garantirBibliotecaCarregada();\n  const convertidos=[]; const faltando=[];\n  for(const valor of orig){\n    const l=lerExercicioTreino(valor);\n    if(!l.legado){convertidos.push(valor);continue;}\n    const nome=String(l.nome||'').trim(), chave=mgymNormalizarNome(nome);\n    const candidatos=bibliotecaExerciciosCache.filter(ex=>mgymNormalizarNome(ex.nome)===chave);\n    if(candidatos.length!==1){faltando.push(nome);convertidos.push(valor);continue;}\n    convertidos.push(serializarExercicioTreino({biblioteca_id:Number(candidatos[0].id),nome:candidatos[0].nome,series:'',repeticoes:'',carga:'',descanso:'60',grupo_combo:''}));\n  }\n  if(faltando.length) return {ok:false,migrado:false,faltando};\n  const {error}=await supabaseClient.from('treinos').update({exercicios:convertidos,atualizado_em:new Date().toISOString()}).eq('id',t.id);\n  if(error){console.warn('Migração de treino antigo:',error.message);return {ok:false,migrado:false,faltando:[]};}\n  t.exercicios=convertidos;\n  return {ok:true,migrado:true};\n}\n\nfunction mgymIndicesCombo(item){\n  if(!item?.grupo_combo)return [];\n  return mgymItensTreino(mgymTreinoAtual).map((x,i)=>x.grupo_combo===item.grupo_combo?i:-1).filter(i=>i>=0);\n}\nfunction mgymProgIndice(i){return mgymProgresso.find(x=>Number(x.ordem)===Number(i)+1)}\nfunction mgymComboConcluido(indices){return indices.every(i=>!!mgymProgIndice(i)?.concluido)}\nfunction mgymProximoDoCombo(indices,atual){\n  if(!indices.length)return null;\n  const pos=indices.indexOf(atual);\n  for(let k=1;k<=indices.length;k++){\n    const i=indices[(pos+k)%indices.length],p=mgymProgIndice(i);\n    if(p&&!p.concluido)return i;\n  }\n  return null;\n}\nfunction mgymProximoDepoisDoGrupo(indices){\n  const fim=Math.max(...indices); const itens=mgymItensTreino(mgymTreinoAtual);\n  for(let i=fim+1;i<itens.length;i++){const p=mgymProgIndice(i);if(p&&!p.concluido)return i}\n  return null;\n}\nfunction mgymAbrirIndice(i){fecharModoTreino();setTimeout(()=>abrirModoExercicio(i),80)}\n\nconcluirSerieAtual=async function(){\n  if(!mgymExercicioAtivo)return;\n  const {indice,item,p}=mgymExercicioAtivo;\n  const novas=Math.min(Number(p.series_total),Number(p.series_concluidas||0)+1), terminou=novas>=Number(p.series_total);\n  const payload={series_concluidas:novas,concluido:terminou,concluido_em:terminou?new Date().toISOString():null};\n  const {error}=await supabaseClient.from('progresso_exercicios').update(payload).eq('id',p.id);\n  if(error)return alert('Não foi possível registrar a série: '+error.message);\n  Object.assign(p,payload);\n  const combo=mgymIndicesCombo(item);\n  if(combo.length>1){\n    const proximoCombo=mgymProximoDoCombo(combo,indice);\n    if(proximoCombo!==null){\n      const pos=combo.indexOf(indice), proximaPos=combo.indexOf(proximoCombo);\n      const fechouVolta=proximaPos<=pos;\n      if(fechouVolta){mgymProximoIndiceAposDescanso=proximoCombo;iniciarDescanso(Number(p.descanso_segundos||60));}\n      else mgymAbrirIndice(proximoCombo);\n      mgymRenderTreino(mgymTreinoAtual);return;\n    }\n    mgymRenderTreino(mgymTreinoAtual);\n    const prox=mgymProximoDepoisDoGrupo(combo);\n    const body=document.getElementById('mgym-mode-body');\n    body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-done"><div class="icon">✅</div><h2>Alternado concluído</h2><p>Todas as séries do grupo foram registradas.</p></div>${prox!==null?`<button class="mgym-big-btn" type="button" onclick="mgymAbrirIndice(${prox})">PRÓXIMO EXERCÍCIO →</button>`:'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">VER RESUMO DO TREINO</button>'}</div>`;\n    return;\n  }\n  if(terminou){mgymAvisoFimDescanso(true);mostrarExercicioConcluido();}else iniciarDescanso(Number(p.descanso_segundos||60));\n};\n\nmostrarProximaSerie=function(){\n  if(mgymProximoIndiceAposDescanso!==null){const i=mgymProximoIndiceAposDescanso;mgymProximoIndiceAposDescanso=null;mgymAbrirIndice(i);return;}\n  const p=mgymExercicioAtivo?.p;if(!p)return;\n  const body=document.getElementById('mgym-mode-body');\n  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-mode-kicker">Descanso concluído</div><div class="mgym-done"><div class="icon">⏱️</div><h2>Pronto para continuar</h2><p>Série ${Number(p.series_concluidas)+1} de ${p.series_total}</p></div><button class="mgym-big-btn" type="button" onclick="abrirModoExercicio(${mgymExercicioAtivo.indice})">▶ INICIAR NOVA SÉRIE</button></div>`;\n};\n\nconst mgymMostrarTreinoAbaCompat=mostrarTreinoAba;\nmostrarTreinoAba=async function(id,botao){\n  const t=treinosCache.find(x=>Number(x.id)===Number(id));if(!t)return;\n  const r=await mgymTentarMigrarTreinoLegado(t);\n  await mgymMostrarTreinoAbaCompat(id,botao);\n  if(r.migrado)console.info('MorottiGym: treino antigo convertido automaticamente para o formato atual.');\n};\n</script>\n\n<script>\n/* ===== MOROTTIGYM • ALTERNADO 5.0 — A1/B1 POR RODADAS ===== */\nlet mgymAlternadoProximoIndice=null;\n\nfunction mgymComboIndicesDoItem(item){\n  if(!item?.grupo_combo)return [];\n  const itens=mgymItensTreino(mgymTreinoAtual);\n  return itens.map((x,i)=>x.grupo_combo===item.grupo_combo?i:-1).filter(i=>i>=0);\n}\nfunction mgymLetraCombo(indice,indices){\n  const p=indices.indexOf(indice);\n  return p>=0?String.fromCharCode(65+p):'';\n}\nfunction mgymSerieAtualDoIndice(indice){\n  const p=mgymProgIndice(indice);\n  if(!p)return 1;\n  return Math.min(Number(p.series_concluidas||0)+1,Number(p.series_total||1));\n}\nfunction mgymRotuloAlternado(indice){\n  const itens=mgymItensTreino(mgymTreinoAtual),item=itens[indice],indices=mgymComboIndicesDoItem(item);\n  if(indices.length<2)return '';\n  return mgymLetraCombo(indice,indices)+mgymSerieAtualDoIndice(indice);\n}\n\n/* Próximo exercício do alternado é decidido por RODADA.\n   Ex.: A1 -> B1 -> descanso -> A2 -> B2 -> descanso. */\nfunction mgymProximoAlternadoPorRodada(indices,indiceAtual){\n  if(indices.length<2)return {proximo:null,descansar:false,acabou:false};\n  const atualPos=indices.indexOf(indiceAtual);\n  const pAtual=mgymProgIndice(indiceAtual);\n  const rodada=Math.max(1,Number(pAtual?.series_concluidas||1));\n\n  /* Primeiro procura, depois do atual, alguém que ainda não fez esta rodada. */\n  for(let pos=atualPos+1;pos<indices.length;pos++){\n    const idx=indices[pos],p=mgymProgIndice(idx);\n    if(p && !p.concluido && Number(p.series_concluidas||0)<rodada)return {proximo:idx,descansar:false,acabou:false};\n  }\n\n  /* Se todos os exercícios chegaram à rodada, descansa e volta ao primeiro\n     exercício que ainda possui série pendente. */\n  const pendente=indices.find(idx=>{const p=mgymProgIndice(idx);return p&&!p.concluido});\n  if(pendente!==undefined)return {proximo:pendente,descansar:true,acabou:false};\n  return {proximo:null,descansar:false,acabou:true};\n}\n\nconst mgymAbrirModoExercicio50=abrirModoExercicio;\nabrirModoExercicio=function(indice){\n  mgymAbrirModoExercicio50(indice);\n  const itens=mgymItensTreino(mgymTreinoAtual),item=itens[indice],indices=mgymComboIndicesDoItem(item);\n  if(indices.length<2)return;\n  const body=document.getElementById('mgym-mode-body'),p=mgymProgIndice(indice);\n  if(!body||!p)return;\n  const kicker=body.querySelector('.mgym-mode-kicker');\n  if(kicker&&!p.concluido)kicker.textContent='Alternado • '+mgymRotuloAlternado(indice);\n  const contador=body.querySelector('.mgym-set-counter span');\n  if(contador&&!p.concluido)contador.textContent='Sequência '+mgymRotuloAlternado(indice)+' • depois '+(indices.indexOf(indice)<indices.length-1?mgymLetraCombo(indices[indices.indexOf(indice)+1],indices)+mgymSerieAtualDoIndice(indices[indices.indexOf(indice)+1]):'descanso');\n};\n\nconcluirSerieAtual=async function(){\n  if(!mgymExercicioAtivo)return;\n  const {indice,item,p}=mgymExercicioAtivo;\n  const novas=Math.min(Number(p.series_total),Number(p.series_concluidas||0)+1);\n  const terminou=novas>=Number(p.series_total);\n  const payload={series_concluidas:novas,concluido:terminou,concluido_em:terminou?new Date().toISOString():null};\n  const {error}=await supabaseClient.from('progresso_exercicios').update(payload).eq('id',p.id);\n  if(error)return alert('Não foi possível registrar a série: '+error.message);\n  Object.assign(p,payload);\n\n  const combo=mgymComboIndicesDoItem(item);\n  if(combo.length>1){\n    const fluxo=mgymProximoAlternadoPorRodada(combo,indice);\n    mgymRenderTreino(mgymTreinoAtual);\n    if(fluxo.acabou){\n      const prox=mgymProximoDepoisDoGrupo(combo);\n      const body=document.getElementById('mgym-mode-body');\n      body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-done"><div class="icon">✅</div><h2>Alternado concluído</h2><p>Todas as rodadas foram feitas na sequência correta.</p></div>${prox!==null?`<button class="mgym-big-btn" type="button" onclick="mgymAbrirIndice(${prox})">PRÓXIMO EXERCÍCIO →</button>`:'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">VER RESUMO DO TREINO</button>'}</div>`;\n      return;\n    }\n    if(fluxo.descansar){\n      mgymAlternadoProximoIndice=fluxo.proximo;\n      mgymProximoIndiceAposDescanso=fluxo.proximo;\n      iniciarDescanso(Number(p.descanso_segundos||60));\n    }else{\n      mgymAbrirIndice(fluxo.proximo);\n    }\n    return;\n  }\n\n  if(terminou){mgymAvisoFimDescanso(true);mostrarExercicioConcluido();}\n  else iniciarDescanso(Number(p.descanso_segundos||60));\n};\n\n/* O descanso do alternado acontece somente depois de fechar a rodada A+B. */\nconst mgymRenderDescanso50=renderDescanso;\nrenderDescanso=function(){\n  mgymRenderDescanso50();\n  if(mgymProximoIndiceAposDescanso===null&&mgymAlternadoProximoIndice===null)return;\n  const destino=mgymProximoIndiceAposDescanso!==null?mgymProximoIndiceAposDescanso:mgymAlternadoProximoIndice;\n  const body=document.getElementById('mgym-mode-body');\n  const small=body?.querySelector('.mgym-timer small');\n  if(small&&destino!==null)small.textContent='Próxima sequência: '+mgymRotuloAlternado(destino);\n};\n\nconst mgymMostrarProximaSerie50=mostrarProximaSerie;\nmostrarProximaSerie=function(){\n  const destino=mgymProximoIndiceAposDescanso!==null?mgymProximoIndiceAposDescanso:mgymAlternadoProximoIndice;\n  if(destino!==null){\n    mgymProximoIndiceAposDescanso=null;mgymAlternadoProximoIndice=null;\n    mgymAbrirIndice(destino);return;\n  }\n  mgymMostrarProximaSerie50();\n};\n\n/* Treinos já SALVOS em MGYM2 continuam valendo: grupo_combo é lido diretamente\n   do treino existente, portanto não é necessário apagar e montar a ficha novamente. */\n</script>\n</body>
+
+<script>
+/* ===== MOROTTIGYM • COMPATIBILIDADE LEGADA + ALTERNADO REAL ===== */
+let mgymProximoIndiceAposDescanso=null;
+
+function mgymNormalizarNome(v){
+  return String(v||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+}
+
+async function mgymTentarMigrarTreinoLegado(t){
+  const orig=Array.isArray(t?.exercicios)?t.exercicios:[];
+  if(!orig.some(v=>lerExercicioTreino(v).legado)) return {ok:true,migrado:false};
+  await garantirBibliotecaCarregada();
+  const convertidos=[]; const faltando=[];
+  for(const valor of orig){
+    const l=lerExercicioTreino(valor);
+    if(!l.legado){convertidos.push(valor);continue;}
+    const nome=String(l.nome||'').trim(), chave=mgymNormalizarNome(nome);
+    const candidatos=bibliotecaExerciciosCache.filter(ex=>mgymNormalizarNome(ex.nome)===chave);
+    if(candidatos.length!==1){faltando.push(nome);convertidos.push(valor);continue;}
+    convertidos.push(serializarExercicioTreino({biblioteca_id:Number(candidatos[0].id),nome:candidatos[0].nome,series:'',repeticoes:'',carga:'',descanso:'60',grupo_combo:''}));
+  }
+  if(faltando.length) return {ok:false,migrado:false,faltando};
+  const {error}=await supabaseClient.from('treinos').update({exercicios:convertidos,atualizado_em:new Date().toISOString()}).eq('id',t.id);
+  if(error){console.warn('Migração de treino antigo:',error.message);return {ok:false,migrado:false,faltando:[]};}
+  t.exercicios=convertidos;
+  return {ok:true,migrado:true};
+}
+
+function mgymIndicesCombo(item){
+  if(!item?.grupo_combo)return [];
+  return mgymItensTreino(mgymTreinoAtual).map((x,i)=>x.grupo_combo===item.grupo_combo?i:-1).filter(i=>i>=0);
+}
+function mgymProgIndice(i){return mgymProgresso.find(x=>Number(x.ordem)===Number(i)+1)}
+function mgymComboConcluido(indices){return indices.every(i=>!!mgymProgIndice(i)?.concluido)}
+function mgymProximoDoCombo(indices,atual){
+  if(!indices.length)return null;
+  const pos=indices.indexOf(atual);
+  for(let k=1;k<=indices.length;k++){
+    const i=indices[(pos+k)%indices.length],p=mgymProgIndice(i);
+    if(p&&!p.concluido)return i;
+  }
+  return null;
+}
+function mgymProximoDepoisDoGrupo(indices){
+  const fim=Math.max(...indices); const itens=mgymItensTreino(mgymTreinoAtual);
+  for(let i=fim+1;i<itens.length;i++){const p=mgymProgIndice(i);if(p&&!p.concluido)return i}
+  return null;
+}
+function mgymAbrirIndice(i){fecharModoTreino();setTimeout(()=>abrirModoExercicio(i),80)}
+
+concluirSerieAtual=async function(){
+  if(!mgymExercicioAtivo)return;
+  const {indice,item,p}=mgymExercicioAtivo;
+  const novas=Math.min(Number(p.series_total),Number(p.series_concluidas||0)+1), terminou=novas>=Number(p.series_total);
+  const payload={series_concluidas:novas,concluido:terminou,concluido_em:terminou?new Date().toISOString():null};
+  const {error}=await supabaseClient.from('progresso_exercicios').update(payload).eq('id',p.id);
+  if(error)return alert('Não foi possível registrar a série: '+error.message);
+  Object.assign(p,payload);
+  const combo=mgymIndicesCombo(item);
+  if(combo.length>1){
+    const proximoCombo=mgymProximoDoCombo(combo,indice);
+    if(proximoCombo!==null){
+      const pos=combo.indexOf(indice), proximaPos=combo.indexOf(proximoCombo);
+      const fechouVolta=proximaPos<=pos;
+      if(fechouVolta){mgymProximoIndiceAposDescanso=proximoCombo;iniciarDescanso(Number(p.descanso_segundos||60));}
+      else mgymAbrirIndice(proximoCombo);
+      mgymRenderTreino(mgymTreinoAtual);return;
+    }
+    mgymRenderTreino(mgymTreinoAtual);
+    const prox=mgymProximoDepoisDoGrupo(combo);
+    const body=document.getElementById('mgym-mode-body');
+    body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-done"><div class="icon">✅</div><h2>Alternado concluído</h2><p>Todas as séries do grupo foram registradas.</p></div>${prox!==null?`<button class="mgym-big-btn" type="button" onclick="mgymAbrirIndice(${prox})">PRÓXIMO EXERCÍCIO →</button>`:'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">VER RESUMO DO TREINO</button>'}</div>`;
+    return;
+  }
+  if(terminou){mgymAvisoFimDescanso(true);mostrarExercicioConcluido();}else iniciarDescanso(Number(p.descanso_segundos||60));
+};
+
+mostrarProximaSerie=function(){
+  if(mgymProximoIndiceAposDescanso!==null){const i=mgymProximoIndiceAposDescanso;mgymProximoIndiceAposDescanso=null;mgymAbrirIndice(i);return;}
+  const p=mgymExercicioAtivo?.p;if(!p)return;
+  const body=document.getElementById('mgym-mode-body');
+  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-mode-kicker">Descanso concluído</div><div class="mgym-done"><div class="icon">⏱️</div><h2>Pronto para continuar</h2><p>Série ${Number(p.series_concluidas)+1} de ${p.series_total}</p></div><button class="mgym-big-btn" type="button" onclick="abrirModoExercicio(${mgymExercicioAtivo.indice})">▶ INICIAR NOVA SÉRIE</button></div>`;
+};
+
+const mgymMostrarTreinoAbaCompat=mostrarTreinoAba;
+mostrarTreinoAba=async function(id,botao){
+  const t=treinosCache.find(x=>Number(x.id)===Number(id));if(!t)return;
+  const r=await mgymTentarMigrarTreinoLegado(t);
+  await mgymMostrarTreinoAbaCompat(id,botao);
+  if(r.migrado)console.info('MorottiGym: treino antigo convertido automaticamente para o formato atual.');
+};
+</script>
+
+<script>
+/* ===== MOROTTIGYM • ALTERNADO 5.0 — A1/B1 POR RODADAS ===== */
+let mgymAlternadoProximoIndice=null;
+
+function mgymComboIndicesDoItem(item){
+  if(!item?.grupo_combo)return [];
+  const itens=mgymItensTreino(mgymTreinoAtual);
+  return itens.map((x,i)=>x.grupo_combo===item.grupo_combo?i:-1).filter(i=>i>=0);
+}
+function mgymLetraCombo(indice,indices){
+  const p=indices.indexOf(indice);
+  return p>=0?String.fromCharCode(65+p):'';
+}
+function mgymSerieAtualDoIndice(indice){
+  const p=mgymProgIndice(indice);
+  if(!p)return 1;
+  return Math.min(Number(p.series_concluidas||0)+1,Number(p.series_total||1));
+}
+function mgymRotuloAlternado(indice){
+  const itens=mgymItensTreino(mgymTreinoAtual),item=itens[indice],indices=mgymComboIndicesDoItem(item);
+  if(indices.length<2)return '';
+  return mgymLetraCombo(indice,indices)+mgymSerieAtualDoIndice(indice);
+}
+
+/* Próximo exercício do alternado é decidido por RODADA.
+   Ex.: A1 -> B1 -> descanso -> A2 -> B2 -> descanso. */
+function mgymProximoAlternadoPorRodada(indices,indiceAtual){
+  if(indices.length<2)return {proximo:null,descansar:false,acabou:false};
+  const atualPos=indices.indexOf(indiceAtual);
+  const pAtual=mgymProgIndice(indiceAtual);
+  const rodada=Math.max(1,Number(pAtual?.series_concluidas||1));
+
+  /* Primeiro procura, depois do atual, alguém que ainda não fez esta rodada. */
+  for(let pos=atualPos+1;pos<indices.length;pos++){
+    const idx=indices[pos],p=mgymProgIndice(idx);
+    if(p && !p.concluido && Number(p.series_concluidas||0)<rodada)return {proximo:idx,descansar:false,acabou:false};
+  }
+
+  /* Se todos os exercícios chegaram à rodada, descansa e volta ao primeiro
+     exercício que ainda possui série pendente. */
+  const pendente=indices.find(idx=>{const p=mgymProgIndice(idx);return p&&!p.concluido});
+  if(pendente!==undefined)return {proximo:pendente,descansar:true,acabou:false};
+  return {proximo:null,descansar:false,acabou:true};
+}
+
+const mgymAbrirModoExercicio50=abrirModoExercicio;
+abrirModoExercicio=function(indice){
+  mgymAbrirModoExercicio50(indice);
+  const itens=mgymItensTreino(mgymTreinoAtual),item=itens[indice],indices=mgymComboIndicesDoItem(item);
+  if(indices.length<2)return;
+  const body=document.getElementById('mgym-mode-body'),p=mgymProgIndice(indice);
+  if(!body||!p)return;
+  const kicker=body.querySelector('.mgym-mode-kicker');
+  if(kicker&&!p.concluido)kicker.textContent='Alternado • '+mgymRotuloAlternado(indice);
+  const contador=body.querySelector('.mgym-set-counter span');
+  if(contador&&!p.concluido)contador.textContent='Sequência '+mgymRotuloAlternado(indice)+' • depois '+(indices.indexOf(indice)<indices.length-1?mgymLetraCombo(indices[indices.indexOf(indice)+1],indices)+mgymSerieAtualDoIndice(indices[indices.indexOf(indice)+1]):'descanso');
+};
+
+concluirSerieAtual=async function(){
+  if(!mgymExercicioAtivo)return;
+  const {indice,item,p}=mgymExercicioAtivo;
+  const novas=Math.min(Number(p.series_total),Number(p.series_concluidas||0)+1);
+  const terminou=novas>=Number(p.series_total);
+  const payload={series_concluidas:novas,concluido:terminou,concluido_em:terminou?new Date().toISOString():null};
+  const {error}=await supabaseClient.from('progresso_exercicios').update(payload).eq('id',p.id);
+  if(error)return alert('Não foi possível registrar a série: '+error.message);
+  Object.assign(p,payload);
+
+  const combo=mgymComboIndicesDoItem(item);
+  if(combo.length>1){
+    const fluxo=mgymProximoAlternadoPorRodada(combo,indice);
+    mgymRenderTreino(mgymTreinoAtual);
+    if(fluxo.acabou){
+      const prox=mgymProximoDepoisDoGrupo(combo);
+      const body=document.getElementById('mgym-mode-body');
+      body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-done"><div class="icon">✅</div><h2>Alternado concluído</h2><p>Todas as rodadas foram feitas na sequência correta.</p></div>${prox!==null?`<button class="mgym-big-btn" type="button" onclick="mgymAbrirIndice(${prox})">PRÓXIMO EXERCÍCIO →</button>`:'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">VER RESUMO DO TREINO</button>'}</div>`;
+      return;
+    }
+    if(fluxo.descansar){
+      mgymAlternadoProximoIndice=fluxo.proximo;
+      mgymProximoIndiceAposDescanso=fluxo.proximo;
+      iniciarDescanso(Number(p.descanso_segundos||60));
+    }else{
+      mgymAbrirIndice(fluxo.proximo);
+    }
+    return;
+  }
+
+  if(terminou){mgymAvisoFimDescanso(true);mostrarExercicioConcluido();}
+  else iniciarDescanso(Number(p.descanso_segundos||60));
+};
+
+/* O descanso do alternado acontece somente depois de fechar a rodada A+B. */
+const mgymRenderDescanso50=renderDescanso;
+renderDescanso=function(){
+  mgymRenderDescanso50();
+  if(mgymProximoIndiceAposDescanso===null&&mgymAlternadoProximoIndice===null)return;
+  const destino=mgymProximoIndiceAposDescanso!==null?mgymProximoIndiceAposDescanso:mgymAlternadoProximoIndice;
+  const body=document.getElementById('mgym-mode-body');
+  const small=body?.querySelector('.mgym-timer small');
+  if(small&&destino!==null)small.textContent='Próxima sequência: '+mgymRotuloAlternado(destino);
+};
+
+const mgymMostrarProximaSerie50=mostrarProximaSerie;
+mostrarProximaSerie=function(){
+  const destino=mgymProximoIndiceAposDescanso!==null?mgymProximoIndiceAposDescanso:mgymAlternadoProximoIndice;
+  if(destino!==null){
+    mgymProximoIndiceAposDescanso=null;mgymAlternadoProximoIndice=null;
+    mgymAbrirIndice(destino);return;
+  }
+  mgymMostrarProximaSerie50();
+};
+
+/* Treinos já SALVOS em MGYM2 continuam valendo: grupo_combo é lido diretamente
+   do treino existente, portanto não é necessário apagar e montar a ficha novamente. */
+</script>
+</body>
 </html>
