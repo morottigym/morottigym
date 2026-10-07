@@ -302,6 +302,14 @@ body.mgym-modal-open{overflow:hidden}
 /* ===== MODELOS / VÁRIOS DIAS / BI-SET ===== */
 .treino-dias-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:4px}.treino-dias-grid label{background:#202024;border:1px solid #3a3a40;border-radius:11px;padding:10px 5px;text-align:center;font-size:.68rem;font-weight:900;color:#d4d4d8}.treino-dias-grid label:has(input:checked){background:#3b171c;border-color:#e11d2e;color:#fecdd3}.treino-dias-grid input{accent-color:#e11d2e}.modelo-treino-box{background:#1d1d21;border:1px solid #4b3b1c;border-radius:16px;padding:13px;margin-bottom:13px}.modelo-treino-head{display:flex;align-items:center;gap:10px}.modelo-treino-head>div{flex:1}.modelo-treino-head strong{display:block;font-size:.82rem}.modelo-treino-head small{display:block;color:#a1a1aa;font-size:.64rem;margin-top:3px}.modelos-treino-rapidos{display:flex;gap:7px;overflow-x:auto;margin-top:10px}.modelo-chip{flex:0 0 auto;border:1px solid #5a4720;background:#332913;color:#fde68a;border-radius:999px;padding:8px 11px;font-size:.66rem;font-weight:900}.treino-builder-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.treino-builder-actions .btn-acao{margin-top:0;text-transform:none}.combo-badge{display:inline-flex;margin-top:6px;padding:4px 7px;border-radius:7px;background:#172c24;border:1px solid #245b38;color:#86efac;font-size:.61rem;font-weight:900}.combo-line{border-left:3px solid #22c55e!important}.modelo-card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.modelo-card-actions button{flex:1}.install-app-btn{font-size:.76rem;letter-spacing:.02em}.install-app-card strong{display:block;color:#fff;font-size:.9rem}.install-app-card{border-color:#5a4720;background:linear-gradient(145deg,#2b2518,#1d1d21)}
 </style>
+
+<style>
+/* ===== BIBLIOTECA • NAVEGAÇÃO COMPACTA ===== */
+.grupos-rapidos{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:2px 0 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.grupos-rapidos::-webkit-scrollbar{display:none}
+.grupo-chip{white-space:nowrap}
+</style>
+
 </head>
 
 <body>
@@ -560,18 +568,7 @@ body.mgym-modal-open{overflow:hidden}
         <button class="btn-acao ouro" type="button" onclick="mostrarListaMaquinas()">🏷️ Máquinas 01–37</button>
     </div>
 
-    <div id="grupos-rapidos-biblioteca" class="grupos-rapidos">
-        <button class="grupo-chip ativo" type="button" data-grupo="todos" onclick="selecionarGrupoRapido('todos',this)">Todos</button>
-        <button class="grupo-chip" type="button" data-grupo="peito" onclick="selecionarGrupoRapido('peito',this)">Peito</button>
-        <button class="grupo-chip" type="button" data-grupo="costas" onclick="selecionarGrupoRapido('costas',this)">Costas</button>
-        <button class="grupo-chip" type="button" data-grupo="ombros" onclick="selecionarGrupoRapido('ombros',this)">Ombros</button>
-        <button class="grupo-chip" type="button" data-grupo="biceps" onclick="selecionarGrupoRapido('biceps',this)">Bíceps</button>
-        <button class="grupo-chip" type="button" data-grupo="triceps" onclick="selecionarGrupoRapido('triceps',this)">Tríceps</button>
-        <button class="grupo-chip" type="button" data-grupo="pernas" onclick="selecionarGrupoRapido('pernas',this)">Pernas</button>
-        <button class="grupo-chip" type="button" data-grupo="gluteos" onclick="selecionarGrupoRapido('gluteos',this)">Glúteos</button>
-        <button class="grupo-chip" type="button" data-grupo="panturrilhas" onclick="selecionarGrupoRapido('panturrilhas',this)">Panturrilhas</button>
-        <button class="grupo-chip" type="button" data-grupo="core" onclick="selecionarGrupoRapido('core',this)">Core</button>
-    </div>
+    <div id="grupos-rapidos-biblioteca" class="grupos-rapidos"><button type="button" class="grupo-chip ativo" onclick="selecionarGrupoRapido('todos',this)">Todos</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Peito',this)">Peito</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Costas',this)">Costas</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Ombros',this)">Ombros</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Bíceps',this)">Bíceps</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Tríceps',this)">Tríceps</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Pernas',this)">Pernas</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Glúteos',this)">Glúteos</button><button type="button" class="grupo-chip" onclick="selecionarGrupoRapido('Abdômen / Core',this)">Abdômen/Core</button></div>
 
     <div class="biblioteca-toolbar">
         <input id="busca-biblioteca" class="search-box" style="margin:0" type="search" placeholder="🔎 Buscar exercício ou máquina..." oninput="filtrarBibliotecaExercicios()">
@@ -2674,5 +2671,26 @@ mostrarProximaSerie=function(){
 /* Treinos já SALVOS em MGYM2 continuam valendo: grupo_combo é lido diretamente
    do treino existente, portanto não é necessário apagar e montar a ficha novamente. */
 </script>
+
+<script>
+/* ===== MOROTTIGYM • CATEGORIAS MUSCULARES UNIFICADAS ===== */
+(function(){
+  const normalizar = s => (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  window.morottiCategoriaMuscular = function(grupo){
+    const g = normalizar(grupo);
+    if (!g) return '';
+    if (/(quadriceps|posterior|panturrilha|perna|coxa|adutor|abdutor)/.test(g)) return 'pernas';
+    if (/glute/.test(g)) return 'gluteos';
+    if (/(abdomen|abdominal|core)/.test(g)) return 'abdomen / core';
+    if (/peito|peitoral/.test(g)) return 'peito';
+    if (/costa|dorsal/.test(g)) return 'costas';
+    if (/ombro|deltoide/.test(g)) return 'ombros';
+    if (/biceps/.test(g)) return 'biceps';
+    if (/triceps/.test(g)) return 'triceps';
+    return g;
+  };
+})();
+</script>
+
 </body>
 </html>
