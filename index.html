@@ -376,6 +376,8 @@ main{width:100%;max-width:920px;margin:0 auto;padding:clamp(20px,4vw,36px) clamp
 .mh-today-card{display:flex;gap:12px;align-items:center;padding:16px;border-radius:21px;border:1px solid #8a6b2e;background:linear-gradient(130deg,#413217,#222018 60%,#151719);box-shadow:0 14px 34px #0005}.mh-today-icon{height:47px;width:47px;display:grid;place-items:center;background:#8e6c2c34;border:1px solid #bd965048;border-radius:15px;font-size:1.45rem;flex:none}.mh-today-text{min-width:0;flex:1}.mh-today-text small,.mh-chrono-card small,.mh-next-award small{display:block;color:#f3cd77;font-size:.59rem;font-weight:950;letter-spacing:.085em}.mh-today-text h3{font-size:1.02rem;margin:4px 0;color:#fff;line-height:1.25}.mh-today-text p{font-size:.65rem;color:#c7c1b4}.mh-today-card>button{flex:none;background:#e7bf62;color:#1c160a;border:0;border-radius:11px;padding:12px 10px;font-size:.69rem;font-weight:950;min-height:45px}
 .mh-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mh-stat{min-height:113px;text-align:left;border:1px solid #44403b;background:linear-gradient(135deg,#222326,#17191c);padding:14px;border-radius:18px;color:#fff}.mh-stat>span{display:block;color:#bca56d;font-size:.62rem;font-weight:900}.mh-stat strong{font-size:1.38rem;display:block;margin:8px 0 4px;line-height:1.1}.mh-stat small{font-size:.61rem;color:#a9adb3}
 .mh-calendar-card{padding:16px;border:1px solid #393d42;border-radius:20px;background:#191c20}.mh-section-title span{font-size:.58rem;font-weight:900;color:#bfaa76;letter-spacing:.085em}.mh-section-title h3{font-size:1rem;margin:4px 0 0;text-transform:capitalize}.mh-pill{border:1px solid #6d572b;color:#f0ce7f;background:#3c301a;border-radius:99px;padding:7px 9px;white-space:nowrap;font-size:.59rem!important}.mh-week-head,.mh-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center;margin-top:12px}.mh-week-head span{font-size:.62rem;color:#989ca4;font-weight:900}.mh-calendar-grid{margin-top:8px}.mh-day{min-height:35px;display:grid;place-items:center;border-radius:10px;color:#b3b8c0;background:#25282d;font-size:.67rem;font-weight:800}.mh-day.blank{visibility:hidden}.mh-day.checked{background:#654f22;color:#ffdf8f;border:1px solid #d2a84f}.mh-day.today{box-shadow:inset 0 0 0 2px #e9c676}.mh-calendar-hint{display:flex;align-items:center;gap:7px;color:#a7abb2;font-size:.61rem;margin:13px 0 0}.mh-calendar-hint i{width:10px;height:10px;background:#cba54a;border-radius:3px}.mh-loading{grid-column:1/-1;font-size:.7rem;color:#9fa2a8}
+.mh-calendar-page{max-width:720px;margin:18px auto 20px;padding:clamp(15px,3vw,26px)}.mh-calendar-page .mh-day{min-height:clamp(36px,7vw,60px);font-size:.82rem}.mh-calendar-page .mh-day.checked{background:#1f6645;color:#d0ffe0;border-color:#42af72}.mh-calendar-page .mh-day.missed{background:#64272d;color:#ffd2d5;border:1px solid #d55b65}.mh-freq-legenda{display:flex;gap:12px;flex-wrap:wrap;margin-top:17px}.mh-freq-legenda span{display:flex;gap:6px;align-items:center;font-size:.65rem;color:#c3c6cb}.mh-freq-legenda i{width:11px;height:11px;border-radius:4px;display:inline-block}.mh-freq-legenda i.presenca{background:#36a267}.mh-freq-legenda i.falta{background:#cb4b57}.mh-freq-legenda i.sem-registro{background:#35383c}.mh-calendar-page .mh-calendar-hint{line-height:1.5}
+.bottom-nav:has(#nav-frequencia:not(.hidden)){grid-template-columns:repeat(6,minmax(0,1fr))}.bottom-nav:has(#nav-frequencia:not(.hidden)) .nav-btn{font-size:.52rem}.bottom-nav:has(#nav-frequencia:not(.hidden)) .nav-icon{font-size:1.22rem}
 .mh-next-award{display:flex;align-items:center;gap:12px;padding:15px;border-radius:18px;border:1px solid #66542d;background:linear-gradient(120deg,#302618,#1a1c1f);width:100%;text-align:left;color:#fff}.mh-award-icon{font-size:1.8rem;flex:none}.mh-next-award>span:nth-child(2){flex:1;min-width:0}.mh-next-award strong{display:block;margin:5px 0 3px;font-size:.79rem}.mh-next-award em{display:block;font-size:.63rem;color:#b1b4ba;font-style:normal}.mh-next-award>b{color:#e5c066;font-size:1.7rem}.mh-award-progress{display:block;margin-top:11px;height:5px;background:#3a3b3e;border-radius:99px;overflow:hidden}.mh-award-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9f7836,#f1ca68);border-radius:inherit;transition:width .25s}
 .mh-chrono-card{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px;border:1px solid #3e4248;border-radius:19px;background:#191c20}.mh-chrono-card strong{display:block;margin:9px 0;font-size:1.45rem;font-variant-numeric:tabular-nums;letter-spacing:.03em}.mh-chrono-card p{font-size:.61rem;color:#9b9fa5}.mh-chrono-actions{display:grid;gap:7px}.mh-chrono-actions button{white-space:nowrap;padding:10px 12px;border-radius:10px;background:#383126;color:#f2d083;border:1px solid #81672e;font-weight:900;font-size:.65rem;min-height:39px}.mh-chrono-actions button+button{background:#25292d;color:#c1c5ca;border-color:#41464a}
 @media(max-width:370px){.mh-today-card{gap:8px;padding:12px}.mh-today-icon{width:38px;height:40px}.mh-today-card>button{padding:9px 7px}.mh-chrono-card strong{font-size:1.15rem}}
@@ -553,7 +555,6 @@ header h1,.section-title{color:#f5f5f5}
                 <button type="button" class="mh-stat" onclick="abrirCampeonato()"><span>🔥 SEQUÊNCIA</span><strong id="mh-sequencia">—</strong><small>semanas de constância</small></button>
                 <button type="button" class="mh-stat" onclick="abrirCampeonato()"><span>🏆 MEU NÍVEL</span><strong id="mh-nivel">—</strong><small id="mh-pontos">0 pontos digitais</small></button>
             </div>
-            <div class="mh-calendar-card"><div class="mh-section-title"><div><span>📅 SUA FREQUÊNCIA</span><h3 id="mh-mes-nome">Calendário</h3></div><span id="mh-presencas-mes" class="mh-pill">— presenças</span></div><div class="mh-week-head"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></div><div id="mh-calendario" class="mh-calendar-grid"><p class="mh-loading">Carregando presença...</p></div><p class="mh-calendar-hint"><i></i> Dias com check-in validado</p></div>
             <button type="button" class="mh-next-award" onclick="abrirCampeonato()"><span class="mh-award-icon" id="mh-medalha-icone">🥇</span><span><small>PRÓXIMA CONQUISTA</small><strong id="mh-medalha-nome">Uma nova conquista espera por você</strong><em id="mh-medalha-progresso">Acompanhe sua evolução</em><span class="mh-award-progress"><span id="mh-medalha-barra"></span></span></span><b>›</b></button>
             <div class="mh-chrono-card"><div><small>⏱️ CRONÔMETRO LIVRE</small><strong id="mh-crono-display" aria-live="off">00:00:00</strong><p>Use durante o cardio ou entre exercícios.</p></div><div class="mh-chrono-actions"><button id="mh-crono-toggle" type="button" onclick="alternarCronometroMorotti()">▶ Iniciar</button><button type="button" onclick="zerarCronometroMorotti()">↺ Zerar</button></div></div>
         </section>
@@ -574,6 +575,7 @@ header h1,.section-title{color:#f5f5f5}
         </div>
         <div class="quick-grid">
             <div class="quick-card" onclick="abrirTela('tela-treino')"><div class="qicon">🏋🏻</div><div><strong>Meu treino</strong><br><small>Treinos por dia da semana</small></div></div>
+            <div class="quick-card gold" onclick="abrirFrequenciaMorotti()"><div class="qicon">📅</div><div><strong>Frequência</strong><br><small>Presenças e faltas por dia</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-avisos')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Novidades da academia</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-perfil')"><div class="qicon">👤</div><div><strong>Meu perfil</strong><br><small>Dados e foto</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-horarios')"><div class="qicon">🕒</div><div><strong>Horários</strong><br><small>Funcionamento</small></div></div>
@@ -674,6 +676,12 @@ header h1,.section-title{color:#f5f5f5}
 </main>
 
 <!-- HORÁRIOS -->
+<main id="tela-frequencia" class="hidden">
+    <div class="section-heading"><div class="page-kicker">SUA EVOLUÇÃO</div><h2>📅 Minha frequência</h2><p>Veja seus check-ins e acompanhe os dias de treino.</p></div>
+    <div class="mh-calendar-card mh-calendar-page"><div class="mh-section-title"><div><span>HISTÓRICO DE PRESENÇAS</span><h3 id="mh-mes-nome">Calendário</h3></div><span id="mh-presencas-mes" class="mh-pill">— presenças</span></div><div class="mh-week-head"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></div><div id="mh-calendario" class="mh-calendar-grid"><p class="mh-loading">Carregando presença...</p></div><div class="mh-freq-legenda"><span><i class="presenca"></i> Presença</span><span><i class="falta"></i> Falta no dia programado</span><span><i class="sem-registro"></i> Descanso / sem registro</span></div><p class="mh-calendar-hint">O vermelho indica um dia de treino programado que já passou sem check-in. Hoje e os próximos dias não são considerados falta.</p></div>
+    <button class="btn-acao" type="button" onclick="voltarParaMenu()">← Voltar ao início</button>
+</main>
+
 <main id="tela-horarios" class="hidden">
     <h2 class="section-title">Horário de Funcionamento</h2>
     <p class="text-destaque">Treine no seu ritmo, no horário que combina com a sua rotina. Confira os horários da academia.</p>
@@ -996,6 +1004,7 @@ header h1,.section-title{color:#f5f5f5}
     <button class="nav-btn active" data-nav="inicio" aria-label="Ir para início" onclick="voltarParaMenu()"><span class="nav-icon">⌂</span><span>Início</span></button>
     <button id="nav-principal" class="nav-btn" data-nav="principal" onclick="acaoNavPrincipal()"><span class="nav-icon">🏋️</span><span id="nav-principal-label">Treinos</span></button>
     <button id="nav-campeonato" class="nav-btn" data-nav="campeonato" onclick="acaoNavCampeonato()"><span class="nav-icon">🏆</span><span id="nav-campeonato-label">Campeonato</span></button>
+    <button id="nav-frequencia" class="nav-btn hidden" data-nav="frequencia" onclick="abrirFrequenciaMorotti()"><span class="nav-icon">📅</span><span>Frequência</span></button>
     <button id="nav-secundario" class="nav-btn" data-nav="secundario" onclick="acaoNavSecundario()"><span class="nav-icon">▤</span><span id="nav-secundario-label">Avisos</span></button>
     <button class="nav-btn" data-nav="perfil" onclick="acaoNavPerfil()"><span class="nav-icon">◉</span><span id="nav-perfil-label">Perfil</span></button>
 </nav>
@@ -2045,6 +2054,7 @@ function atualizarHomeApp(){
 }
 function configurarNav(tipo){
     const p=document.getElementById('nav-principal-label'),s=document.getElementById('nav-secundario-label'),pf=document.getElementById('nav-perfil-label'),c=document.getElementById('nav-campeonato-label'),ci=document.querySelector('#nav-campeonato .nav-icon');
+    document.getElementById('nav-frequencia')?.classList.toggle('hidden',tipo!=='aluno');
     if(tipo==='funcionario'){if(p)p.textContent='Alunos';if(s)s.textContent='Treinos';if(pf)pf.textContent='Início';if(c)c.textContent='Biblioteca';if(ci)ci.textContent='📚';}
     else{if(p)p.textContent='Treinos';if(s)s.textContent='Avisos';if(pf)pf.textContent='Perfil';if(c)c.textContent='Conquistas';if(ci)ci.textContent='🏆';}
 }
@@ -2057,7 +2067,7 @@ const _voltarParaMenuOriginal=voltarParaMenu;
 voltarParaMenu=function(){_voltarParaMenuOriginal();atualizarHomeApp();marcarNavInicio();}
 function marcarNavInicio(){document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',i===0));}
 const _abrirTelaOriginal=abrirTela;
-abrirTela=async function(idTela){await _abrirTelaOriginal(idTela);const destino={"tela-treino":"principal","tela-alunos":"principal","tela-campeonato":"campeonato","tela-biblioteca-exercicios":"campeonato","tela-avisos":"secundario","tela-editar-treino":"secundario","tela-perfil":"perfil"}[idTela];document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===destino));}
+abrirTela=async function(idTela){await _abrirTelaOriginal(idTela);const destino={"tela-treino":"principal","tela-alunos":"principal","tela-campeonato":"campeonato","tela-biblioteca-exercicios":"campeonato","tela-frequencia":"frequencia","tela-avisos":"secundario","tela-editar-treino":"secundario","tela-perfil":"perfil"}[idTela];document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===destino));}
 
 const _mostrarModoAlunoLogadoOriginal=mostrarModoAlunoLogado;
 mostrarModoAlunoLogado=function(){_mostrarModoAlunoLogadoOriginal();atualizarHomeApp();}
@@ -3332,7 +3342,7 @@ atualizarTelasAluno=async function(){await atualizarTelasAlunoAntesAutorais();aw
 
 <script>
 /* ===== HOME DO ALUNO • SETE RECURSOS INTEGRADOS ===== */
-let mhAtualizacaoToken=0,mhDadosDe=null,mhCronometroIniciado=0,mhCronometroAcumulado=0,mhCronometroIntervalo=null;
+let mhAtualizacaoToken=0,mhDadosDe=null,mhCronometroIniciado=0,mhCronometroAcumulado=0,mhCronometroIntervalo=null,mhUltimasDatas=[];
 const mhDias=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 function mhDataLocal(date=new Date()){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');return `${y}-${m}-${d}`}
 function mhSaudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
@@ -3343,6 +3353,7 @@ function mhTreinosHoje(){
  return {dia,proprios,professor};
 }
 function abrirTreinoDaHome(){abrirTela('tela-treino')}
+async function abrirFrequenciaMorotti(){if(!alunoAtual)return alert('Entre como aluno para consultar sua frequência.');await abrirTela('tela-frequencia');mhDesenharCalendario(mhUltimasDatas)}
 function mhCarregarResumoHoje(){
  if(!alunoAtual)return;
  const nome=document.getElementById('saudacao-aluno');if(nome)nome.textContent=`${mhSaudacao()}, ${String(alunoAtual.nome||'aluno').split(' ')[0]}! 👋`;
@@ -3359,8 +3370,9 @@ function mhDesenharCalendario(datas){
  document.getElementById('mh-mes-nome').textContent=hoje.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
  document.getElementById('mh-presencas-mes').textContent=`${datas.filter(d=>d.startsWith(chaveMes)).length} presenças`;
  let html='';for(let i=0;i<offset;i++)html+='<span class="mh-day blank" aria-hidden="true"></span>';
- const hojeChave=mhDataLocal(hoje),set=new Set(datas);
- for(let d=1;d<=ultimo;d++){const chave=`${chaveMes}-${String(d).padStart(2,'0')}`,presente=set.has(chave);html+=`<span class="mh-day ${presente?'checked':''} ${chave===hojeChave?'today':''}" title="${d}: ${presente?'check-in validado':'sem check-in'}">${d}</span>`}
+ const hojeChave=mhDataLocal(hoje),set=new Set(datas),programados=new Set((treinoAutoralAtual?.dias||[]).map(s=>String(s).toLowerCase()));
+ treinosCache.filter(t=>Number(t.aluno_id)===Number(alunoAtual?.id)).forEach(t=>{const dia=String(t.dia_semana||t.nome||'').toLowerCase();if(mhDias.some(s=>s.toLowerCase()===dia))programados.add(dia)});
+ for(let d=1;d<=ultimo;d++){const chave=`${chaveMes}-${String(d).padStart(2,'0')}`,presente=set.has(chave),nomeDia=mhDias[new Date(ano,mes,d).getDay()].toLowerCase(),faltou=!presente&&chave<hojeChave&&programados.has(nomeDia);html+=`<span class="mh-day ${presente?'checked':faltou?'missed':''} ${chave===hojeChave?'today':''}" title="${d}: ${presente?'presença':faltou?'falta no dia programado':'sem registro'}">${d}</span>`}
  el.innerHTML=html;
 }
 function mhSequenciaAtual(datas){
@@ -3386,7 +3398,7 @@ async function atualizarPainelAlunoMorotti(){
  let resultado;try{resultado=await supabaseClient.rpc('minhas_presencas_detalhadas_morotti');if(resultado.error)resultado=await supabaseClient.rpc('minhas_presencas_morotti')}catch(e){console.warn('Frequência na home:',e);return}
  if(token!==mhAtualizacaoToken||!alunoAtual||mhDadosDe!==`${usuarioAtual?.id}:${alunoAtual.id}`)return;
  if(resultado.error){document.getElementById('mh-calendario').innerHTML='<p class="mh-loading">Frequência temporariamente indisponível.</p>';return}
- const registros=resultado.data||[],datas=[...new Set(registros.map(r=>typeof r==='string'?r:r?.data_checkin).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)))].sort(),conquistas=calcularConquistasMorotti(registros);
+ const registros=resultado.data||[],datas=[...new Set(registros.map(r=>typeof r==='string'?r:r?.data_checkin).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)))].sort(),conquistas=calcularConquistasMorotti(registros);mhUltimasDatas=datas;
  mhDesenharCalendario(datas);document.getElementById('mh-sequencia').textContent=mhSequenciaAtual(datas);document.getElementById('mh-nivel').textContent=mhNivel(conquistas.pontos);document.getElementById('mh-pontos').textContent=`${conquistas.pontos.toLocaleString('pt-BR')} pontos digitais`;mhMedalhaSeguinte(datas,conquistas);
 }
 function mhTempoFormatado(ms){const s=Math.floor(ms/1000);return [Math.floor(s/3600),Math.floor(s/60)%60,s%60].map(x=>String(x).padStart(2,'0')).join(':')}
