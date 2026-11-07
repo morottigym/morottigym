@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#09090b">
-<title>Morotti Gym - App</title>
+<meta name="theme-color" content="#0d0f11">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MorottiGym 2.0 | Força • Disciplina • Evolução</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
@@ -310,9 +312,83 @@ body.mgym-modal-open{overflow:hidden}
 .grupo-chip{white-space:nowrap}
 </style>
 
+<style>
+/* ===========================================================
+   MOROTTI GYM 2.0 — REDESIGN MOBILE FIRST / BLACK & GOLD
+   Camada visual: preserva IDs, eventos e funções do sistema.
+   =========================================================== */
+:root{--bg:#090a0b;--surface:#121417;--card:#191c20;--card2:#24272c;--line:#30333a;--red:#d4a944;--red2:#947321;--gold:#e7bd60;--muted:#9da1ab;--text:#f9f7f0;--green:#5ec79a}
+html{background:#08090b;color-scheme:dark}
+body{font-family:Inter,'Segoe UI',system-ui,sans-serif;background:#08090b;color:#f7f4ed;min-height:100dvh;align-items:stretch}
+.app-container{width:100%;max-width:none;min-height:100dvh;border:0;border-radius:0;background:linear-gradient(180deg,#111315 0%,#08090b 52%);box-shadow:none;overflow:visible}
+header#app-header{position:sticky;top:0;z-index:100;padding:12px clamp(16px,4vw,34px);min-height:76px;background:rgba(12,13,15,.94);border-bottom:1px solid #282b30;backdrop-filter:blur(24px);box-shadow:0 8px 28px #0005}
+.app-logo{width:46px;height:46px;box-shadow:0 0 0 1px #6d561f,0 4px 18px #0005;background:#141414}.app-logo.foto-aluno{border:2px solid #d7ad50}
+header h1{font-size:1.08rem;font-weight:950;letter-spacing:.095em;color:#f8f1df;line-height:1.12}header p{font-size:.56rem;letter-spacing:.17em;color:#d4ad5b}
+.toggle-container{background:#1b1d1f;border-color:#3b3423}.btn-func-ativo,.btn-aluno-ativo{background:#d7ad50!important;color:#130f08!important;border-radius:9px}.btn-inativo{color:#aeb0b5}
+main{width:100%;max-width:920px;margin:0 auto;padding:clamp(20px,4vw,36px) clamp(17px,4vw,40px) 120px;min-height:calc(100dvh - 76px);animation:morottiPage .22s ease-out}
+@keyframes morottiPage{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:none}}
+.section-title{font-size:clamp(1.25rem,3vw,1.7rem);font-weight:850;letter-spacing:-.035em;color:#f8f7f3;text-transform:none;margin-bottom:10px}
+.page-kicker,.hero-app .eyebrow,.desafio-kicker{color:#e5b957;font-size:.66rem;letter-spacing:.16em;font-weight:900}
+.app-subtitle,.text-destaque{color:#aeb2b9;font-size:.83rem;line-height:1.65;text-align:left}
+.hero-app{position:relative;overflow:hidden;background:radial-gradient(circle at 92% 0%,#5c451d85,transparent 54%),linear-gradient(135deg,#252017,#14171a 72%);border:1px solid #62512c;border-radius:27px;padding:clamp(23px,4vw,34px);box-shadow:0 20px 40px #0004;min-height:155px}
+.hero-app:before{content:'';position:absolute;right:-42px;bottom:-87px;width:185px;height:185px;border:1px solid #d4ac413b;border-radius:50%;pointer-events:none}
+.hero-app h2{font-size:clamp(1.6rem,5vw,2.1rem);font-weight:900;letter-spacing:-.045em;color:#fff;margin:9px 0}.hero-app p{color:#c9c7c0;max-width:580px;line-height:1.55}
+.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.quick-card{min-height:125px;border-radius:22px;padding:18px;background:linear-gradient(145deg,#202327,#16181b);border:1px solid #333740;box-shadow:0 9px 21px #0003;cursor:pointer;gap:12px}
+.quick-card:hover,.menu-item:hover{border-color:#957c44;background:linear-gradient(145deg,#282820,#1b1e21);transform:translateY(-1px)}
+.quick-card .qicon{display:grid;place-items:center;font-size:1.45rem;width:42px;height:42px;border:1px solid #544626;background:#30291c;border-radius:13px}
+.quick-card strong{font-size:.91rem;font-weight:850;color:#f9f7f0}.quick-card small{color:#9c9fa8;font-size:.71rem}
+.quick-card.gold{background:linear-gradient(145deg,#332918,#1c1c1b);border-color:#66502c}
+.desafio-card,.public-challenge{background:linear-gradient(130deg,#332919,#191b1f 62%);border:1px solid #705629;border-radius:24px;padding:20px;box-shadow:0 12px 32px #0003}
+.desafio-head h3{font-size:1.12rem;letter-spacing:-.02em}.desafio-link{color:#e9c56e}
+.desafio-stat{border-radius:14px;background:#121416a8;border-color:#474236;padding:14px 8px}.desafio-stat strong{font-size:1.35rem;color:#f1cf79}.desafio-stat span{font-size:.64rem}
+.checkin-btn,.btn-acao.sucesso,.btn-acao.ouro,.public-login-btn,.install-app-btn{background:linear-gradient(135deg,#efd07b,#c69a3b)!important;color:#17130b!important;border:1px solid #edcb75!important;box-shadow:0 8px 24px #d3a64225!important;font-weight:900}
+.btn-acao,.btn-voltar,.public-login-btn,.install-app-btn{min-height:46px;border-radius:13px;text-transform:none;letter-spacing:.01em}.btn-voltar{background:#1e2125;border:1px solid #3b3c40;color:#ddd}
+.btn-perigo,.mini-action.red{background:#3e2222!important;border-color:#835050!important;color:#ffd1cd!important;box-shadow:none!important}
+.info-card,.treino-card,.plano-card,.aviso-card,.app-list-card,.day-card,.login-card,.public-member,.public-info-card,.profile-box,.modelo-treino-box,.treino-item-edit{background:#1b1e22;border:1px solid #34363e;border-left:1px solid #34363e;border-radius:20px;padding:17px;box-shadow:0 8px 24px #0002}
+.info-card h3,.treino-card h3,.plano-card h3,.aviso-card h3{color:#faf8ef}.plano-card.destaque,.info-card.gold{border-color:#79612f}
+.public-top{align-items:flex-start}.public-top strong{font-size:1rem;line-height:1.25;display:block;margin-top:5px}.public-badge{color:#e5b957}.public-login-btn{white-space:nowrap}
+.public-planos .plano-card{margin-bottom:10px}.public-planos .plano-card h3{color:#f2ce78}
+.menu-item{border-radius:20px;min-height:115px;background:#1c1e22;border-color:#383a40}
+.form-grupo label{font-weight:750;color:#d7d7d5}.form-grupo input,.form-grupo select,.form-grupo textarea,.search-box,.treino-campos input{background:#15171a;border:1px solid #42454c;color:#fff;border-radius:13px;min-height:43px}
+.form-grupo input:focus,.form-grupo select:focus,.form-grupo textarea:focus,.search-box:focus{border-color:#d3a54a;box-shadow:0 0 0 3px #d3a54a24}
+.treino-tab,.ranking-tab,.modelo-chip,.grupo-chip{border-radius:12px;background:#22252a;border-color:#44464a;color:#c4c5c9}.treino-tab.ativo,.ranking-tab.ativo{background:#3a2e17!important;color:#ffe8a5!important;border-color:#c49940!important}
+.exercise{background:#15171a;border-color:#383b40;padding:15px;border-radius:15px}.exercise strong{color:#f8f6ee}
+.ranking-item{border-radius:17px;background:#1b1e22;border-color:#373a3e;padding:15px}.ranking-item.top1{border-color:#caa34c;background:#282215}.ranking-pos{border-radius:12px}
+.minha-posicao{background:#282214;border:1px solid #80652a;border-radius:19px}.medalha-item.conquistada{border-color:#a98840;background:linear-gradient(160deg,#302719,#1a1c1d)}
+.bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr));width:100%;left:0;transform:none;bottom:0;padding:8px max(7px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-bottom));background:rgba(13,15,17,.97);border-top:1px solid #554729;box-shadow:0 -12px 36px #0008;z-index:120}
+.nav-btn{min-height:54px;gap:5px;justify-content:center;color:#8f959f;font-size:.58rem;border-radius:12px}.nav-btn .nav-icon{font-size:1.35rem;line-height:1.15}.nav-btn.active{color:#f2c969;background:#3a2d1733}
+footer{border-color:#25282c;color:#676b73;margin-bottom:75px}button:focus-visible,a:focus-visible,[onclick]:focus-visible{outline:2px solid #f0ca69;outline-offset:3px}
+@media(min-width:640px){body{padding:0}.app-container{min-height:100dvh;border-radius:0;padding-bottom:0}.bottom-nav{bottom:0;border-radius:0;border:0;border-top:1px solid #554729}.quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.app-logo{width:52px;height:52px}}
+@media(min-width:1080px){.bottom-nav{width:min(700px,70%);left:50%;transform:translateX(-50%);bottom:15px;border:1px solid #59482b;border-radius:19px;padding:9px;box-shadow:0 12px 38px #0009}.app-container main{padding-bottom:135px}.quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:360px){header#app-header{padding:10px 12px}.app-logo{width:39px;height:39px}header h1{font-size:.93rem}.nav-btn{font-size:.51rem}.nav-btn .nav-icon{font-size:1.18rem}.quick-card{padding:13px;min-height:116px}}
+@media(prefers-reduced-motion:reduce){main{animation:none}.quick-card{transition:none}}
+</style>
 </head>
 
 <body>
+<style>
+/* MorottiGym 2.0 — identidade e boas-vindas */
+:root{--morotti-ouro:#d6aa3d}
+header h1,.section-title{color:#f5f5f5}
+.btn-aluno-ativo,.treino-tab.ativo,.ranking-tab.ativo{background:#44330e!important;border-color:#a9852f!important;color:#ffe6a0!important}
+.checkin-btn{background:linear-gradient(135deg,#d6aa3d,#8b671b)!important;border-color:#d6aa3d!important;color:#15120b!important;box-shadow:0 9px 22px rgba(214,170,61,.16)!important}
+.checkin-btn.realizado{background:#193628!important;color:#9de4b5!important;border-color:#3c805b!important}
+.campeonato-hero{background:linear-gradient(135deg,#30270f,#161616 75%);border:1px solid #82651e;border-radius:20px;padding:22px;margin:15px 0;color:#fff}
+.campeonato-hero span{font-size:.65rem;letter-spacing:.15em;color:#eac56d;font-weight:900}.campeonato-hero strong{display:block;font-size:1.4rem;margin:10px 0}.campeonato-hero p{font-size:.78rem;color:#ccc;margin-bottom:16px}
+.medalhas-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.medalha-item{background:#1c1c1e;border:1px solid #3d3420;border-radius:16px;padding:16px 12px;text-align:center}.medalha-item .emblema{font-size:2rem;filter:grayscale(1);opacity:.65}.medalha-item strong{display:block;font-size:.74rem;color:#e9d9a9;margin:8px 0 4px}.medalha-item small{font-size:.64rem;color:#a1a1aa;line-height:1.4;display:block}.medalha-item .pontos{display:inline-block;color:#b9a37c;font-size:.63rem;margin-top:9px}
+.morotti-onboard{position:fixed;inset:0;z-index:10000;background:#080808;color:#fff;display:grid;place-items:center;padding:22px}.morotti-onboard.hidden{display:none!important}.morotti-intro{width:min(420px,100%);min-height:min(650px,90dvh);border:1px solid #4a391d;border-radius:26px;display:flex;flex-direction:column;padding:25px;background:radial-gradient(circle at 50% 12%,#483715 0,#171717 48%,#101010 100%);box-shadow:0 30px 90px #0009}
+.morotti-intro-top{display:flex;justify-content:space-between;align-items:center}.morotti-intro-top small{letter-spacing:.15em;color:#d6aa3d;font-weight:900;font-size:.62rem}.morotti-intro-top button{background:none;border:0;color:#ddd;padding:8px}
+.morotti-intro-center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:14px}.morotti-intro-emoji{display:grid;place-items:center;width:112px;height:112px;border-radius:50%;background:#2a230f;border:1px solid #aa8426;font-size:3.2rem;box-shadow:0 0 50px #aa842633}.morotti-intro-center h2{font-size:clamp(1.7rem,6vw,2.25rem);line-height:1.15}.morotti-intro-center p{font-size:.9rem;color:#c4c4c4;line-height:1.6;max-width:290px}.morotti-intro-dots{display:flex;gap:6px;justify-content:center;margin:14px 0}.morotti-intro-dots i{width:7px;height:7px;border-radius:100%;background:#555}.morotti-intro-dots i.ativo{width:24px;border-radius:8px;background:#d6aa3d}.morotti-intro-next{background:#d6aa3d;border:0;border-radius:13px;min-height:51px;font-weight:900;color:#171207;width:100%}
+@media(prefers-reduced-motion:reduce){.morotti-onboard *{scroll-behavior:auto!important;animation:none!important}}
+</style>
+<div class="morotti-onboard hidden" id="morotti-onboard" role="dialog" aria-modal="true" aria-labelledby="morotti-intro-title">
+ <section class="morotti-intro">
+  <div class="morotti-intro-top"><small>MOROTTI GYM • 2.0</small><button type="button" onclick="finalizarOnboarding()">Pular</button></div>
+  <div class="morotti-intro-center"><div class="morotti-intro-emoji" id="morotti-intro-icon">💪</div><h2 id="morotti-intro-title">Bem-vindo à família Morotti</h2><p id="morotti-intro-text">Sua evolução começa agora.</p></div>
+  <div class="morotti-intro-dots" id="morotti-intro-dots"></div><button class="morotti-intro-next" type="button" id="morotti-intro-next" onclick="proximaIntroducao()">Próximo →</button>
+ </section>
+</div>
 <div class="app-container">
 
 <header id="app-header">
@@ -392,7 +468,14 @@ body.mgym-modal-open{overflow:hidden}
             <div class="public-info-card"><small>HOJE</small><strong id="resumo-dia-visitante">Horário da unidade</strong></div>
             <div class="public-info-card"><small>ACESSO</small><strong>Treinos e conteúdos no app</strong></div>
         </div>
-        <div class="public-challenge"><div class="desafio-kicker">🏆 Desafio MorottiGym</div><h3>Presença que vira desafio</h3><p>Alunos cadastrados fazem check-in na unidade e acompanham suas visitas e posições nos rankings semanal, mensal e anual.</p></div>
+        <div class="public-challenge"><div class="desafio-kicker">🏆 Campeonato Morotti Gym</div><h3>Sua disciplina merece reconhecimento</h3><p>Alunos cadastrados fazem check-in na unidade, acompanham o campeonato e colecionam conquistas digitais.</p></div>
+        <section class="public-planos" aria-label="Planos e valores" style="margin:16px 0">
+          <h3 style="margin-bottom:10px;color:#f4d37b">Conheça nossos planos</h3>
+          <div class="plano-card"><h3>Diária — R$ 20,00</h3><p>Treine por um dia. <strong>Não inclui acesso ao aplicativo ou à área exclusiva dos alunos.</strong></p></div>
+          <div class="plano-card"><h3>Mensal — R$ 89,90</h3><p>Mensalidade com possibilidade de acesso ao app após cadastro e ativação.</p></div>
+          <div class="plano-card"><h3>Trimestral — R$ 69,90/mês</h3><p>Durante três meses. Total de R$ 209,70 no período, com possibilidade de acesso ao app após cadastro e ativação.</p></div>
+          <p class="small">Rua General Câmara, 2586 — Ipiranga, Ribeirão Preto.</p>
+        </section>
         <div class="public-member"><h3>🏋️ Já treina na MorottiGym?</h3><p>Procure um professor da unidade e faça seu cadastro no app para acessar seus <strong>treinos, check-ins, ranking e conteúdos exclusivos</strong>.</p></div>
         <div class="public-actions">
             <button class="btn-acao sucesso" type="button" onclick="abrirLoginPublico()">🔐 JÁ SOU ALUNO — ENTRAR</button>
@@ -414,7 +497,7 @@ body.mgym-modal-open{overflow:hidden}
             <p id="mensagem-dia-aluno">Seu treino está a poucos toques. Disciplina, foco e constância.</p>
         </div>
         <div class="desafio-card">
-            <div class="desafio-head"><div><div class="desafio-kicker">🏆 Desafio MorottiGym</div><h3>Seu ritmo no ranking</h3></div><button class="desafio-link" type="button" onclick="abrirRanking()">Ver Top 10 →</button></div>
+            <div class="desafio-head"><div><div class="desafio-kicker">🏆 Campeonato Morotti Gym</div><h3>Seu ritmo no ranking</h3></div><button class="desafio-link" type="button" onclick="abrirRanking()">Ver Top 10 →</button></div>
             <div class="desafio-stats">
                 <div class="desafio-stat"><strong id="desafio-posicao">—</strong><span>posição no mês</span></div>
                 <div class="desafio-stat"><strong id="desafio-mes">0</strong><span>visitas no mês</span></div>
@@ -434,6 +517,7 @@ body.mgym-modal-open{overflow:hidden}
             <div class="quick-card" onclick="abrirTela('tela-perfil')"><div class="qicon">👤</div><div><strong>Meu perfil</strong><br><small>Dados e foto</small></div></div>
             <div class="quick-card" onclick="abrirTela('tela-horarios')"><div class="qicon">🕒</div><div><strong>Horários</strong><br><small>Funcionamento</small></div></div>
             <div class="quick-card gold" onclick="abrirSolicitacoesAluno()"><div class="qicon">📩</div><div><strong>Solicitar treino</strong><br><small>Novo treino ou alteração</small></div></div>
+            <div class="quick-card gold" onclick="abrirCampeonato()"><div class="qicon">🏆</div><div><strong>Campeonato</strong><br><small>Ranking e conquistas</small></div></div>
         </div>
         <div id="area-aluno-logado" class="admin-section"><div id="aluno-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
     </div>
@@ -466,7 +550,7 @@ body.mgym-modal-open{overflow:hidden}
 
 <!-- RANKING -->
 <main id="tela-ranking" class="hidden">
-    <div class="page-kicker">Desafio MorottiGym</div>
+    <div class="page-kicker">Campeonato Morotti Gym</div>
     <h2 class="section-title">🏆 Ranking de visitas</h2>
     <p class="app-subtitle">Top 10 de frequência. Cada aluno soma no máximo uma presença válida por dia.</p>
     <div class="ranking-tabs">
@@ -479,6 +563,19 @@ body.mgym-modal-open{overflow:hidden}
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
+<!-- CAMPEONATO — ÁREA EXCLUSIVA DO ALUNO -->
+<main id="tela-campeonato" class="hidden">
+    <div class="page-kicker">FORÇA • DISCIPLINA • EVOLUÇÃO</div>
+    <h2 class="section-title">🏆 Campeonato Morotti Gym</h2>
+    <p class="app-subtitle">Acompanhe a competição mensal e as suas conquistas digitais. Treine no seu ritmo: descanso também faz parte da evolução.</p>
+    <div class="campeonato-hero"><span>🏆 CAMPEONATO DO MÊS</span><strong id="campeonato-minha-posicao">Sua posição: —</strong><p id="campeonato-minhas-visitas">Acompanhe suas presenças válidas.</p><button class="btn-acao ouro" type="button" onclick="abrirRanking()">Ver classificação completa →</button></div>
+    <h3 class="section-title" style="margin-top:24px">🎖️ Minhas conquistas</h3>
+    <p class="app-subtitle">Medalhas por frequência e constância, desbloqueadas com presenças validadas. Cada conquista soma pontos digitais uma única vez.</p>
+    <div class="campeonato-hero"><span>MINHA EVOLUÇÃO</span><strong id="campeonato-pontos">0 pontos digitais</strong><p id="campeonato-progresso">Carregando sua coleção...</p></div>
+    <div id="campeonato-medalhas" class="medalhas-grid"></div>
+    <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
 <!-- HORÁRIOS -->
 <main id="tela-horarios" class="hidden">
     <h2 class="section-title">Horário de Funcionamento</h2>
@@ -486,7 +583,7 @@ body.mgym-modal-open{overflow:hidden}
     <table class="tabela-horarios">
         <thead><tr><th>Dia</th><th>Horário</th></tr></thead>
         <tbody>
-            <tr><td>Segunda a sexta</td><td>05h às 22h</td></tr>
+            <tr><td>Segunda a sexta</td><td>04h30 às 22h</td></tr>
             <tr><td>Sábado</td><td>08h às 13h</td></tr>
             <tr><td>Domingos e feriados</td><td>09h às 12h</td></tr>
         </tbody>
@@ -780,11 +877,12 @@ body.mgym-modal-open{overflow:hidden}
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
-<nav id="bottom-nav" class="bottom-nav">
-    <button class="nav-btn active" onclick="voltarParaMenu()"><span class="nav-icon">⌂</span><span>Início</span></button>
-    <button id="nav-principal" class="nav-btn" onclick="acaoNavPrincipal()"><span class="nav-icon">🏋️</span><span id="nav-principal-label">Treino</span></button>
-    <button id="nav-secundario" class="nav-btn" onclick="acaoNavSecundario()"><span class="nav-icon">📢</span><span id="nav-secundario-label">Avisos</span></button>
-    <button class="nav-btn" onclick="acaoNavPerfil()"><span class="nav-icon">👤</span><span id="nav-perfil-label">Perfil</span></button>
+<nav id="bottom-nav" class="bottom-nav" aria-label="Navegação principal">
+    <button class="nav-btn active" data-nav="inicio" aria-label="Ir para início" onclick="voltarParaMenu()"><span class="nav-icon">⌂</span><span>Início</span></button>
+    <button id="nav-principal" class="nav-btn" data-nav="principal" onclick="acaoNavPrincipal()"><span class="nav-icon">🏋️</span><span id="nav-principal-label">Treinos</span></button>
+    <button id="nav-campeonato" class="nav-btn" data-nav="campeonato" onclick="acaoNavCampeonato()"><span class="nav-icon">🏆</span><span id="nav-campeonato-label">Campeonato</span></button>
+    <button id="nav-secundario" class="nav-btn" data-nav="secundario" onclick="acaoNavSecundario()"><span class="nav-icon">▤</span><span id="nav-secundario-label">Avisos</span></button>
+    <button class="nav-btn" data-nav="perfil" onclick="acaoNavPerfil()"><span class="nav-icon">◉</span><span id="nav-perfil-label">Perfil</span></button>
 </nav>
 
 <footer>
@@ -907,7 +1005,7 @@ function atualizarMensagemDiariaAluno(){
  const dias=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"],meses=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"],sem=data.getDay(),chave=`${p.month}-${p.day}`,feriado=feriadoRibeirao(ano,chave);
  dEl.textContent=`${dias[sem]}, ${dia} de ${meses[mes-1]}`;
  if(feriado){fEl.textContent=`🇧🇷 Feriado • ${feriado}`;fEl.classList.remove("hidden")}else{fEl.textContent="";fEl.classList.add("hidden")}
- const horario=feriado?"09h às 12h":sem===6?"08h às 13h":sem===0?"09h às 12h":"05h às 22h";
+ const horario=feriado?"09h às 12h":sem===6?"08h às 13h":sem===0?"09h às 12h":"04h30 às 22h";
  hEl.textContent=`🕒 Hoje • ${horario}`;
  if(feriado)mEl.textContent="Feriado também pode ter treino. Se quiser aproveitar o dia para se movimentar, a MorottiGym te espera!";
  else if(mensagensEspeciaisMorotti[chave])mEl.textContent=mensagensEspeciaisMorotti[chave];
@@ -1801,7 +1899,7 @@ function atualizarHomeVisitante(){
     const s=document.getElementById("saudacao-visitante");if(s)s.textContent=`${saud} 👋`;
     const p=partesDataSaoPaulo(),ano=+p.year,mes=+p.month,dia=+p.day,data=new Date(`${p.year}-${p.month}-${p.day}T12:00:00-03:00`);
     const dias=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"],meses=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"],sem=data.getDay(),chave=`${p.month}-${p.day}`,feriado=feriadoRibeirao(ano,chave);
-    const horario=feriado?"09h às 12h":sem===6?"08h às 13h":sem===0?"09h às 12h":"05h às 22h";
+    const horario=feriado?"09h às 12h":sem===6?"08h às 13h":sem===0?"09h às 12h":"04h30 às 22h";
     const d=document.getElementById("data-visitante");if(d)d.textContent=`${dias[sem]}, ${dia} de ${meses[mes-1]}`;
     const f=document.getElementById("feriado-visitante");if(f){if(feriado){f.textContent=`🇧🇷 Feriado • ${feriado}`;f.classList.remove("hidden")}else f.classList.add("hidden")}
     const he=document.getElementById("horario-visitante");if(he)he.textContent=`🕒 Hoje • ${horario}`;
@@ -1822,11 +1920,12 @@ function atualizarHomeApp(){
     if(perfilAtual){const e=document.getElementById('saudacao-funcionario');if(e)e.textContent=`Olá, ${String(perfilAtual.nome||'').split(' ')[0]} 👋`; configurarNav('funcionario');const cm=document.getElementById('card-funcionarios-master');if(cm)cm.classList.toggle('hidden',perfilAtual.cargo!=='master');}
 }
 function configurarNav(tipo){
-    const p=document.getElementById('nav-principal-label'),s=document.getElementById('nav-secundario-label'),pf=document.getElementById('nav-perfil-label');
-    if(tipo==='funcionario'){if(p)p.textContent='Alunos';if(s)s.textContent='Treinos';if(pf)pf.textContent='Mais';}
-    else{if(p)p.textContent='Treino';if(s)s.textContent='Avisos';if(pf)pf.textContent='Perfil';}
+    const p=document.getElementById('nav-principal-label'),s=document.getElementById('nav-secundario-label'),pf=document.getElementById('nav-perfil-label'),c=document.getElementById('nav-campeonato-label'),ci=document.querySelector('#nav-campeonato .nav-icon');
+    if(tipo==='funcionario'){if(p)p.textContent='Alunos';if(s)s.textContent='Treinos';if(pf)pf.textContent='Início';if(c)c.textContent='Biblioteca';if(ci)ci.textContent='📚';}
+    else{if(p)p.textContent='Treinos';if(s)s.textContent='Avisos';if(pf)pf.textContent='Perfil';if(c)c.textContent='Conquistas';if(ci)ci.textContent='🏆';}
 }
 function acaoNavPrincipal(){abrirTela(perfilAtual?'tela-alunos':'tela-treino')}
+function acaoNavCampeonato(){if(perfilAtual)abrirBibliotecaExercicios();else abrirCampeonato()}
 function acaoNavSecundario(){abrirTela(perfilAtual?'tela-editar-treino':'tela-avisos')}
 function acaoNavPerfil(){if(perfilAtual) voltarParaMenu(); else abrirTela('tela-perfil')}
 
@@ -1834,7 +1933,7 @@ const _voltarParaMenuOriginal=voltarParaMenu;
 voltarParaMenu=function(){_voltarParaMenuOriginal();atualizarHomeApp();marcarNavInicio();}
 function marcarNavInicio(){document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',i===0));}
 const _abrirTelaOriginal=abrirTela;
-abrirTela=async function(idTela){await _abrirTelaOriginal(idTela);document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));}
+abrirTela=async function(idTela){await _abrirTelaOriginal(idTela);const destino={"tela-treino":"principal","tela-alunos":"principal","tela-campeonato":"campeonato","tela-biblioteca-exercicios":"campeonato","tela-avisos":"secundario","tela-editar-treino":"secundario","tela-perfil":"perfil"}[idTela];document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.nav===destino));}
 
 const _mostrarModoAlunoLogadoOriginal=mostrarModoAlunoLogado;
 mostrarModoAlunoLogado=function(){_mostrarModoAlunoLogadoOriginal();atualizarHomeApp();}
@@ -2690,6 +2789,87 @@ mostrarProximaSerie=function(){
     return g;
   };
 })();
+</script>
+<script>
+/* Introdução independente de login: uma vez por dispositivo, repetível por configuração. */
+const introducoesMorotti=[
+ {icone:'💪',titulo:'Bem-vindo à família Morotti!',texto:'Força, disciplina e evolução. Aqui, cada conquista importa.'},
+ {icone:'🏋️',titulo:'Seu treino, seu ritmo',texto:'Organize seus exercícios, acompanhe suas fichas e evolua com orientação.'},
+ {icone:'📅',titulo:'Cada treino conta',texto:'Registre sua presença na academia e acompanhe sua constância.'},
+ {icone:'🏆',titulo:'Campeonato Morotti Gym',texto:'Dispute o campeonato mensal e desbloqueie medalhas digitais na sua jornada.'}
+];
+let introducaoIndice=0;
+function renderizarIntroducao(){
+ const item=introducoesMorotti[introducaoIndice];
+ document.getElementById('morotti-intro-icon').textContent=item.icone;
+ document.getElementById('morotti-intro-title').textContent=item.titulo;
+ document.getElementById('morotti-intro-text').textContent=item.texto;
+ document.getElementById('morotti-intro-dots').innerHTML=introducoesMorotti.map((_,i)=>`<i class="${i===introducaoIndice?'ativo':''}"></i>`).join('');
+ document.getElementById('morotti-intro-next').textContent=introducaoIndice===introducoesMorotti.length-1?'Começar agora →':'Próximo →';
+}
+function mostrarIntroducaoMorotti(){introducaoIndice=0;renderizarIntroducao();document.getElementById('morotti-onboard').classList.remove('hidden');document.getElementById('morotti-intro-next').focus();}
+function finalizarOnboarding(){try{localStorage.setItem('morottigym-introducao-2','concluida')}catch(e){}document.getElementById('morotti-onboard').classList.add('hidden')}
+function proximaIntroducao(){if(introducaoIndice===introducoesMorotti.length-1){finalizarOnboarding();return}introducaoIndice++;renderizarIntroducao()}
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.getElementById('morotti-onboard').classList.contains('hidden'))finalizarOnboarding()});
+window.addEventListener('load',()=>{try{if(!localStorage.getItem('morottigym-introducao-2'))mostrarIntroducaoMorotti()}catch(e){mostrarIntroducaoMorotti()}});
+
+const medalhasMorotti=[
+ ['🌱','Primeiro Passo','1 presença',10],['🔥','Pegou Fogo','5 presenças',25],
+ ['🥉','Bronze Morotti','10 presenças',50],['🥈','Prata Morotti','25 presenças',100],
+ ['🥇','Ouro Morotti','50 presenças',200],['💎','Diamante Morotti','100 presenças',400],
+ ['👑','Lenda Morotti','250 presenças',1000],['🏆','Imortal Morotti','500 presenças',2000],
+ ['🔥','Chama Acesa','1 semana com pelo menos 3 treinos',25],
+ ['🛡️','Ritmo de Aço','2 semanas consecutivas',50],
+ ['🎖️','Disciplina de Ouro','3 semanas consecutivas',75],
+ ['🏆','Mês de Superação','4 semanas consecutivas',100],
+ ['⭐','Constância Inabalável','8 semanas consecutivas',250],
+ ['🔱','Trimestre de Ferro','12 semanas consecutivas',500],
+ ['🌟','Meio Ano de Evolução','26 semanas consecutivas',1000],
+ ['👑','Um Ano de Disciplina','52 semanas consecutivas',2500]
+];
+function semanaSegundaUTC(data){
+ const d=new Date(`${data}T12:00:00Z`);
+ const deslocamento=(d.getUTCDay()+6)%7;
+ d.setUTCDate(d.getUTCDate()-deslocamento);
+ return d.toISOString().slice(0,10);
+}
+function calcularConquistasMorotti(dias){
+ const datas=[...new Set(dias)].filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+ const semanas=new Map();
+ datas.forEach(d=>{const chave=semanaSegundaUTC(d);semanas.set(chave,(semanas.get(chave)||0)+1)});
+ const validas=[...semanas.entries()].filter(([_,quantidade])=>quantidade>=3).map(([data])=>data).sort();
+ let maior=0,sequencia=0,anterior=null;
+ validas.forEach(data=>{
+   if(anterior){const intervalo=(Date.parse(data+'T12:00:00Z')-Date.parse(anterior+'T12:00:00Z'))/86400000;sequencia=intervalo===7?sequencia+1:1}
+   else sequencia=1;
+   maior=Math.max(maior,sequencia);anterior=data;
+ });
+ const marcosFrequencia=[1,5,10,25,50,100,250,500];
+ const marcosSemanas=[1,2,3,4,8,12,26,52];
+ const desbloqueadas=medalhasMorotti.map((m,i)=>i<8?datas.length>=marcosFrequencia[i]:maior>=marcosSemanas[i-8]);
+ return {total:datas.length,maiorSequencia:maior,desbloqueadas,pontos:medalhasMorotti.reduce((s,m,i)=>s+(desbloqueadas[i]?m[3]:0),0)};
+}
+async function abrirCampeonato(){
+ if(!usuarioAtual||!alunoAtual){alert('Entre como aluno para acessar o campeonato.');return mudarAcesso('aluno')}
+ await abrirTela('tela-campeonato');
+ const grade=document.getElementById('campeonato-medalhas');
+ grade.innerHTML='<div class="empty">Verificando conquistas...</div>';
+ const [presencas,posicao]=await Promise.all([
+   supabaseClient.rpc('minhas_presencas_morotti'),
+   supabaseClient.rpc('minha_posicao_ranking',{periodo:'mes'})
+ ]);
+ if(presencas.error){console.error(presencas.error);grade.innerHTML='<div class="warning">Não foi possível carregar as medalhas. Execute primeiro o SQL de conquistas no Supabase principal.</div>';return}
+ const conquistas=calcularConquistasMorotti((presencas.data||[]).map(p=>p.data_checkin));
+ grade.innerHTML=medalhasMorotti.map(([icone,nome,regra,pontos],i)=>{
+   const ok=conquistas.desbloqueadas[i];
+   return `<div class="medalha-item ${ok?'conquistada':''}"><div class="emblema" aria-hidden="true" style="${ok?'filter:none;opacity:1':''}">${icone}</div><strong>${nome}</strong><small>${regra}</small><span class="pontos">${ok?'✅ Desbloqueada':'🔒 Bloqueada'} • ${pontos} pontos</span></div>`;
+ }).join('');
+ document.getElementById('campeonato-pontos').textContent=`${conquistas.pontos.toLocaleString('pt-BR')} pontos digitais`;
+ document.getElementById('campeonato-progresso').textContent=`${conquistas.total} dias de treino • ${conquistas.desbloqueadas.filter(Boolean).length} de ${medalhasMorotti.length} medalhas • maior sequência: ${conquistas.maiorSequencia} semana(s)`;
+ const pos=posicao.data?.[0];
+ document.getElementById('campeonato-minha-posicao').textContent=`Sua posição: ${pos?.posicao?'#'+pos.posicao:'—'}`;
+ document.getElementById('campeonato-minhas-visitas').textContent=`${pos?.visitas??0} presença(s) válidas neste mês`;
+}
 </script>
 
 </body>
