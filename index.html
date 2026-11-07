@@ -361,6 +361,9 @@ main{width:100%;max-width:920px;margin:0 auto;padding:clamp(20px,4vw,36px) clamp
 .conquistas-categorias{display:flex;gap:8px;overflow-x:auto;padding:10px 0 14px;scrollbar-width:none}.conquistas-categorias button{flex:0 0 auto;background:#23262b;border:1px solid #4a4b50;border-radius:99px;color:#d5d4d0;padding:10px 13px;font-size:.68rem;font-weight:850}.conquistas-categorias button.ativo{background:#46371c;color:#ffe4a5;border-color:#bd9238}
 .medalha-item{min-height:164px;display:flex;flex-direction:column;align-items:center;justify-content:center}.medalha-item .pontos{margin-top:auto;padding-top:10px}.medalha-item.conquistada .pontos{color:#9fe2a9}.medalha-item .raridade{font-size:.58rem;color:#b3a277;letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase}
 .conquista-toast{position:fixed;z-index:20000;left:50%;bottom:100px;transform:translateX(-50%);width:min(390px,calc(100% - 30px));padding:19px;border:1px solid #e0b451;background:linear-gradient(140deg,#3a2d16,#101214);color:white;border-radius:22px;box-shadow:0 18px 60px #000c;text-align:center}.conquista-toast strong{display:block;color:#f7d478;margin:8px 0;font-size:1rem}.conquista-toast p{font-size:.76rem;color:#ddd}.conquista-toast button{margin-top:10px;border:1px solid #aa873f;border-radius:10px;background:#282113;color:#f7d478;padding:9px 16px;font-weight:800}
+.autoral-dias{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.autoral-dias label{border:1px solid #474038;border-radius:12px;text-align:center;padding:10px 4px;font-size:.7rem;font-weight:800;background:#1d2024}.autoral-dias label:has(input:checked){background:#4a391a;color:#f4d078;border-color:#cba14a}.autoral-dias input{accent-color:#d1aa51}
+.autoral-exercicios{max-height:310px;overflow:auto;border:1px solid #34383c;border-radius:17px;padding:7px;background:#111315}.autoral-opcao{display:flex;gap:10px;align-items:center;padding:12px;border-bottom:1px solid #33373c}.autoral-opcao:last-child{border-bottom:0}.autoral-opcao .grow{min-width:0;flex:1}.autoral-opcao strong{display:block;font-size:.77rem}.autoral-opcao small{font-size:.64rem;color:#aaa}.autoral-opcao button{border-radius:11px;border:1px solid #9f8039;background:#352b19;color:#f0cb6b;padding:9px 12px;font-weight:900}
+.autoral-linha{background:#1b1e22;border:1px solid #44444a;border-radius:17px;padding:14px;margin-bottom:10px}.autoral-linha strong{display:block;font-size:.82rem;margin-bottom:10px}.autoral-linha-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.autoral-linha-grid label{font-size:.65rem;color:#b8bac0}.autoral-linha-grid input,.autoral-linha-grid select{display:block;width:100%;margin-top:5px;border-radius:10px;padding:10px;background:#121417;border:1px solid #45474a;color:#fff;min-width:0}.autoral-linha-acoes{display:flex;gap:7px;margin-top:10px}.autoral-linha-acoes button{flex:1;padding:9px;border-radius:10px;background:#292b2d;border:1px solid #53545a;color:#ddd;font-weight:800}
 .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr));width:100%;left:0;transform:none;bottom:0;padding:8px max(7px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-bottom));background:rgba(13,15,17,.97);border-top:1px solid #554729;box-shadow:0 -12px 36px #0008;z-index:120}
 .nav-btn{min-height:54px;gap:5px;justify-content:center;color:#8f959f;font-size:.58rem;border-radius:12px}.nav-btn .nav-icon{font-size:1.35rem;line-height:1.15}.nav-btn.active{color:#f2c969;background:#3a2d1733}
 footer{border-color:#25282c;color:#676b73;margin-bottom:75px}button:focus-visible,a:focus-visible,[onclick]:focus-visible{outline:2px solid #f0ca69;outline-offset:3px}
@@ -523,6 +526,7 @@ header h1,.section-title{color:#f5f5f5}
             <div class="quick-card" onclick="abrirTela('tela-horarios')"><div class="qicon">🕒</div><div><strong>Horários</strong><br><small>Funcionamento</small></div></div>
             <div class="quick-card gold" onclick="abrirSolicitacoesAluno()"><div class="qicon">📩</div><div><strong>Solicitar treino</strong><br><small>Novo treino ou alteração</small></div></div>
             <div class="quick-card gold" onclick="abrirCampeonato()"><div class="qicon">🏆</div><div><strong>Campeonato</strong><br><small>Ranking e conquistas</small></div></div>
+            <div class="quick-card gold" onclick="abrirMontadorAluno()"><div class="qicon">🧩</div><div><strong>Montar meu treino</strong><br><small>Monte e utilize na hora</small></div></div>
         </div>
         <div id="area-aluno-logado" class="admin-section"><div id="aluno-logado" class="status" style="margin-top:14px"></div><button class="btn-acao btn-perigo" type="button" onclick="sair()">Sair da conta</button></div>
     </div>
@@ -536,6 +540,7 @@ header h1,.section-title{color:#f5f5f5}
             <div class="quick-card" onclick="abrirTela('tela-publicar-aviso')"><div class="qicon">📢</div><div><strong>Avisos</strong><br><small>Publicar comunicado</small></div></div>
             <div class="quick-card" onclick="abrirBibliotecaExercicios()"><div class="qicon">📚</div><div><strong>Biblioteca</strong><br><small>Exercícios e aparelhos</small></div></div>
             <div class="quick-card" onclick="abrirSolicitacoesFuncionario()"><div class="qicon">📩</div><div><strong>Solicitações <span id="contador-solicitacoes" class="request-badge hidden">0</span></strong><br><small>Pedidos dos alunos</small></div></div>
+            <div class="quick-card gold" onclick="abrirRevisaoTreinosAutorais()"><div class="qicon">📝</div><div><strong>Treinos dos alunos</strong><br><small>Revisar sem interromper o uso</small></div></div>
             <div id="card-funcionarios-master" class="quick-card master-only hidden" onclick="abrirFuncionariosMaster()"><div class="qicon">🪪</div><div><strong>Funcionários</strong><br><small>Equipe e níveis de acesso</small></div></div>
         </div>
         <div id="install-app-card-funcionario" class="install-app-card">
@@ -549,8 +554,37 @@ header h1,.section-title{color:#f5f5f5}
 <!-- TREINO -->
 <main id="tela-treino" class="hidden">
     <h2 class="section-title">Meu treino</h2>
+    <div id="meu-treino-autoral"></div>
     <div id="treino-aluno-conteudo"></div>
+    <button class="btn-acao ouro" type="button" onclick="abrirMontadorAluno()">🧩 Criar ou editar meu treino</button>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- MONTADOR AUTORAL: aluno usa de imediato; professor pode revisar depois -->
+<main id="tela-montador-aluno" class="hidden">
+ <div class="page-kicker">Meu treino • minha rotina</div><h2 class="section-title">🧩 Montador de treinos</h2>
+ <p class="app-subtitle">Escolha os dias e adicione exercícios. Você poderá usar o treino assim que salvar. O professor poderá revisá-lo depois.</p>
+ <div class="info-card"><label class="form-grupo">Nome do treino<input id="autoral-nome" maxlength="80" value="Meu treino" placeholder="Ex.: Minha divisão semanal"></label>
+ <p class="small" style="margin:12px 0">Escolha os dias da semana</p><div class="autoral-dias" id="autoral-dias"></div>
+ <p id="autoral-recuperacao" class="small" aria-live="polite" style="margin-top:11px"></p>
+ <button type="button" class="btn-acao ouro" onclick="gerarSugestaoAutoral()">✨ Sugerir divisão A/B/C e exercícios</button>
+ <p class="small">A sugestão é um ponto de partida, não uma prescrição individual. Você pode editar tudo e pedir orientação ao professor.</p></div>
+ <h3 class="section-title" style="margin-top:18px">Adicionar exercícios</h3>
+ <div id="autoral-grupos" class="conquistas-categorias"></div>
+ <input class="search-box" id="autoral-busca" type="search" placeholder="Buscar exercício ou aparelho" oninput="renderizarBibliotecaAutoral()">
+ <div id="autoral-biblioteca" class="autoral-exercicios"></div>
+ <h3 class="section-title" style="margin-top:22px">Sua sequência</h3>
+ <div id="autoral-selecionados"></div>
+ <button type="button" class="btn-acao sucesso" onclick="salvarTreinoAutoral()">💾 Salvar e começar a usar</button>
+ <button type="button" class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<!-- FILA DE REVISÃO DO PROFESSOR -->
+<main id="tela-revisao-autorais" class="hidden">
+ <div class="page-kicker">Painel do professor</div><h2 class="section-title">📝 Treinos criados pelos alunos</h2>
+ <p class="app-subtitle">Os alunos já podem utilizar seus treinos. Aqui você observa, revisa e faz ajustes quando necessário, mantendo versões anteriores.</p>
+ <div id="autorais-professor-lista"></div>
+ <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
 <!-- RANKING -->
@@ -2973,6 +3007,149 @@ async function abrirCampeonato(){
  document.getElementById('campeonato-minha-posicao').textContent=`Sua posição: ${pos?.posicao?'#'+pos.posicao:'—'}`;
  document.getElementById('campeonato-minhas-visitas').textContent=`${pos?.visitas??0} presença(s) válidas neste mês`;
 }
+</script>
+
+<script>
+/* MOROTTIGYM 2.0 — MONTADOR AUTORAL / REVISÃO NÃO BLOQUEANTE */
+const diasAutorais=['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado','Domingo'];
+const sugestoesAutorais={
+ 'Peito':['Supino reto','Supino inclinado','Crossover peito','Peck deck'],
+ 'Costas':['Puxada frontal','Remada baixa','Remada articulada','Pulldown'],
+ 'Ombros':['Desenvolvimento','Elevação lateral','Crucifixo inverso'],
+ 'Bíceps':['Rosca direta','Rosca alternada','Rosca Scott'],
+ 'Tríceps':['Tríceps corda','Tríceps pulley','Tríceps francês'],
+ 'Pernas':['Agachamento','Leg press','Cadeira extensora','Mesa flexora'],
+ 'Glúteos':['Elevação pélvica','Extensão de quadril','Cadeira abdutora'],
+ 'Panturrilha':['Panturrilha em pé','Panturrilha no leg press'],
+ 'Abdômen':['Prancha','Abdominal no solo','Crunch no cabo']
+};
+let treinoAutoralAtual=null,treinoAutoralEdicao=null,itensAutorais=[],grupoAutoral='Peito';
+function diasAutoraisEscolhidos(){return [...document.querySelectorAll('#autoral-dias input:checked')].map(x=>x.value)}
+function montarCheckboxesAutorais(dias=[]){document.getElementById('autoral-dias').innerHTML=diasAutorais.map((d,i)=>`<label><input type="checkbox" value="${d}" ${dias.includes(d)?'checked':''} onchange="atualizarDiasAutorais()"> ${['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'][i]}</label>`).join('')}
+function atualizarDiasAutorais(){
+ const dias=diasAutoraisEscolhidos();
+ const consecutivos=diasAutorais.some((d,i)=>dias.includes(d)&&dias.includes(diasAutorais[(i+1)%7]));
+ const aviso=document.getElementById('autoral-recuperacao');
+ aviso.textContent=consecutivos?'💡 Você escolheu dias seguidos. Distribua os grupos musculares para respeitar a recuperação.':'💡 Priorize recuperação adequada de cada grupo muscular entre sessões.';
+ renderizarItensAutorais();
+}
+function alterarGrupoAutoral(grupo){grupoAutoral=grupo;renderizarGruposAutorais();renderizarBibliotecaAutoral()}
+function renderizarGruposAutorais(){document.getElementById('autoral-grupos').innerHTML=Object.keys(sugestoesAutorais).map(g=>`<button type="button" class="${g===grupoAutoral?'ativo':''}" onclick="alterarGrupoAutoral('${g}')">${g}</button>`).join('')}
+function opcoesAutorais(){
+ const daBiblioteca=bibliotecaExerciciosCache.map(ex=>{const grupo=bibliotecaGruposCache.find(g=>g.id===ex.grupo_muscular_id)?.nome||'';const maquina=bibliotecaMaquinasCache.find(m=>m.id===ex.maquina_id);return {nome:ex.nome,grupo,maquina:maquina?.numero||null,biblioteca_id:ex.id}});
+ const sugeridos=(sugestoesAutorais[grupoAutoral]||[]).map(nome=>({nome,grupo:grupoAutoral,maquina:null,biblioteca_id:null}));
+ const lista=[...sugeridos,...daBiblioteca.filter(x=>String(x.grupo).toLowerCase().includes(grupoAutoral.toLowerCase().slice(0,4)))];
+ return [...new Map(lista.map(e=>[e.nome.toLowerCase(),e])).values()];
+}
+function renderizarBibliotecaAutoral(){
+ const el=document.getElementById('autoral-biblioteca');if(!el)return;
+ const q=(document.getElementById('autoral-busca').value||'').trim().toLowerCase();
+ const todos=opcoesAutorais();const lista=todos.filter(x=>(x.nome+' '+x.grupo+' '+(x.maquina||'')).toLowerCase().includes(q)).slice(0,40);
+ el.innerHTML=lista.map((e,i)=>`<div class="autoral-opcao"><div class="grow"><strong>${esc(e.nome)}</strong><small>${esc(e.grupo)}${e.maquina?' • Máquina '+esc(e.maquina):''}</small></div><button type="button" onclick="adicionarItemAutoral(${todos.indexOf(e)})">＋</button></div>`).join('')+`<div class="autoral-opcao"><div class="grow"><small>Não encontrou? Digite o nome e adicione manualmente.</small></div><button type="button" onclick="adicionarManualAutoral()">Adicionar</button></div>`;
+}
+function adicionarItemAutoral(indice){
+ const ex=opcoesAutorais()[indice];if(!ex)return;
+ if(itensAutorais.length>=30)return alert('Limite de 30 exercícios por ficha.');
+ itensAutorais.push({...ex,dia:diasAutoraisEscolhidos()[0]||'Segunda-feira',series:3,repeticoes:'10',carga:'',descanso:60});renderizarItensAutorais();
+}
+function adicionarManualAutoral(){const nome=(document.getElementById('autoral-busca').value||'').trim();if(!nome)return alert('Digite o nome do exercício na busca.');if(nome.length>100)return alert('Nome muito longo.');if(itensAutorais.length>=30)return alert('Limite de 30 exercícios.');itensAutorais.push({nome,grupo:grupoAutoral,dia:diasAutoraisEscolhidos()[0]||'Segunda-feira',series:3,repeticoes:'10',carga:'',descanso:60});renderizarItensAutorais()}
+function gerarSugestaoAutoral(){
+ const dias=diasAutoraisEscolhidos();if(!dias.length)return alert('Primeiro selecione os dias de treino.');
+ if(itensAutorais.length&&!confirm('Substituir os exercícios que você já adicionou pela sugestão automática?'))return;
+ const divisoes=dias.length<=2?[['Peito','Tríceps','Ombros'],['Costas','Bíceps','Pernas']]:dias.length===3?[['Peito','Tríceps'],['Costas','Bíceps'],['Pernas','Ombros']]:dias.length===4?[['Peito','Tríceps'],['Costas','Bíceps'],['Pernas'],['Ombros','Abdômen']]:[['Peito','Tríceps'],['Costas','Bíceps'],['Pernas'],['Ombros','Abdômen'],['Glúteos','Panturrilha']];
+ itensAutorais=[];
+ dias.forEach((dia,i)=>{
+  const grupos=divisoes[i%divisoes.length];
+  grupos.forEach(grupo=>{
+   const nomes=sugestoesAutorais[grupo]||[];
+   nomes.slice(0,grupos.length>2?1:2).forEach(nome=>{
+    const ex=bibliotecaExerciciosCache.find(e=>e.nome?.toLowerCase()===nome.toLowerCase());
+    itensAutorais.push({nome,grupo,dia,biblioteca_id:ex?.id||null,series:3,repeticoes:'10',carga:'',descanso:60});
+   });
+  });
+ });
+ document.getElementById('autoral-nome').value=`Minha divisão ${dias.length<=3?'A/B/C':'semanal'}`;
+ renderizarItensAutorais();
+ document.getElementById('autoral-recuperacao').textContent='✨ Sugestão pronta! Confira se grupos e dias permitem recuperação adequada; edite a ordem, séries, repetições e exercícios como preferir.';
+}
+function moverItemAutoral(indice,dir){const j=indice+dir;if(j<0||j>=itensAutorais.length)return;[itensAutorais[indice],itensAutorais[j]]=[itensAutorais[j],itensAutorais[indice]];renderizarItensAutorais()}
+function removerItemAutoral(i){itensAutorais.splice(i,1);renderizarItensAutorais()}
+function campoItemAutoral(i,campo,valor){if(itensAutorais[i])itensAutorais[i][campo]=valor}
+function renderizarItensAutorais(){
+ const el=document.getElementById('autoral-selecionados');if(!el)return;
+ const dias=diasAutoraisEscolhidos();
+ if(!itensAutorais.length){el.innerHTML='<div class="empty">Escolha exercícios na lista acima para começar.</div>';return}
+ el.innerHTML=itensAutorais.map((x,i)=>`<div class="autoral-linha"><strong>${i+1}. ${esc(x.nome)} <small style="color:#d4b45c">${esc(x.grupo||'')}</small></strong><div class="autoral-linha-grid">
+ <label>Dia<select onchange="campoItemAutoral(${i},'dia',this.value)">${(dias.length?dias:diasAutorais).map(d=>`<option value="${d}" ${d===x.dia?'selected':''}>${d}</option>`).join('')}</select></label>
+ <label>Séries<input type="number" min="1" max="10" value="${Number(x.series)||3}" onchange="campoItemAutoral(${i},'series',this.value)"></label>
+ <label>Repetições<input maxlength="20" value="${esc(x.repeticoes||'10')}" onchange="campoItemAutoral(${i},'repeticoes',this.value)"></label>
+ <label>Carga (opcional)<input maxlength="30" value="${esc(x.carga||'')}" placeholder="Ex.: 20 kg" onchange="campoItemAutoral(${i},'carga',this.value)"></label>
+ </div><div class="autoral-linha-acoes"><button type="button" onclick="moverItemAutoral(${i},-1)" aria-label="Subir exercício">↑</button><button type="button" onclick="moverItemAutoral(${i},1)" aria-label="Descer exercício">↓</button><button type="button" onclick="removerItemAutoral(${i})">Remover</button></div></div>`).join('');
+}
+async function carregarTreinoAutoral(){
+ if(!alunoAtual)return;
+ const {data,error}=await supabaseClient.from('treinos_autorais').select('*').eq('aluno_id',alunoAtual.id).maybeSingle();
+ if(error){console.warn('Treino autoral indisponível:',error);return}
+ treinoAutoralAtual=data||null;renderizarMeuTreinoAutoral();
+}
+function renderizarMeuTreinoAutoral(){
+ const el=document.getElementById('meu-treino-autoral');if(!el)return;
+ const t=treinoAutoralAtual;
+ if(!t){el.innerHTML='<div class="info-card"><h3>Crie sua própria ficha 🧩</h3><p>Você pode montar e utilizar seu treino imediatamente, sem esperar aprovação. A ficha do professor continuará disponível.</p><button class="btn-acao ouro" type="button" onclick="abrirMontadorAluno()">Montar agora</button></div>';return}
+ const itens=Array.isArray(t.exercicios)?t.exercicios:[];
+ el.innerHTML=`<div class="info-card gold"><h3>${esc(t.nome)} <small>• ${t.status==='revisado'?'✅ Revisado pelo professor':'🕒 Criado pelo aluno'}</small></h3><p>Versão ${t.versao} • Pronto para uso</p><button class="mini-action gold" type="button" onclick="verHistoricoAutoral(${t.id})">📜 Ver histórico de versões</button></div>`+
+ (t.dias||[]).map(d=>`<div class="treino-card"><h3>📅 ${esc(d)}</h3>${itens.filter(x=>x.dia===d).map(x=>`<div class="exercise"><strong>${esc(x.nome)} <small>• ${esc(x.grupo||'')}</small></strong><span>${esc(x.series)} séries × ${esc(x.repeticoes)} repetições${x.carga?' • '+esc(x.carga):''}</span></div>`).join('')||'<p>Sem exercícios neste dia.</p>'}</div>`).join('');
+}
+async function abrirMontadorAluno(registroProfessor=null){
+ if(!registroProfessor&&!alunoAtual)return alert('Faça login como aluno.');
+ if(registroProfessor&&!perfilAtual)return alert('Acesso exclusivo do professor.');
+ treinoAutoralEdicao=registroProfessor||treinoAutoralAtual;
+ esconderTelas();document.getElementById('tela-montador-aluno').classList.remove('hidden');window.scrollTo({top:0});
+ document.getElementById('autoral-nome').value=treinoAutoralEdicao?.nome||'Meu treino';
+ itensAutorais=(Array.isArray(treinoAutoralEdicao?.exercicios)?treinoAutoralEdicao.exercicios:[]).map(x=>({...x}));
+ montarCheckboxesAutorais(treinoAutoralEdicao?.dias||['Segunda-feira','Quarta-feira','Sexta-feira']);atualizarDiasAutorais();renderizarGruposAutorais();
+ renderizarBibliotecaAutoral();
+ try{await garantirBibliotecaCarregada();renderizarBibliotecaAutoral()}catch(e){console.warn('Biblioteca indisponível: mantendo sugestões locais',e)}
+}
+async function salvarTreinoAutoral(){
+ if(!alunoAtual&&!perfilAtual)return;
+ const dias=diasAutoraisEscolhidos();if(!dias.length)return alert('Selecione pelo menos um dia de treino.');
+ if(!itensAutorais.length)return alert('Adicione pelo menos um exercício.');
+ if(itensAutorais.some(x=>!dias.includes(x.dia)))return alert('Um exercício foi atribuído a um dia desmarcado. Ajuste o dia de cada exercício.');
+ const nome=document.getElementById('autoral-nome').value.trim()||'Meu treino';
+ const exercicios=itensAutorais.map(x=>({nome:String(x.nome).slice(0,100),grupo:x.grupo||'',biblioteca_id:x.biblioteca_id||null,maquina:x.maquina||null,dia:x.dia,series:Math.min(10,Math.max(1,Number(x.series)||3)),repeticoes:String(x.repeticoes||'10').slice(0,20),carga:String(x.carga||'').slice(0,30),descanso:Number(x.descanso)||60}));
+ const alunoId=treinoAutoralEdicao?.aluno_id||alunoAtual?.id;
+ const payload={nome,dias,exercicios};
+ const botao=document.querySelector('#tela-montador-aluno .btn-acao.sucesso');botao.disabled=true;
+ try{
+  let resultado;if(treinoAutoralEdicao?.id)resultado=await supabaseClient.from('treinos_autorais').update(payload).eq('id',treinoAutoralEdicao.id).select('*').single();
+  else resultado=await supabaseClient.from('treinos_autorais').insert({...payload,aluno_id:alunoId}).select('*').single();
+  if(resultado.error)throw resultado.error;
+  if(alunoAtual){treinoAutoralAtual=resultado.data;renderizarMeuTreinoAutoral();await abrirTela('tela-treino');alert('Treino salvo! Você já pode utilizá-lo. O professor poderá revisar depois.');}
+  else{await abrirRevisaoTreinosAutorais();alert('Treino revisado e salvo. A versão anterior foi preservada no histórico.');}
+ }catch(e){console.error(e);alert('Não foi possível salvar: '+e.message+'\nConfira se o SQL de treinos autorais foi executado.')}
+ finally{botao.disabled=false}
+}
+async function abrirRevisaoTreinosAutorais(){
+ if(!perfilAtual)return alert('Entre como professor.');
+ esconderTelas();document.getElementById('tela-revisao-autorais').classList.remove('hidden');window.scrollTo({top:0});
+ const el=document.getElementById('autorais-professor-lista');el.innerHTML='<div class="empty">Carregando fichas...</div>';
+ const {data,error}=await supabaseClient.from('treinos_autorais').select('*').order('atualizado_em',{ascending:false});
+ if(error){el.innerHTML=`<div class="warning">Erro: ${esc(error.message)}. Confira a atualização SQL.</div>`;return}
+ window.autoraisProfessorCache=data||[];
+ const lista=(data||[]).sort((a,b)=>(a.status==='sugerido'?0:1)-(b.status==='sugerido'?0:1));
+ el.innerHTML=lista.length?lista.map(t=>{const aluno=alunosCache.find(a=>a.id===t.aluno_id);return `<div class="app-list-card"><h3>${esc(aluno?.nome||'Aluno #'+t.aluno_id)}</h3><p>${esc(t.nome)} • ${t.dias.length} dias • ${t.exercicios.length} exercícios • Versão ${t.versao}</p><p>${t.status==='sugerido'?'🟡 Aguardando revisão (já em uso)':'✅ Revisado'}</p><button class="btn-acao ouro" type="button" onclick="revisarTreinoAutoral(${t.id})">✏️ Abrir e ajustar</button><button class="mini-action" type="button" onclick="verHistoricoAutoral(${t.id})">📜 Histórico</button></div>`}).join(''):'<div class="empty">Ainda não há treinos criados pelos alunos.</div>';
+}
+function revisarTreinoAutoral(id){const registro=(window.autoraisProfessorCache||[]).find(t=>t.id===id);if(registro)abrirMontadorAluno(registro)}
+async function verHistoricoAutoral(id){
+ const {data,error}=await supabaseClient.from('treinos_autorais_versoes').select('versao,alterado_em,snapshot').eq('treino_id',id).order('versao',{ascending:false});
+ if(error)return alert('Erro ao carregar histórico: '+error.message);
+ if(!data?.length)return alert('Este treino ainda está na primeira versão. Nenhuma alteração anterior.');
+ const texto=data.slice(0,15).map(v=>`Versão ${v.versao} — ${new Date(v.alterado_em).toLocaleString('pt-BR')} — ${(v.snapshot?.exercicios||[]).length} exercícios`).join('\n');
+ alert('Histórico preservado no banco:\n\n'+texto);
+}
+const atualizarTelasAlunoAntesAutorais=atualizarTelasAluno;
+atualizarTelasAluno=async function(){await atualizarTelasAlunoAntesAutorais();await carregarTreinoAutoral()};
 </script>
 
 </body>
