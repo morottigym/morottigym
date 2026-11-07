@@ -371,6 +371,34 @@ main{width:100%;max-width:920px;margin:0 auto;padding:clamp(20px,4vw,36px) clamp
 .autoral-ex-actions .autoral-video{display:grid;place-items:center;text-align:center;padding:12px 7px;border-radius:11px;border:1px solid #494b52;background:#26292e;color:#e9e9eb;font-weight:800;font-size:.68rem}.autoral-ex-card.concluido{border-color:#3c8864;background:#172820}
 /* Mesmo acabamento dourado no treino prescrito pelo professor. */
 .mgym-ex-machine{color:#e6bd66!important}.mgym-ex-card{background:#1c1f23!important;border:1px solid #353a41!important;border-radius:19px!important}.mgym-ex-actions .primary,.mgym-start-workout,.mgym-big-btn,.mgym-finish-workout{background:linear-gradient(135deg,#efcf79,#c69b43)!important;border-color:#ebc46d!important;color:#17130b!important}.mgym-treino-head{background:linear-gradient(135deg,#3b301d,#17191c)!important;border-color:#755b2b!important}.mgym-ex-card.concluido{border-color:#408861!important}
+/* Treinos 2.0: foco visual e execução com aparência de aplicativo nativo. */
+.mgym-ex-card,.autoral-ex-card{box-shadow:0 12px 28px #0004;transition:border-color .2s,transform .2s}
+.mgym-ex-card:active,.autoral-ex-card:active{transform:scale(.996)}
+.foco-list-index{font-size:.65rem;color:#d9b45a;font-weight:950;align-self:flex-start;padding-top:2px}
+.foco-list-placeholder{height:70px;width:70px;flex:none;border-radius:14px;background:linear-gradient(140deg,#3b3424,#1d2025);display:grid;place-items:center;font-size:1.7rem}
+.mgym-ex-actions button,.autoral-ex-actions button{min-height:44px}
+.mgym-mode-card.foco-mode{padding:16px 16px 24px}
+.foco-step{display:flex;justify-content:space-between;gap:12px;font-size:.65rem;font-weight:950;letter-spacing:.08em;color:#e9c36b;margin:2px 0 14px;text-transform:uppercase}
+.foco-step span{color:#9b9fa6;text-align:right;font-size:.61rem;letter-spacing:0;text-transform:none}
+.foco-hero{position:relative;width:100%;height:clamp(175px,31vh,275px);background:radial-gradient(circle at 55% 40%,#4b3a1b,#14171c 72%);border:1px solid #594827;border-radius:19px;overflow:hidden;margin-bottom:19px;display:flex;align-items:center;justify-content:center}
+.foco-hero img{width:100%;height:100%;object-fit:contain}
+.foco-hero-placeholder{font-size:4.5rem;opacity:.65}
+.foco-video-btn{position:absolute;bottom:12px;left:12px;right:12px;background:rgba(9,12,16,.92);color:#f5d37e;border:1px solid #b99040;border-radius:12px;padding:12px;font-size:.76rem;font-weight:900;backdrop-filter:blur(8px)}
+.foco-series-grid{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0 7px}
+.foco-series-grid span{width:37px;height:37px;border-radius:12px;display:grid;place-items:center;background:#24282e;border:1px solid #474a50;color:#b5b8be;font-weight:950;font-size:.82rem}
+.foco-series-grid span.atual{background:#55401d;border-color:#e0b65c;color:#ffe6ab;box-shadow:0 0 0 3px #d4a74a20}
+.foco-series-grid span.feito{background:#1c4431;border-color:#488967;color:#a8f0bc}
+.foco-back-btn{width:100%;border:0;background:transparent;color:#b7b9c0;padding:15px 10px 5px;font-size:.77rem;font-weight:750}
+.foco-set-label{color:#f1c66e!important;font-size:1.6rem!important;margin-top:13px!important}
+#mgym-mode-modal{padding:0;z-index:9998}
+#mgym-mode-modal .mgym-modal-card{width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;background:#101216;display:flex;flex-direction:column}
+#mgym-mode-modal .mgym-modal-head{flex:none;background:#14171b;border-bottom-color:#41371f;padding-top:max(14px,env(safe-area-inset-top))}
+#mgym-mode-body{overflow:auto;flex:1;overscroll-behavior:contain;padding:0 max(0px,calc((100% - 460px)/2)) max(24px,env(safe-area-inset-bottom))}
+#autoral-modal .morotti-intro{width:min(500px,100%);overflow-y:auto}
+#autoral-modal-corpo{width:100%;max-width:460px;padding:0 7px 20px}
+#autoral-modal-corpo .foco-hero{height:clamp(175px,28vh,245px)}
+#autoral-modal-corpo .foco-back-btn{margin-top:8px}
+@media(min-width:650px){#mgym-mode-modal{padding:28px}#mgym-mode-modal .mgym-modal-card{width:min(510px,100%);height:min(850px,95dvh);max-height:95dvh;border:1px solid #5a4a29;border-radius:24px}}
 .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr));width:100%;left:0;transform:none;bottom:0;padding:8px max(7px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-bottom));background:rgba(13,15,17,.97);border-top:1px solid #554729;box-shadow:0 -12px 36px #0008;z-index:120}
 .nav-btn{min-height:54px;gap:5px;justify-content:center;color:#8f959f;font-size:.58rem;border-radius:12px}.nav-btn .nav-icon{font-size:1.35rem;line-height:1.15}.nav-btn.active{color:#f2c969;background:#3a2d1733}
 footer{border-color:#25282c;color:#676b73;margin-bottom:75px}button:focus-visible,a:focus-visible,[onclick]:focus-visible{outline:2px solid #f0ca69;outline-offset:3px}
@@ -2452,7 +2480,8 @@ function abrirVideoExecucao(url,nome="Execução do exercício"){
 }
 function fecharVideoExecucao(){
   document.getElementById("mgym-video-body").innerHTML="";
-  document.getElementById("mgym-video-modal").classList.add("hidden");document.body.classList.remove("mgym-modal-open");
+  document.getElementById("mgym-video-modal").classList.add("hidden");
+  if(document.getElementById("mgym-mode-modal")?.classList.contains("hidden"))document.body.classList.remove("mgym-modal-open");
 }
 function mgymEscJs(v){return String(v??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g," ")}
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){fecharVideoExecucao();fecharModoTreino();}});
@@ -2472,7 +2501,13 @@ function mgymCardExercicio(item,i){
   const thumb=ex?.miniatura_url?`<img class="mgym-ex-thumb" src="${esc(ex.miniatura_url)}" alt="${esc(nome)}">`:"";
   const maq=d?.maquina?`<div class="mgym-ex-machine">MÁQUINA ${String(d.maquina.numero).padStart(2,"0")} • ${esc(d.maquina.nome)}</div>`:"";
   const video=ex?.video_url?`<button type="button" onclick="abrirVideoExecucao('${mgymEscJs(ex.video_url)}','${mgymEscJs(nome)}')">▶ Ver execução</button>`:"";
-  return `<div class="mgym-ex-card ${concluido?"concluido":""}"><div class="mgym-ex-main">${thumb}<div class="mgym-ex-info">${maq}<h4>${esc(nome)}</h4><div class="mgym-ex-meta">${mgymResumoPrescricao(item)}</div></div>${concluido?'<div class="mgym-check">✓</div>':""}</div><div class="mgym-ex-actions">${video}<button type="button" class="${concluido?"":"primary"}" onclick="abrirModoExercicio(${i})">${concluido?"Reabrir":"Iniciar exercício"}</button></div></div>`;
+  return `<div class="mgym-ex-card ${concluido?"concluido":""}"><div class="mgym-ex-main"><span class="foco-list-index">${String(i+1).padStart(2,'0')}</span>${thumb||'<span class="foco-list-placeholder">🏋️</span>'}<div class="mgym-ex-info">${maq}<h4>${esc(nome)}</h4><div class="mgym-ex-meta">${mgymResumoPrescricao(item)}</div></div>${concluido?'<div class="mgym-check">✓</div>':""}</div><div class="mgym-ex-actions">${video}<button type="button" class="${concluido?"":"primary"}" onclick="abrirModoExercicio(${i})">${concluido?"✓ Rever":"▶ Executar"}</button></div></div>`;
+}
+function mgymHeroFoco(item,indice,total){
+ const ex=dadosExercicioBiblioteca(item.biblioteca_id)?.ex;
+ const video=ex?.video_url?`<button class="foco-video-btn" type="button" onclick="abrirVideoExecucao('${mgymEscJs(ex.video_url)}','${mgymEscJs(ex.nome||item.nome)}')">▶ Ver execução aqui</button>`:'';
+ const imagem=ex?.miniatura_url?`<img src="${esc(ex.miniatura_url)}" alt="Demonstração de ${esc(ex.nome||item.nome)}" loading="lazy">`:'<div class="foco-hero-placeholder">🏋️</div>';
+ return `<div class="foco-step">EXERCÍCIO ${indice+1} DE ${total}<span>${Math.round((indice+1)/total*100)}% da sequência</span></div><div class="foco-hero">${imagem}${video}</div>`;
 }
 function mgymRenderTreino(t){
   mgymTreinoAtual=t;
@@ -2511,7 +2546,7 @@ function abrirModoExercicio(indice){
   const d=dadosExercicioBiblioteca(item.biblioteca_id),nome=d?.ex?.nome||item.nome;
   const modal=document.getElementById("mgym-mode-modal"),body=document.getElementById("mgym-mode-body");
   const atual=Math.min(Number(p.series_concluidas||0)+1,Number(p.series_total||1));
-  body.innerHTML=`<div class="mgym-mode-card"><div class="mgym-mode-kicker">${p.concluido?"Exercício concluído":"Exercício em andamento"}</div><h2>${esc(nome)}</h2><div class="mgym-ex-meta">${mgymResumoPrescricao(item)}</div><div class="mgym-set-counter"><strong>${p.concluido?"✓":atual+" / "+p.series_total}</strong><span>${p.concluido?"Todas as séries concluídas":"Série atual"}</span></div>${p.concluido?'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">Voltar ao treino</button>':`<button class="mgym-big-btn" type="button" onclick="concluirSerieAtual()">✓ CONCLUIR SÉRIE ${atual}</button>`}</div>`;
+  body.innerHTML=`<div class="mgym-mode-card foco-mode">${mgymHeroFoco(item,indice,itens.length)}<div class="mgym-mode-kicker">${p.concluido?"Exercício concluído":"MODO TREINO FOCADO"}</div><h2>${esc(nome)}</h2><div class="mgym-ex-meta">${mgymResumoPrescricao(item)}</div><div class="foco-series-grid">${Array.from({length:Math.min(20,Number(p.series_total)||1)},(_,i)=>`<span class="${i<Number(p.series_concluidas||0)?'feito':i===Number(p.series_concluidas||0)?'atual':''}">${i<Number(p.series_concluidas||0)?'✓':i+1}</span>`).join('')}</div><div class="mgym-set-counter"><strong>${p.concluido?"✓":atual+" / "+p.series_total}</strong><span>${p.concluido?"Todas as séries concluídas":"Série atual"}</span></div>${p.concluido?'<button class="mgym-big-btn" type="button" onclick="fecharModoTreino()">Voltar ao treino</button>':`<button class="mgym-big-btn" type="button" onclick="concluirSerieAtual()">✓ CONCLUIR SÉRIE ${atual}</button>`}<button class="foco-back-btn" type="button" onclick="fecharModoTreino()">← Voltar à lista de exercícios</button></div>`;
   modal.classList.remove("hidden");document.body.classList.add("mgym-modal-open");
 }
 async function concluirSerieAtual(){
@@ -3210,8 +3245,11 @@ function mostrarSerieAutoral(){
  if(!autoralExercicioAtivo)return;
  const {dia,indice,item}=autoralExercicioAtivo,p=lerProgressoAutoral(),concluidas=Number(p[dia]?.[indice]||0),total=Math.max(1,Number(item.series)||3);
  const completa=concluidas>=total;
- document.getElementById('autoral-modal-corpo').innerHTML=`<div class="morotti-intro-emoji">🏋️</div><h2 id="autoral-modal-titulo">${esc(item.nome)}</h2><p>${esc(item.repeticoes)} repetições${item.carga?' • '+esc(item.carga):''}</p><h2 style="color:#f0c66e">${concluidas} / ${total} séries</h2><p>${completa?'Exercício concluído!':'Conclua cada série para acompanhar seu progresso.'}</p>${completa?'<button class="morotti-intro-next" type="button" onclick="fecharExercicioAutoral()">✓ Voltar ao treino</button>':'<button class="morotti-intro-next" type="button" onclick="concluirSerieAutoral()">✓ Concluir série</button>'}`;
+ const ex=encontrarExercicioAutoral(item),todos=(treinoAutoralAtual?.exercicios||[]).filter(x=>x.dia===dia),imagem=ex?.miniatura_url?`<img src="${esc(ex.miniatura_url)}" alt="${esc(item.nome)}" loading="lazy">`:'<div class="foco-hero-placeholder">🏋️</div>';
+ const video=ex?.video_url?`<button type="button" class="foco-video-btn" onclick="abrirVideoAutoral('${encodeURIComponent(dia)}',${indice})">▶ Ver execução aqui</button>`:'';
+ document.getElementById('autoral-modal-corpo').innerHTML=`<div class="foco-step">EXERCÍCIO ${indice+1} DE ${todos.length}<span>${esc(dia)}</span></div><div class="foco-hero">${imagem}${video}</div><div class="mgym-mode-kicker">MODO TREINO FOCADO</div><h2 id="autoral-modal-titulo">${esc(item.nome)}</h2><p>${esc(item.repeticoes)} repetições${item.carga?' • '+esc(item.carga):''}</p><div class="foco-series-grid">${Array.from({length:Math.min(total,20)},(_,i)=>`<span class="${i<concluidas?'feito':i===concluidas?'atual':''}">${i<concluidas?'✓':i+1}</span>`).join('')}</div><h2 class="foco-set-label">${concluidas} / ${total} séries</h2><p>${completa?'Exercício concluído!':'Registre cada série e acompanhe seu progresso.'}</p>${completa?`<button class="morotti-intro-next" type="button" onclick="avancarExercicioAutoral()">${indice+1<todos.length?'Próximo exercício →':'✓ Voltar ao treino'}</button>`:'<button class="morotti-intro-next" type="button" onclick="concluirSerieAutoral()">✓ Concluir série</button>'}<button class="foco-back-btn" type="button" onclick="fecharExercicioAutoral()">← Voltar à ficha</button>`;
 }
+function avancarExercicioAutoral(){if(!autoralExercicioAtivo)return;const {dia,indice}=autoralExercicioAtivo,total=(treinoAutoralAtual?.exercicios||[]).filter(x=>x.dia===dia).length;if(indice+1<total)abrirExercicioAutoral(encodeURIComponent(dia),indice+1);else fecharExercicioAutoral()}
 function concluirSerieAutoral(){
  if(!autoralExercicioAtivo)return;
  const {dia,indice,item}=autoralExercicioAtivo,p=lerProgressoAutoral();p[dia]??={};
