@@ -3110,10 +3110,20 @@ function classeGrupoAutoral(g){const s=String(g||'').toLowerCase();return s.incl
 function cardExercicioAutoral(item,i,dia){
  const ex=encontrarExercicioAutoral(item);const maquina=bibliotecaMaquinasCache.find(m=>Number(m.id)===Number(ex?.maquina_id));
  const thumb=ex?.miniatura_url?`<img class="autoral-ex-thumb" src="${esc(ex.miniatura_url)}" alt="${esc(item.nome)}" loading="lazy">`:'<div class="autoral-ex-thumb missing" aria-hidden="true">🏋️</div>';
- let video='';try{const url=new URL(ex?.video_url||'');if(['https:','http:'].includes(url.protocol))video=`<a class="autoral-video" href="${esc(url.href)}" target="_blank" rel="noopener noreferrer">▶ Ver execução</a>`}catch(e){}
+ let video='';try{const url=new URL(ex?.video_url||'');if(['https:','http:'].includes(url.protocol))video=`<button type="button" onclick="abrirVideoAutoral('${encodeURIComponent(dia)}',${i})">▶ Ver execução</button>`}catch(e){}
  const chave=encodeURIComponent(dia);
  const progresso=Number(lerProgressoAutoral()[dia]?.[i]||0),completo=progresso>=Number(item.series||3);
  return `<article class="autoral-ex-card ${classeGrupoAutoral(item.grupo)} ${completo?'concluido':''}"><div class="autoral-ex-main">${thumb}<div class="autoral-ex-text"><div class="autoral-ex-group">${esc(item.grupo||'Exercício')}${maquina?' • Máquina '+esc(maquina.numero):''}</div><h4>${esc(ex?.nome||item.nome)}</h4><div class="autoral-ex-meta">${esc(item.series)} séries × ${esc(item.repeticoes)} reps${item.carga?' • '+esc(item.carga):''}<br>${completo?'✅ Exercício concluído':`${progresso}/${Number(item.series)||3} séries • ${Number(item.descanso)||60}s descanso`}</div></div></div><div class="autoral-ex-actions">${video||'<button type="button" disabled>Sem vídeo</button>'}<button class="primary" type="button" onclick="abrirExercicioAutoral('${chave}',${i})">${completo?'✓ Ver séries':'▶ Iniciar exercício'}</button></div></article>`;
+}
+function abrirVideoAutoral(diaCodificado,indice){
+ const dia=decodeURIComponent(diaCodificado);
+ const item=(treinoAutoralAtual?.exercicios||[]).filter(x=>x.dia===dia)[indice];
+ if(!item)return;
+ const ex=encontrarExercicioAutoral(item);
+ if(!ex?.video_url)return alert('Este exercício não possui vídeo cadastrado.');
+ let url;try{url=new URL(ex.video_url)}catch(e){return alert('O endereço do vídeo é inválido.')}
+ if(!['https:','http:'].includes(url.protocol))return alert('Endereço de vídeo não permitido.');
+ abrirVideoExecucao(url.href,ex.nome||item.nome);
 }
 function renderizarMeuTreinoAutoral(){
  const el=document.getElementById('meu-treino-autoral');if(!el)return;
