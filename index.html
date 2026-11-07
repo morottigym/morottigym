@@ -549,6 +549,7 @@ header h1,.section-title{color:#f5f5f5}
             <div class="quick-card" onclick="abrirSolicitacoesFuncionario()"><div class="qicon">📩</div><div><strong>Solicitações <span id="contador-solicitacoes" class="request-badge hidden">0</span></strong><br><small>Pedidos dos alunos</small></div></div>
             <div class="quick-card gold" onclick="abrirRevisaoTreinosAutorais()"><div class="qicon">📝</div><div><strong>Treinos dos alunos</strong><br><small>Revisar sem interromper o uso</small></div></div>
             <div id="card-funcionarios-master" class="quick-card master-only hidden" onclick="abrirFuncionariosMaster()"><div class="qicon">🪪</div><div><strong>Funcionários</strong><br><small>Equipe e níveis de acesso</small></div></div>
+            <div id="card-auditoria-master" class="quick-card master-only hidden" onclick="abrirAuditoriaMaster()"><div class="qicon">🛡️</div><div><strong>Histórico Master</strong><br><small>Logins e alterações</small></div></div>
         </div>
         <div id="install-app-card-funcionario" class="install-app-card">
             <strong>📲 Baixe o app MorottiGym</strong><p>Tenha o painel da academia direto no celular e abra o MorottiGym como um aplicativo.</p>
@@ -913,7 +914,25 @@ header h1,.section-title{color:#f5f5f5}
     <h2 class="section-title">🪪 Funcionários</h2>
     <p class="app-subtitle">Visão da equipe cadastrada no sistema. O gerenciamento de contas permanece restrito ao Master.</p>
     <div id="lista-funcionarios"></div>
+    <div class="info-card gold" style="margin-top:18px">
+      <h3>➕ Cadastrar professor</h3>
+      <p>Disponível somente ao Master. A senha é inicial e deve ser comunicada ao funcionário por um meio privado.</p>
+      <form id="form-novo-funcionario" onsubmit="criarFuncionarioMaster(event)">
+        <div class="form-grupo"><label>Nome completo<input id="func-nome" required minlength="3" maxlength="100"></label></div>
+        <div class="form-grupo"><label>E-mail<input id="func-email" type="email" required autocomplete="off"></label></div>
+        <div class="form-grupo"><label>Senha inicial<input id="func-senha" type="password" minlength="8" required autocomplete="new-password"></label></div>
+        <button class="btn-acao sucesso" type="submit">Criar acesso de professor</button>
+      </form>
+      <p id="func-cadastro-retorno" class="small" role="status"></p>
+    </div>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
+</main>
+
+<main id="tela-auditoria-master" class="hidden">
+ <div class="page-kicker">Área Master • segurança</div><h2 class="section-title">🛡️ Histórico administrativo</h2>
+ <p class="app-subtitle">Registros de alterações realizadas pelos funcionários. O histórico começa após a instalação da auditoria no banco.</p>
+ <div id="resumo-auditoria-master"></div><div id="lista-auditoria-master"></div>
+ <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
 
 <!-- PUBLICAR AVISO -->
@@ -1349,7 +1368,15 @@ async function fazerLogin(evento) {
     if (tipo !== "funcionario") { await supabaseClient.auth.signOut(); return alert("Esta conta não possui acesso de funcionário."); }
     evento.target.reset();
     mostrarModoFuncionario();
+    registrarAcessoFuncionarioMorotti();
     await atualizarTelas();
+}
+
+async function registrarAcessoFuncionarioMorotti(){
+ if(!perfilAtual||!usuarioAtual)return;
+ const dispositivo=(navigator.userAgent||'Navegador').slice(0,250);
+ const {error}=await supabaseClient.from('acessos_funcionarios_morotti').insert({funcionario_id:usuarioAtual.id,dispositivo});
+ if(error)console.warn('Registro de acesso indisponível:',error.message);
 }
 
 async function carregarUsuario(user) { return (await identificarUsuario(user)) === "funcionario"; }
@@ -1968,7 +1995,7 @@ function atualizarHomeApp(){
     if(nav) nav.classList.toggle('show',!!usuarioAtual);
     const toggle=document.querySelector('.toggle-container'); if(toggle) toggle.classList.toggle('hidden',!!usuarioAtual);
     if(alunoAtual){const e=document.getElementById('saudacao-aluno');if(e)e.textContent=`Olá, ${String(alunoAtual.nome||'').split(' ')[0]} 👋`; configurarNav('aluno');}
-    if(perfilAtual){const e=document.getElementById('saudacao-funcionario');if(e)e.textContent=`Olá, ${String(perfilAtual.nome||'').split(' ')[0]} 👋`; configurarNav('funcionario');const cm=document.getElementById('card-funcionarios-master');if(cm)cm.classList.toggle('hidden',perfilAtual.cargo!=='master');}
+    if(perfilAtual){const e=document.getElementById('saudacao-funcionario');if(e)e.textContent=`Olá, ${String(perfilAtual.nome||'').split(' ')[0]} 👋`; configurarNav('funcionario');['card-funcionarios-master','card-auditoria-master'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',perfilAtual.cargo!=='master'));}
 }
 function configurarNav(tipo){
     const p=document.getElementById('nav-principal-label'),s=document.getElementById('nav-secundario-label'),pf=document.getElementById('nav-perfil-label'),c=document.getElementById('nav-campeonato-label'),ci=document.querySelector('#nav-campeonato .nav-icon');
@@ -2307,6 +2334,42 @@ async function abrirFuncionariosMaster(){
     if(error){console.error(error);el.innerHTML='<div class="warning">Não foi possível carregar a equipe. Confira a política de leitura da tabela perfis.</div>';return}
     funcionariosCache=data||[];
     el.innerHTML=funcionariosCache.map(f=>`<div class="app-list-card"><div class="app-row"><div class="avatar-mini">${esc((f.nome||"?").charAt(0).toUpperCase())}</div><div class="grow"><h3>${esc(f.nome||"Funcionário")}</h3><p>${f.cargo==="master"?"Master / Gestor do app":"Professor"} • ${f.ativo===false?"Inativo":"Ativo"}</p></div></div></div>`).join("")||'<div class="empty">Nenhum funcionário encontrado.</div>';
+}
+
+async function criarFuncionarioMaster(evento){
+ evento.preventDefault();
+ if(perfilAtual?.cargo!=='master')return alert('Somente o Master pode criar funcionários.');
+ const botao=evento.submitter,retorno=document.getElementById('func-cadastro-retorno');
+ const nome=document.getElementById('func-nome').value.trim(),email=document.getElementById('func-email').value.trim().toLowerCase(),senha=document.getElementById('func-senha').value;
+ if(!nome||senha.length<8)return alert('Informe nome e uma senha inicial de pelo menos 8 caracteres.');
+ botao.disabled=true;retorno.textContent='Criando acesso...';
+ try{
+   const {data:{session}}=await supabaseClient.auth.getSession();if(!session?.access_token)throw new Error('Sua sessão expirou. Entre novamente.');
+   const resposta=await fetch(`${SUPABASE_URL}/functions/v1/gerenciar-funcionarios`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':`Bearer ${session.access_token}`},body:JSON.stringify({operacao:'criar_professor',nome,email,senha})});
+   const resultado=await resposta.json().catch(()=>({}));
+   if(!resposta.ok||!resultado.sucesso)throw new Error(resultado.erro||'Não foi possível criar a conta. Confira se a função gerenciar-funcionarios foi implantada.');
+   evento.target.reset();retorno.textContent=`✅ Acesso criado para ${nome}. Oriente o funcionário a trocar a senha inicial.`;
+   await abrirFuncionariosMaster();
+ }catch(e){console.error(e);retorno.textContent='❌ '+e.message;alert(retorno.textContent)}finally{botao.disabled=false}
+}
+async function abrirAuditoriaMaster(){
+ if(perfilAtual?.cargo!=='master')return alert('Área exclusiva do Master.');
+ await abrirTela('tela-auditoria-master');
+ const lista=document.getElementById('lista-auditoria-master'),resumo=document.getElementById('resumo-auditoria-master');
+ lista.innerHTML='<div class="empty">Carregando registros...</div>';
+ const [acoes,logins,equipe]=await Promise.all([
+   supabaseClient.from('auditoria_morotti').select('ator_id,tabela,operacao,registro_id,antes,depois,em').order('em',{ascending:false}).limit(100),
+   supabaseClient.from('acessos_funcionarios_morotti').select('funcionario_id,dispositivo,em').order('em',{ascending:false}).limit(100),
+   supabaseClient.from('perfis').select('id,nome')
+ ]);
+ if(acoes.error||logins.error){lista.innerHTML='<div class="warning">Não foi possível consultar o histórico. Execute o SQL de auditoria e confira as permissões.</div>';console.error(acoes.error||logins.error);return}
+ const nomes=new Map((equipe.data||[]).map(p=>[p.id,p.nome]));
+ const registros=[...(acoes.data||[]).map(a=>{
+  const campos=[...new Set([...Object.keys(a.antes||{}),...Object.keys(a.depois||{})])].filter(k=>JSON.stringify(a.antes?.[k])!==JSON.stringify(a.depois?.[k]));
+  return {em:a.em,nome:nomes.get(a.ator_id)||'Sistema / usuário não identificado',titulo:`${a.operacao} • ${a.tabela}`,detalhe:`Registro ${a.registro_id||'—'} • Campos: ${campos.slice(0,10).join(', ')||'—'}`}
+ }),...(logins.data||[]).map(l=>({em:l.em,nome:nomes.get(l.funcionario_id)||'Funcionário',titulo:'LOGIN • Painel',detalhe:'Acesso registrado pelo aplicativo'}))].sort((a,b)=>new Date(b.em)-new Date(a.em)).slice(0,100);
+ resumo.innerHTML=`<div class="info-card gold"><h3>${acoes.data?.length||0} alterações • ${logins.data?.length||0} logins recentes</h3><p>Histórico exibido: até 100 registros de cada origem. Ações anteriores à instalação não aparecem retroativamente.</p></div>`;
+ lista.innerHTML=registros.length?registros.map(r=>`<div class="app-list-card"><h3>${esc(r.titulo)}</h3><p><strong>${esc(r.nome)}</strong> • ${esc(formatarDataHora(r.em))}</p><p>${esc(r.detalhe)}</p></div>`).join(''):'<div class="empty">Nenhum evento registrado ainda.</div>';
 }
 
 document.addEventListener("DOMContentLoaded", inicializar);
