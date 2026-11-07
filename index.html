@@ -356,6 +356,11 @@ main{width:100%;max-width:920px;margin:0 auto;padding:clamp(20px,4vw,36px) clamp
 .exercise{background:#15171a;border-color:#383b40;padding:15px;border-radius:15px}.exercise strong{color:#f8f6ee}
 .ranking-item{border-radius:17px;background:#1b1e22;border-color:#373a3e;padding:15px}.ranking-item.top1{border-color:#caa34c;background:#282215}.ranking-pos{border-radius:12px}
 .minha-posicao{background:#282214;border:1px solid #80652a;border-radius:19px}.medalha-item.conquistada{border-color:#a98840;background:linear-gradient(160deg,#302719,#1a1c1d)}
+.nivel-morotti{border-radius:18px;padding:16px;background:#171a1d;border:1px solid #55482d;margin:12px 0}.nivel-morotti strong{color:#f5d486;display:block;margin-bottom:7px}.nivel-morotti small{color:#aeb1b8}.nivel-barra{height:9px;background:#34302a;border-radius:99px;overflow:hidden;margin:12px 0 6px}.nivel-barra span{display:block;height:100%;background:linear-gradient(90deg,#9c7629,#f5d486);border-radius:99px}
+.segredos-morotti{border:1px dashed #806331;background:#272116;border-radius:17px;padding:14px;margin:12px 0;color:#f4d180;font-size:.78rem;line-height:1.5}
+.conquistas-categorias{display:flex;gap:8px;overflow-x:auto;padding:10px 0 14px;scrollbar-width:none}.conquistas-categorias button{flex:0 0 auto;background:#23262b;border:1px solid #4a4b50;border-radius:99px;color:#d5d4d0;padding:10px 13px;font-size:.68rem;font-weight:850}.conquistas-categorias button.ativo{background:#46371c;color:#ffe4a5;border-color:#bd9238}
+.medalha-item{min-height:164px;display:flex;flex-direction:column;align-items:center;justify-content:center}.medalha-item .pontos{margin-top:auto;padding-top:10px}.medalha-item.conquistada .pontos{color:#9fe2a9}.medalha-item .raridade{font-size:.58rem;color:#b3a277;letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase}
+.conquista-toast{position:fixed;z-index:20000;left:50%;bottom:100px;transform:translateX(-50%);width:min(390px,calc(100% - 30px));padding:19px;border:1px solid #e0b451;background:linear-gradient(140deg,#3a2d16,#101214);color:white;border-radius:22px;box-shadow:0 18px 60px #000c;text-align:center}.conquista-toast strong{display:block;color:#f7d478;margin:8px 0;font-size:1rem}.conquista-toast p{font-size:.76rem;color:#ddd}.conquista-toast button{margin-top:10px;border:1px solid #aa873f;border-radius:10px;background:#282113;color:#f7d478;padding:9px 16px;font-weight:800}
 .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr));width:100%;left:0;transform:none;bottom:0;padding:8px max(7px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-bottom));background:rgba(13,15,17,.97);border-top:1px solid #554729;box-shadow:0 -12px 36px #0008;z-index:120}
 .nav-btn{min-height:54px;gap:5px;justify-content:center;color:#8f959f;font-size:.58rem;border-radius:12px}.nav-btn .nav-icon{font-size:1.35rem;line-height:1.15}.nav-btn.active{color:#f2c969;background:#3a2d1733}
 footer{border-color:#25282c;color:#676b73;margin-bottom:75px}button:focus-visible,a:focus-visible,[onclick]:focus-visible{outline:2px solid #f0ca69;outline-offset:3px}
@@ -572,6 +577,9 @@ header h1,.section-title{color:#f5f5f5}
     <h3 class="section-title" style="margin-top:24px">🎖️ Minhas conquistas</h3>
     <p class="app-subtitle">Medalhas por frequência e constância, desbloqueadas com presenças validadas. Cada conquista soma pontos digitais uma única vez.</p>
     <div class="campeonato-hero"><span>MINHA EVOLUÇÃO</span><strong id="campeonato-pontos">0 pontos digitais</strong><p id="campeonato-progresso">Carregando sua coleção...</p></div>
+    <div id="campeonato-nivel" class="nivel-morotti" aria-live="polite"></div>
+    <div id="campeonato-segredos" class="segredos-morotti"></div>
+    <div id="campeonato-categorias" class="conquistas-categorias"></div>
     <div id="campeonato-medalhas" class="medalhas-grid"></div>
     <button class="btn-voltar" onclick="voltarParaMenu()">⬅️ Voltar</button>
 </main>
@@ -1070,6 +1078,7 @@ async function fazerCheckin(){
    if(resultado.ok){
     btn.classList.add("realizado");btn.textContent="✅ CHECK-IN REALIZADO";feedback.textContent="Presença registrada. Seu ranking foi atualizado!";
     await carregarResumoDesafio();
+   verificarConquistasDepoisCheckin();
    }else if(resultado.codigo==="JA_REALIZADO"){
     btn.classList.add("realizado");btn.textContent="✅ CHECK-IN DE HOJE REALIZADO";feedback.textContent=resultado.mensagem||"Seu check-in de hoje já foi realizado.";
    }else{
@@ -2813,28 +2822,71 @@ function proximaIntroducao(){if(introducaoIndice===introducoesMorotti.length-1){
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.getElementById('morotti-onboard').classList.contains('hidden'))finalizarOnboarding()});
 window.addEventListener('load',()=>{try{if(!localStorage.getItem('morottigym-introducao-2'))mostrarIntroducaoMorotti()}catch(e){mostrarIntroducaoMorotti()}});
 
+/* Catálogo 2.0 — cada marco é concedido uma única vez, derivado dos check-ins.
+   As surpresas só revelam nome e requisito depois de alcançadas. */
 const medalhasMorotti=[
- ['🌱','Primeiro Passo','1 presença',10],['🔥','Pegou Fogo','5 presenças',25],
- ['🥉','Bronze Morotti','10 presenças',50],['🥈','Prata Morotti','25 presenças',100],
- ['🥇','Ouro Morotti','50 presenças',200],['💎','Diamante Morotti','100 presenças',400],
- ['👑','Lenda Morotti','250 presenças',1000],['🏆','Imortal Morotti','500 presenças',2000],
- ['🔥','Chama Acesa','1 semana com pelo menos 3 treinos',25],
- ['🛡️','Ritmo de Aço','2 semanas consecutivas',50],
- ['🎖️','Disciplina de Ouro','3 semanas consecutivas',75],
- ['🏆','Mês de Superação','4 semanas consecutivas',100],
- ['⭐','Constância Inabalável','8 semanas consecutivas',250],
- ['🔱','Trimestre de Ferro','12 semanas consecutivas',500],
- ['🌟','Meio Ano de Evolução','26 semanas consecutivas',1000],
- ['👑','Um Ano de Disciplina','52 semanas consecutivas',2500]
+ // [emoji, nome, requisito, pontos, categoria, métrica, marco, secreta]
+ ['🌱','Primeiro Passo','1 presença',10,'Frequência','dias',1,false],
+ ['🔥','Pegou Fogo','5 presenças',25,'Frequência','dias',5,false],
+ ['🥉','Bronze Morotti','10 presenças',50,'Frequência','dias',10,false],
+ ['⚡','Em Movimento','15 presenças',65,'Frequência','dias',15,false],
+ ['🥈','Prata Morotti','25 presenças',100,'Frequência','dias',25,false],
+ ['🎯','Foco de Ferro','40 presenças',160,'Frequência','dias',40,false],
+ ['🥇','Ouro Morotti','50 presenças',200,'Frequência','dias',50,false],
+ ['🚀','Sem Parar','75 presenças',300,'Frequência','dias',75,false],
+ ['💎','Diamante Morotti','100 presenças',400,'Frequência','dias',100,false],
+ ['🛡️','Veterano','150 presenças',650,'Frequência','dias',150,false],
+ ['👑','Lenda Morotti','250 presenças',1000,'Frequência','dias',250,false],
+ ['🏆','Imortal Morotti','500 presenças',2000,'Frequência','dias',500,false],
+ ['✨','Inesquecível','750 presenças',3000,'Frequência','dias',750,false],
+ ['🌌','Lenda Viva','1000 presenças',5000,'Frequência','dias',1000,false],
+ ['🔥','Chama Acesa','1 semana com pelo menos 3 treinos',25,'Constância','semanas',1,false],
+ ['🛡️','Ritmo de Aço','2 semanas consecutivas',50,'Constância','semanas',2,false],
+ ['🎖️','Disciplina de Ouro','3 semanas consecutivas',75,'Constância','semanas',3,false],
+ ['🏆','Mês de Superação','4 semanas consecutivas',100,'Constância','semanas',4,false],
+ ['🦾','Ritmo Firme','6 semanas consecutivas',180,'Constância','semanas',6,false],
+ ['⭐','Constância Inabalável','8 semanas consecutivas',250,'Constância','semanas',8,false],
+ ['🔱','Trimestre de Ferro','12 semanas consecutivas',500,'Constância','semanas',12,false],
+ ['💪','Resiliência','16 semanas consecutivas',700,'Constância','semanas',16,false],
+ ['🌟','Meio Ano de Evolução','26 semanas consecutivas',1000,'Constância','semanas',26,false],
+ ['👑','Um Ano de Disciplina','52 semanas consecutivas',2500,'Constância','semanas',52,false],
+ ['📅','Semana Marcante','5 presenças em uma mesma semana',80,'Desafios','semanaMax',5,false],
+ ['🗓️','Mês Ativo','8 presenças em um mês',65,'Desafios','mesMax',8,false],
+ ['🎯','Mês Focado','12 presenças em um mês',100,'Desafios','mesMax',12,false],
+ ['💪','Mês Consistente','16 presenças em um mês',150,'Desafios','mesMax',16,false],
+ ['🏅','Mês Dedicado','20 presenças em um mês',200,'Desafios','mesMax',20,false],
+ ['📚','Colecionador de Meses','Treinar em 3 meses diferentes',125,'Desafios','mesesDistintos',3,false],
+ ['🌍','Jornada Longa','Treinar em 6 meses diferentes',300,'Desafios','mesesDistintos',6,false],
+ ['🧭','Um Ano de Histórias','Treinar em 12 meses diferentes',600,'Desafios','mesesDistintos',12,false],
+ ['🔮','Primeira Surpresa','3 domingos diferentes de treino',70,'Secretas','domingos',3,true],
+ ['☀️','Domingou na Morotti','5 domingos diferentes de treino',125,'Secretas','domingos',5,true],
+ ['🌞','Domingo de Ferro','12 domingos diferentes de treino',280,'Secretas','domingos',12,true],
+ ['🌄','Guerreiro da Madrugada','10 check-ins antes das 6h',100,'Secretas','cedo',10,true],
+ ['🌅','Aurora Dourada','25 check-ins antes das 6h',250,'Secretas','cedo',25,true],
+ ['🌙','Última Repetição','10 check-ins a partir das 20h',100,'Secretas','noite',10,true],
+ ['🌃','Guardiã da Noite','25 check-ins a partir das 20h',250,'Secretas','noite',25,true],
+ ['🔄','O Retorno','Voltar após 30 dias completos sem check-in',150,'Secretas','pausa',30,true],
+ ['🦅','Fênix Morotti','Voltar após 60 dias completos sem check-in',300,'Secretas','pausa',60,true],
+ ['🦁','Recomeço de Ouro','Voltar após 30 dias e fazer 3 semanas consecutivas',275,'Secretas','retornoSequencia',3,true],
+ ['🎉','Aniversário de Evolução','Treinar um ano ou mais após a primeira presença',350,'Secretas','span',365,true],
+ ['🎆','Virada de Ano','Ter presença em dezembro e janeiro consecutivos',175,'Secretas','virada',1,true],
+ ['🎁','Fim de Semana Surpresa','Ter presença em pelo menos 5 sábados e 5 domingos',200,'Secretas','fimSemana',5,true],
+ ['🧱','Diamante Escondido','Completar 24 semanas consecutivas',650,'Secretas','semanas',24,true],
+ ['🏹','Persistência Secreta','Conseguir 200 presenças',650,'Secretas','dias',200,true],
+ ['🚩','Explorador da Rotina','Ter presença em todos os 7 dias da semana ao longo da jornada',200,'Secretas','diasSemana',7,true],
+ ['💫','Coleção Rara','Desbloquear 30 medalhas diferentes',750,'Secretas','medalhas',30,true]
 ];
+let categoriaConquistasAtual='Todas';
 function semanaSegundaUTC(data){
  const d=new Date(`${data}T12:00:00Z`);
  const deslocamento=(d.getUTCDay()+6)%7;
  d.setUTCDate(d.getUTCDate()-deslocamento);
  return d.toISOString().slice(0,10);
 }
-function calcularConquistasMorotti(dias){
- const datas=[...new Set(dias)].filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+function calcularConquistasMorotti(registros){
+ const porDia=new Map();
+ registros.forEach(r=>{const d=typeof r==='string'?r:r?.data_checkin;if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&!porDia.has(d))porDia.set(d,typeof r==='string'?null:r?.hora_local)});
+ const datas=[...porDia.keys()].sort();
  const semanas=new Map();
  datas.forEach(d=>{const chave=semanaSegundaUTC(d);semanas.set(chave,(semanas.get(chave)||0)+1)});
  const validas=[...semanas.entries()].filter(([_,quantidade])=>quantidade>=3).map(([data])=>data).sort();
@@ -2844,10 +2896,43 @@ function calcularConquistasMorotti(dias){
    else sequencia=1;
    maior=Math.max(maior,sequencia);anterior=data;
  });
- const marcosFrequencia=[1,5,10,25,50,100,250,500];
- const marcosSemanas=[1,2,3,4,8,12,26,52];
- const desbloqueadas=medalhasMorotti.map((m,i)=>i<8?datas.length>=marcosFrequencia[i]:maior>=marcosSemanas[i-8]);
+ const meses=new Map();let domingos=0,sabados=0,cedo=0,noite=0,pausa=0,span=0,virada=0,ultimoRetorno=null;
+ const diasSemana=new Set();
+ datas.forEach((d,i)=>{
+   const dia=new Date(d+'T12:00:00Z').getUTCDay();diasSemana.add(dia);
+   if(dia===0)domingos++;if(dia===6)sabados++;
+   const mes=d.slice(0,7);meses.set(mes,(meses.get(mes)||0)+1);
+   const hora=Number(porDia.get(d));
+   if(porDia.get(d)!==null&&Number.isInteger(hora)){if(hora<6)cedo++;if(hora>=20)noite++}
+   if(i){const gap=(Date.parse(d+'T12:00:00Z')-Date.parse(datas[i-1]+'T12:00:00Z'))/86400000-1;pausa=Math.max(pausa,gap);if(gap>=30)ultimoRetorno=d}
+ });
+ if(datas.length>1)span=(Date.parse(datas.at(-1)+'T12:00:00Z')-Date.parse(datas[0]+'T12:00:00Z'))/86400000;
+ for(const mes of meses.keys())if(mes.endsWith('-12')&&meses.has((Number(mes.slice(0,4))+1)+'-01'))virada=1;
+ let sequenciaDepoisRetorno=0,melhorDepoisRetorno=0,ultimaSemanaRetorno=null;
+ if(ultimoRetorno){for(const semana of validas.filter(s=>s>=semanaSegundaUTC(ultimoRetorno))){const intervalo=ultimaSemanaRetorno?(Date.parse(semana+'T12:00:00Z')-Date.parse(ultimaSemanaRetorno+'T12:00:00Z'))/86400000:0;sequenciaDepoisRetorno=intervalo===7?sequenciaDepoisRetorno+1:1;melhorDepoisRetorno=Math.max(melhorDepoisRetorno,sequenciaDepoisRetorno);ultimaSemanaRetorno=semana}}
+ const medidas={dias:datas.length,semanas:maior,semanaMax:Math.max(0,...semanas.values()),mesMax:Math.max(0,...meses.values()),mesesDistintos:meses.size,domingos,cedo,noite,pausa,span,virada,fimSemana:Math.min(domingos,sabados),diasSemana:diasSemana.size,retornoSequencia:melhorDepoisRetorno,medalhas:0};
+ const desbloqueadas=medalhasMorotti.map(m=>m[5]==='medalhas'?false:(medidas[m[5]]||0)>=m[6]);
+ medidas.medalhas=desbloqueadas.filter(Boolean).length;
+ medalhasMorotti.forEach((m,i)=>{if(m[5]==='medalhas')desbloqueadas[i]=medidas.medalhas>=m[6]});
  return {total:datas.length,maiorSequencia:maior,desbloqueadas,pontos:medalhasMorotti.reduce((s,m,i)=>s+(desbloqueadas[i]?m[3]:0),0)};
+}
+function filtrarConquistasMorotti(categoria){categoriaConquistasAtual=categoria;document.querySelectorAll('#campeonato-categorias button').forEach(b=>b.classList.toggle('ativo',b.dataset.cat===categoria));document.querySelectorAll('#campeonato-medalhas .medalha-item').forEach(el=>el.classList.toggle('hidden',categoria!=='Todas'&&el.dataset.cat!==categoria))}
+function anunciarConquistaMorotti(conquistas){
+ if(!usuarioAtual)return;
+ const chave=`morottigym-medalhas-v3-${usuarioAtual.id}`;
+ let anteriores=[];try{anteriores=JSON.parse(localStorage.getItem(chave)||'[]')}catch(e){}
+ const atuais=conquistas.desbloqueadas.map((ok,i)=>ok?i:null).filter(i=>i!==null);
+ try{localStorage.setItem(chave,JSON.stringify(atuais))}catch(e){}
+ const novas=atuais.filter(i=>!anteriores.includes(i));if(!novas.length)return;
+ const preferida=novas.find(i=>medalhasMorotti[i][7])??novas.at(-1);
+ const [emoji,nome,descricao,pontos]=medalhasMorotti[preferida];
+ document.getElementById('conquista-toast-morotti')?.remove();
+ const el=document.createElement('div');el.id='conquista-toast-morotti';el.className='conquista-toast';el.setAttribute('role','status');
+ el.innerHTML=`<div style="font-size:2.4rem">${emoji}</div><small>✨ ${medalhasMorotti[preferida][7]?'CONQUISTA SECRETA!':'NOVA CONQUISTA!'}</small><strong>${nome}</strong><p>${descricao} • +${pontos} pontos digitais</p><button type="button">Continuar minha jornada</button>`;
+ el.querySelector('button').addEventListener('click',()=>el.remove());document.body.append(el);
+}
+async function verificarConquistasDepoisCheckin(){
+ try{let r=await supabaseClient.rpc('minhas_presencas_detalhadas_morotti');if(r.error)r=await supabaseClient.rpc('minhas_presencas_morotti');if(!r.error)anunciarConquistaMorotti(calcularConquistasMorotti(r.data||[]))}catch(e){console.warn('Conquistas indisponíveis após check-in:',e)}
 }
 async function abrirCampeonato(){
  if(!usuarioAtual||!alunoAtual){alert('Entre como aluno para acessar o campeonato.');return mudarAcesso('aluno')}
@@ -2855,17 +2940,35 @@ async function abrirCampeonato(){
  const grade=document.getElementById('campeonato-medalhas');
  grade.innerHTML='<div class="empty">Verificando conquistas...</div>';
  const [presencas,posicao]=await Promise.all([
-   supabaseClient.rpc('minhas_presencas_morotti'),
+   supabaseClient.rpc('minhas_presencas_detalhadas_morotti'),
    supabaseClient.rpc('minha_posicao_ranking',{periodo:'mes'})
  ]);
- if(presencas.error){console.error(presencas.error);grade.innerHTML='<div class="warning">Não foi possível carregar as medalhas. Execute primeiro o SQL de conquistas no Supabase principal.</div>';return}
- const conquistas=calcularConquistasMorotti((presencas.data||[]).map(p=>p.data_checkin));
- grade.innerHTML=medalhasMorotti.map(([icone,nome,regra,pontos],i)=>{
-   const ok=conquistas.desbloqueadas[i];
-   return `<div class="medalha-item ${ok?'conquistada':''}"><div class="emblema" aria-hidden="true" style="${ok?'filter:none;opacity:1':''}">${icone}</div><strong>${nome}</strong><small>${regra}</small><span class="pontos">${ok?'✅ Desbloqueada':'🔒 Bloqueada'} • ${pontos} pontos</span></div>`;
+ let registros=presencas.data;
+ if(presencas.error){
+   // Compatível com a primeira versão do SQL enquanto a atualização não for executada.
+   const anterior=await supabaseClient.rpc('minhas_presencas_morotti');
+   if(anterior.error){console.error(anterior.error);grade.innerHTML='<div class="warning">Não foi possível carregar as medalhas. Confira o SQL de conquistas no Supabase principal.</div>';return}
+   registros=anterior.data;
+ }
+ const conquistas=calcularConquistasMorotti(registros||[]);
+ anunciarConquistaMorotti(conquistas);
+ const achadas=medalhasMorotti.filter((m,i)=>m[7]&&conquistas.desbloqueadas[i]).length;
+ const ocultas=medalhasMorotti.filter(m=>m[7]).length;
+ document.getElementById('campeonato-segredos').textContent=`🔒 Conquistas misteriosas: ${achadas} de ${ocultas} descobertas. Continue sua jornada: algumas medalhas só aparecem quando você as conquista!`;
+ const categorias=['Todas','Frequência','Constância','Desafios','Secretas'];
+ document.getElementById('campeonato-categorias').innerHTML=categorias.map(cat=>`<button type="button" data-cat="${cat}" onclick="filtrarConquistasMorotti('${cat}')">${cat==='Secretas'?'🔒 ':''}${cat}</button>`).join('');
+ grade.innerHTML=medalhasMorotti.map(([icone,nome,regra,pontos,categoria],i)=>{
+   const ok=conquistas.desbloqueadas[i],secreta=medalhasMorotti[i][7];
+   if(secreta&&!ok)return '';
+   return `<div class="medalha-item ${ok?'conquistada':''}" data-cat="${categoria}"><div class="raridade">${secreta?'✨ Secreta':categoria}</div><div class="emblema" aria-hidden="true" style="${ok?'filter:none;opacity:1':''}">${icone}</div><strong>${nome}</strong><small>${regra}</small><span class="pontos">${ok?'✅ Desbloqueada':'🔒 Bloqueada'} • ${pontos} pontos</span></div>`;
  }).join('');
+ filtrarConquistasMorotti(categoriaConquistasAtual);
  document.getElementById('campeonato-pontos').textContent=`${conquistas.pontos.toLocaleString('pt-BR')} pontos digitais`;
  document.getElementById('campeonato-progresso').textContent=`${conquistas.total} dias de treino • ${conquistas.desbloqueadas.filter(Boolean).length} de ${medalhasMorotti.length} medalhas • maior sequência: ${conquistas.maiorSequencia} semana(s)`;
+ const niveis=[['Iniciante',0],['Bronze',100],['Prata',350],['Ouro',900],['Platina',2000],['Diamante',5000],['Elite Morotti',10000],['Lenda Morotti',20000]];
+ const atual=[...niveis].reverse().find(n=>conquistas.pontos>=n[1])||niveis[0];const idx=niveis.indexOf(atual),proximo=niveis[idx+1];
+ const porcentagem=proximo?Math.min(100,Math.round((conquistas.pontos-atual[1])/(proximo[1]-atual[1])*100)):100;
+ document.getElementById('campeonato-nivel').innerHTML=`<strong>💠 Nível: ${atual[0]}</strong><small>${proximo?`Faltam ${(proximo[1]-conquistas.pontos).toLocaleString('pt-BR')} pontos para ${proximo[0]}`:'Você alcançou o nível máximo!'}</small><div class="nivel-barra"><span style="width:${porcentagem}%"></span></div>`;
  const pos=posicao.data?.[0];
  document.getElementById('campeonato-minha-posicao').textContent=`Sua posição: ${pos?.posicao?'#'+pos.posicao:'—'}`;
  document.getElementById('campeonato-minhas-visitas').textContent=`${pos?.visitas??0} presença(s) válidas neste mês`;
